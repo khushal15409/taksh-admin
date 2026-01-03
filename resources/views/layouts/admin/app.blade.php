@@ -147,6 +147,193 @@
         .page-header-title, .page-header-text {
             color: #1e293b !important;
         }
+        /* Sidebar Dropdown Active States - Blue instead of Green */
+        .navbar-vertical .active > .nav-link,
+        .navbar-vertical .nav-link.active,
+        .navbar-vertical .nav-link.show,
+        .navbar-vertical .show > .nav-link,
+        .navbar-vertical .navbar-vertical-aside-has-menu.show > .nav-link,
+        .navbar-vertical .navbar-vertical-aside-has-menu.active > .nav-link {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        .navbar-vertical .active .nav-indicator-icon,
+        .navbar-vertical .nav-link:hover .nav-indicator-icon,
+        .navbar-vertical .show > .nav-link > .nav-indicator-icon,
+        .navbar-vertical .navbar-vertical-aside-has-menu.show > .nav-link .nav-indicator-icon {
+            color: #ffffff !important;
+        }
+        .navbar-vertical .nav-link:hover .text-truncate {
+            color: #ffffff !important;
+        }
+        /* Submenu items - Blue instead of Green */
+        .navbar-vertical .nav-sub .nav-link.active,
+        .navbar-vertical .nav-sub .nav-item.active > .nav-link,
+        .navbar-vertical .nav-sub .navbar-vertical-aside-has-menu.active > .nav-link,
+        .navbar-vertical .js-navbar-vertical-aside-submenu .nav-link.active,
+        .navbar-vertical .js-navbar-vertical-aside-submenu .nav-item.active > .nav-link {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        /* Submenu hover states */
+        .navbar-vertical .nav-sub .nav-link:hover,
+        .navbar-vertical .js-navbar-vertical-aside-submenu .nav-link:hover {
+            color: #ffffff !important;
+            background: rgba(1, 119, 205, 0.3) !important;
+        }
+        /* Parent menu item when submenu is open - Blue instead of Green */
+        .navbar-vertical .navbar-vertical-aside-has-menu.show,
+        .navbar-vertical .navbar-vertical-aside-has-menu.show > a {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            color: #ffffff !important;
+        }
+        /* Override any green background colors in sidebar */
+        .navbar-vertical .nav-link[style*="background"],
+        .navbar-vertical .nav-item[style*="background"],
+        .navbar-vertical .navbar-vertical-aside-has-menu[style*="background"] {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        /* Remove any green color from sidebar elements */
+        .navbar-vertical * {
+            --success-clr: #0177cd !important;
+        }
+        /* Override the specific green color used in style.css (#5affba) - More specific selectors */
+        .navbar .active > .nav-link,
+        .navbar .nav-link.active,
+        .navbar .nav-link.show,
+        .navbar .show > .nav-link,
+        .navbar-vertical .active > .nav-link,
+        .navbar-vertical .nav-link.active,
+        .navbar-vertical .nav-link.show,
+        .navbar-vertical .show > .nav-link,
+        .navbar-vertical .navbar-vertical-aside-has-menu.show > .nav-link,
+        .navbar-vertical .navbar-vertical-aside-has-menu.active > .nav-link,
+        .navbar-vertical .navbar-vertical-aside-has-menu.show > a {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        .navbar-vertical .active .nav-indicator-icon,
+        .navbar-vertical .nav-link:hover .nav-indicator-icon,
+        .navbar-vertical .show > .nav-link > .nav-indicator-icon,
+        .navbar .active > .nav-link .nav-indicator-icon,
+        .navbar .nav-link.active .nav-indicator-icon,
+        .navbar .nav-link.show .nav-indicator-icon,
+        .navbar .show > .nav-link .nav-indicator-icon {
+            color: #ffffff !important;
+        }
+        .navbar .nav-link:hover .text-truncate {
+            color: #ffffff !important;
+        }
+        /* Force override any green backgrounds with blue gradient */
+        .navbar-vertical .nav-link,
+        .navbar-vertical .nav-item,
+        .navbar-vertical .navbar-vertical-aside-has-menu {
+            background-color: transparent !important;
+        }
+        .navbar-vertical .nav-link:hover,
+        .navbar-vertical .nav-item:hover {
+            background: rgba(1, 119, 205, 0.2) !important;
+        }
+        /* Submenu container background - transparent to show sidebar gradient */
+        .navbar-vertical .nav-sub,
+        .navbar-vertical .js-navbar-vertical-aside-submenu {
+            background: transparent !important;
+        }
+        /* All Buttons - Blue instead of Green */
+        .btn-success,
+        .btn-success:hover,
+        .btn-success:focus,
+        .btn-success:active,
+        .btn-success.active {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            border-color: #0177cd !important;
+            color: #ffffff !important;
+        }
+        .btn-success:hover {
+            background: linear-gradient(135deg, #0e4da3 0%, #0177cd 100%) !important;
+            border-color: #0e4da3 !important;
+        }
+        .btn-outline-success {
+            color: #0177cd !important;
+            border-color: #0177cd !important;
+        }
+        .btn-outline-success:hover,
+        .btn-outline-success:focus,
+        .btn-outline-success:active {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            border-color: #0177cd !important;
+            color: #ffffff !important;
+        }
+        /* Badge Success - Blue instead of Green */
+        .badge-success,
+        .badge-soft-success {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            color: #ffffff !important;
+        }
+        /* Text Success - Blue instead of Green */
+        .text-success {
+            color: #0177cd !important;
+        }
+        /* Border Success - Blue instead of Green */
+        .border-success {
+            border-color: #0177cd !important;
+        }
+        /* Background Success - Blue instead of Green */
+        .bg-success {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        .bg-soft-success {
+            background: rgba(1, 119, 205, 0.1) !important;
+        }
+        /* Alert Success - Blue instead of Green */
+        .alert-success {
+            background-color: rgba(1, 119, 205, 0.1) !important;
+            border-color: #0177cd !important;
+            color: #0177cd !important;
+        }
+        /* Table Success - Blue instead of Green */
+        .table-success,
+        .table-success > th,
+        .table-success > td {
+            background-color: rgba(1, 119, 205, 0.1) !important;
+        }
+        /* Progress Bar Success - Blue instead of Green */
+        .progress-bar-success {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        /* Dropdown Menu Active States */
+        .dropdown-menu .active,
+        .dropdown-menu .active > a,
+        .dropdown-menu .active > span {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            color: #ffffff !important;
+        }
+        .dropdown-item.active,
+        .dropdown-item:active {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            color: #ffffff !important;
+        }
+        /* Nav Tabs Active - Blue instead of Green */
+        .nav-tabs .nav-link.active,
+        .nav-tabs .nav-item.show .nav-link {
+            color: #0177cd !important;
+            border-color: #0177cd #0177cd transparent !important;
+        }
+        /* Pagination Active - Blue instead of Green */
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            border-color: #0177cd !important;
+            color: #ffffff !important;
+        }
+        /* Checkbox and Radio Success - Blue instead of Green */
+        .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: #0177cd !important;
+            border-color: #0177cd !important;
+        }
+        /* Switch Success - Blue instead of Green */
+        .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: #0177cd !important;
+        }
     </style>
     @stack('css_or_js')
     <script src="{{asset('assets/admin/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside-mini-cache.js')}}"></script>
