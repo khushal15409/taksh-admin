@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\BannerController;
+use App\Http\Controllers\Api\DashboardController;
 
 // Public routes
 Route::prefix('auth')->group(function () {
@@ -16,6 +17,7 @@ Route::prefix('auth')->group(function () {
     Route::post('verify-otp', [AuthController::class, 'verifyOtp']);
 });
 
+Route::get('dashboard', [DashboardController::class, 'index']);
 Route::get('categories', [ProductController::class, 'categories']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{id}', [ProductController::class, 'show']);
