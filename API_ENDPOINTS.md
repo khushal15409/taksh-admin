@@ -1,0 +1,825 @@
+# 📱 Ecommerce API Endpoints - Postman Testing Guide
+
+**Base URL:** `http://your-domain.com/api`  
+**Content-Type:** `application/json` (for GET) or `multipart/form-data` (for POST/PUT)
+
+**Language Header:** `Accept-Language: en` (or `hi`, `gu`)
+
+---
+
+## 🔐 AUTHENTICATION ENDPOINTS
+
+### 1. Send OTP
+
+**POST** `/api/auth/send-otp`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile: 9000000001
+```
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "OTP sent. Use 1234 for verification (TEST MODE)",
+    "data": {
+        "expires_at": "2026-01-03 12:00:00"
+    }
+}
+```
+
+**Test Data:**
+
+-   Mobile: `9000000001` to `9000000007`
+-   OTP: `1234` (fixed for all requests)
+
+---
+
+### 2. Verify OTP
+
+**POST** `/api/auth/verify-otp`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile: 9000000001
+otp: 1234
+guest_token: guest_token_test_12345678901234567890 (optional)
+```
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "OTP verified successfully",
+    "data": {
+        "user": {
+            "id": 1,
+            "mobile": "9000000001",
+            "name": "John Doe",
+            "is_verified": true
+        },
+        "token": "1|xxxxxxxxxxxxxxxxxxxx"
+    }
+}
+```
+
+**Note:** Save the `token` for authenticated requests. Use it in `Authorization: Bearer {token}` header.
+
+---
+
+### 3. Logout
+
+**POST** `/api/auth/logout`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body:** None
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Logged out successfully",
+    "data": []
+}
+```
+
+---
+
+## 📦 PRODUCT ENDPOINTS
+
+### 4. Get Categories
+
+**GET** `/api/categories`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Query Parameters:** None
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Categories fetched successfully",
+  "data": [...]
+}
+```
+
+---
+
+### 5. Get Products List
+
+**GET** `/api/products`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Query Parameters (all optional):**
+
+```
+category_id: 4
+search: iPhone
+min_price: 50000
+max_price: 150000
+page: 1
+limit: 15
+```
+
+**Example URLs:**
+
+-   `/api/products`
+-   `/api/products?category_id=4`
+-   `/api/products?search=iPhone&min_price=50000&max_price=150000`
+-   `/api/products?page=1&limit=10`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Products fetched successfully",
+  "data": {
+    "current_page": 1,
+    "data": [...],
+    "total": 5
+  }
+}
+```
+
+**Test Data:**
+
+-   Category IDs: `1` (Electronics), `2` (Fashion), `3` (Home & Kitchen)
+-   Sub-categories: `4` (Mobile Phones), `5` (Laptops), `6` (Headphones), `7` (Men's Clothing), `8` (Women's Clothing), `9` (Shoes)
+
+---
+
+### 6. Get Product Details
+
+**GET** `/api/products/{id}`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `id`: Product ID (1-5)
+
+**Example URLs:**
+
+-   `/api/products/1` (iPhone 15 Pro)
+-   `/api/products/2` (Samsung Galaxy S24)
+-   `/api/products/3` (Nike Air Max 90)
+-   `/api/products/4` (Adidas Ultraboost 22)
+-   `/api/products/5` (Sony WH-1000XM5)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Products fetched successfully",
+  "data": {
+    "id": 1,
+    "name": "iPhone 15 Pro",
+    "variants": [...],
+    "images": [...]
+  }
+}
+```
+
+---
+
+## 🛒 CART ENDPOINTS
+
+### 7. Add to Cart
+
+**POST** `/api/cart/add`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (optional - for logged-in users)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+product_variant_id: 1
+qty: 2
+guest_token: guest_token_test_12345678901234567890 (required if not logged in)
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Item added to cart successfully",
+  "data": {
+    "cart": {
+      "items": [...],
+      "total": 189800.00
+    },
+    "guest_token": "guest_token_test_12345678901234567890"
+  }
+}
+```
+
+**Test Data:**
+
+-   Product Variant IDs: `1-11`
+-   Guest Tokens: `guest_token_test_12345678901234567890`, `guest_token_test_09876543210987654321`
+
+---
+
+### 8. Get Cart
+
+**GET** `/api/cart/cart`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (optional - for logged-in users)
+-   `Accept-Language: en` (optional)
+
+**Query Parameters:**
+
+```
+guest_token: guest_token_test_12345678901234567890 (required if not logged in)
+```
+
+**Example URLs:**
+
+-   `/api/cart/cart?guest_token=guest_token_test_12345678901234567890`
+-   `/api/cart/cart` (with Bearer token)
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Cart fetched successfully",
+    "data": {
+        "cart": {
+            "items": [
+                {
+                    "id": 1,
+                    "product_variant_id": 1,
+                    "product_name": "iPhone 15 Pro",
+                    "sku": "IPH15P-128-BLK",
+                    "price": 94900.0,
+                    "qty": 2,
+                    "total": 189800.0,
+                    "image": "https://via.placeholder.com/500x500?text=iPhone+15+Pro+128GB"
+                }
+            ],
+            "total": 189800.0
+        },
+        "guest_token": "guest_token_test_12345678901234567890"
+    }
+}
+```
+
+---
+
+### 9. Update Cart Item
+
+**PUT** `/api/cart/update`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (optional - for logged-in users)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+cart_item_id: 1
+qty: 3
+guest_token: guest_token_test_12345678901234567890 (required if not logged in)
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Cart updated successfully",
+  "data": {
+    "cart": {
+      "items": [...],
+      "total": 284700.00
+    }
+  }
+}
+```
+
+---
+
+### 10. Remove Cart Item
+
+**DELETE** `/api/cart/item/{id}`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (optional - for logged-in users)
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `id`: Cart Item ID
+
+**Query Parameters:**
+
+```
+guest_token: guest_token_test_12345678901234567890 (required if not logged in)
+```
+
+**Example URLs:**
+
+-   `/api/cart/item/1?guest_token=guest_token_test_12345678901234567890`
+-   `/api/cart/item/1` (with Bearer token)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Item removed from cart",
+  "data": {
+    "cart": {
+      "items": [...],
+      "total": 0
+    }
+  }
+}
+```
+
+---
+
+## 🏠 ADDRESS ENDPOINTS (Requires Authentication)
+
+### 11. Add Address
+
+**POST** `/api/address/add`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+state_id: 1
+city_id: 1
+area_id: 1
+name: John Doe
+mobile: 9000000001
+address_line_1: 123, ABC Street
+address_line_2: Near XYZ Mall (optional)
+pincode: 380009
+landmark: Opposite Bank (optional)
+type: home (optional: home, work, other)
+is_default: true (optional: true/false)
+```
+
+**Test Data:**
+
+-   State IDs: `1` (Gujarat), `2` (Maharashtra), `3` (Delhi)
+-   City IDs: `1` (Ahmedabad), `2` (Surat), `3` (Mumbai), `4` (Pune), `5` (New Delhi)
+-   Area IDs: `1-7`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Address added successfully",
+  "data": {
+    "id": 1,
+    "address_line_1": "123, ABC Street",
+    "state": {...},
+    "city": {...},
+    "area": {...}
+  }
+}
+```
+
+---
+
+### 12. Get Addresses
+
+**GET** `/api/address/addresses`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Query Parameters:** None
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Addresses fetched successfully",
+  "data": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "address_line_1": "123, ABC Street",
+      "pincode": "380009",
+      "state": {...},
+      "city": {...},
+      "area": {...}
+    }
+  ]
+}
+```
+
+---
+
+## 🛍️ ORDER ENDPOINTS (Requires Authentication)
+
+### 13. Place Order
+
+**POST** `/api/order/place`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+address_id: 1
+warehouse_id: 1
+delivery_type: 30_min (required: 30_min, 1_day, normal)
+payment_method: cod (required: cod, online)
+```
+
+**Test Data:**
+
+-   Address IDs: `1-5` (must belong to logged-in user)
+-   Warehouse IDs: `1` (Ahmedabad), `2` (Mumbai), `3` (Delhi)
+-   Delivery Types: `30_min`, `1_day`, `normal`
+-   Payment Methods: `cod`, `online`
+
+**Note:** User must have items in cart. Cart will be cleared after order placement.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Order placed successfully",
+  "data": {
+    "id": 1,
+    "order_number": "ORD00000001",
+    "total_amount": 104899.00,
+    "order_status": "pending",
+    "items": [...]
+  }
+}
+```
+
+---
+
+### 14. Get Orders List
+
+**GET** `/api/order/orders`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Query Parameters (optional):**
+
+```
+page: 1
+limit: 15
+```
+
+**Example URLs:**
+
+-   `/api/order/orders`
+-   `/api/order/orders?page=1&limit=10`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Orders fetched successfully",
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 1,
+        "order_number": "ORD00000001",
+        "total_amount": 104899.00,
+        "order_status": "delivered",
+        "items": [...]
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 15. Get Order Details
+
+**GET** `/api/order/orders/{id}`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `id`: Order ID (1-4)
+
+**Example URLs:**
+
+-   `/api/order/orders/1`
+-   `/api/order/orders/2`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Order details fetched successfully",
+  "data": {
+    "id": 1,
+    "order_number": "ORD00000001",
+    "total_amount": 104899.00,
+    "order_status": "delivered",
+    "payment_status": "paid",
+    "items": [...],
+    "address": {...},
+    "warehouse": {...},
+    "payments": [...]
+  }
+}
+```
+
+---
+
+## 💳 PAYMENT ENDPOINTS (Requires Authentication)
+
+### 16. Initiate Payment
+
+**POST** `/api/payment/initiate`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+order_id: 1
+gateway: razorpay (required: razorpay, paytm, stripe)
+```
+
+**Test Data:**
+
+-   Order IDs: `1-4` (must belong to logged-in user and have payment_method = 'online')
+-   Gateways: `razorpay`, `paytm`, `stripe`
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Payment initiated successfully",
+    "data": {
+        "payment_id": 1,
+        "transaction_id": "TXNXXXXXXXXXXXX",
+        "amount": 84930.0,
+        "gateway": "razorpay"
+    }
+}
+```
+
+---
+
+### 17. Verify Payment
+
+**POST** `/api/payment/verify`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+payment_id: 1
+transaction_id: TXNXXXXXXXXXXXX
+status: success (required: success, failed)
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Payment verified successfully",
+  "data": {
+    "id": 1,
+    "status": "success",
+    "order": {...}
+  }
+}
+```
+
+---
+
+## 🔄 RETURN ENDPOINTS (Requires Authentication)
+
+### 18. Request Return
+
+**POST** `/api/return/request`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+order_id: 1
+order_item_id: 1
+reason: Product damaged during delivery. Screen has cracks. (minimum 10 characters)
+```
+
+**Test Data:**
+
+-   Order IDs: `1-4` (must belong to logged-in user and have order_status = 'delivered')
+-   Order Item IDs: `1-4` (must belong to the order)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Return requested successfully",
+  "data": {
+    "id": 1,
+    "reason": "Product damaged during delivery. Screen has cracks.",
+    "status": "pending",
+    "order": {...},
+    "orderItem": {...}
+  }
+}
+```
+
+---
+
+## 📋 POSTMAN COLLECTION SETUP
+
+### Environment Variables
+
+Create a Postman environment with:
+
+```
+base_url: http://localhost:8000/api
+token: (will be set after login)
+guest_token: guest_token_test_12345678901234567890
+```
+
+### Headers (Global)
+
+```
+Accept-Language: en
+Content-Type: application/json (for GET)
+Content-Type: multipart/form-data (for POST/PUT)
+```
+
+### Authentication Flow
+
+1. **Send OTP:** POST `/api/auth/send-otp` with `mobile: 9000000001`
+2. **Verify OTP:** POST `/api/auth/verify-otp` with `mobile: 9000000001`, `otp: 1234`
+3. **Save Token:** Copy `data.token` from response
+4. **Set Authorization:** Add header `Authorization: Bearer {token}` for protected routes
+
+### Test Sequence
+
+1. Get categories → `/api/categories`
+2. Get products → `/api/products`
+3. Get product details → `/api/products/1`
+4. Add to cart (guest) → `/api/cart/add` with `guest_token`
+5. Send OTP → `/api/auth/send-otp`
+6. Verify OTP → `/api/auth/verify-otp` (save token)
+7. Get cart (user) → `/api/cart/cart` with Bearer token
+8. Add address → `/api/address/add` with Bearer token
+9. Place order → `/api/order/place` with Bearer token
+10. Get orders → `/api/order/orders` with Bearer token
+11. Request return → `/api/return/request` with Bearer token
+
+---
+
+## 🧪 TEST DATA SUMMARY
+
+### Users
+
+-   Verified: `9000000001` to `9000000005`
+-   Unverified: `9000000006`, `9000000007`
+-   OTP: `1234` (fixed for all)
+
+### Products
+
+-   Product IDs: `1-5`
+-   Variant IDs: `1-11`
+
+### Locations
+
+-   States: `1-3`
+-   Cities: `1-5`
+-   Areas: `1-7`
+
+### Warehouses
+
+-   Warehouse IDs: `1-3`
+
+### Orders
+
+-   Order IDs: `1-4`
+-   Order Numbers: `ORD00000001` to `ORD00000004`
+
+### Guest Carts
+
+-   Guest Tokens: `guest_token_test_12345678901234567890`, `guest_token_test_09876543210987654321`
+
+---
+
+## ⚠️ IMPORTANT NOTES
+
+1. **FormData:** All POST/PUT requests use `multipart/form-data`, not JSON
+2. **OTP:** Fixed to `1234` for all mobile numbers (TEST MODE)
+3. **Language:** Set `Accept-Language` header for translations (en, hi, gu)
+4. **Authentication:** Use `Bearer {token}` for protected routes
+5. **Guest Cart:** Use `guest_token` parameter when not logged in
+6. **Cart Merging:** Guest cart automatically merges when user logs in (if `guest_token` provided in verify-otp)
+
+---
+
+## 🔗 QUICK REFERENCE
+
+| Endpoint                 | Method | Auth | FormData |
+| ------------------------ | ------ | ---- | -------- |
+| `/api/auth/send-otp`     | POST   | ❌   | ✅       |
+| `/api/auth/verify-otp`   | POST   | ❌   | ✅       |
+| `/api/auth/logout`       | POST   | ✅   | ❌       |
+| `/api/categories`        | GET    | ❌   | ❌       |
+| `/api/products`          | GET    | ❌   | ❌       |
+| `/api/products/{id}`     | GET    | ❌   | ❌       |
+| `/api/cart/add`          | POST   | ⚠️   | ✅       |
+| `/api/cart/cart`         | GET    | ⚠️   | ❌       |
+| `/api/cart/update`       | PUT    | ⚠️   | ✅       |
+| `/api/cart/item/{id}`    | DELETE | ⚠️   | ❌       |
+| `/api/address/add`       | POST   | ✅   | ✅       |
+| `/api/address/addresses` | GET    | ✅   | ❌       |
+| `/api/order/place`       | POST   | ✅   | ✅       |
+| `/api/order/orders`      | GET    | ✅   | ❌       |
+| `/api/order/orders/{id}` | GET    | ✅   | ❌       |
+| `/api/payment/initiate`  | POST   | ✅   | ✅       |
+| `/api/payment/verify`    | POST   | ✅   | ✅       |
+| `/api/return/request`    | POST   | ✅   | ✅       |
+
+**Legend:**
+
+-   ❌ = Not required
+-   ✅ = Required
+-   ⚠️ = Optional (works with or without auth)
