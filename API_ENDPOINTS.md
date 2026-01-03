@@ -1,6 +1,6 @@
 # 📱 Ecommerce API Endpoints - Postman Testing Guide
 
-**Base URL:** `http://your-domain.com/api`  
+**Base URL:** `http://127.0.0.1:8004/api`  
 **Content-Type:** `application/json` (for GET) or `multipart/form-data` (for POST/PUT)
 
 **Language Header:** `Accept-Language: en` (or `hi`, `gu`)
@@ -103,9 +103,69 @@ guest_token: guest_token_test_12345678901234567890 (optional)
 
 ---
 
+## 🎨 BANNER ENDPOINTS
+
+### 4. Get Banners
+
+**GET** `/api/banners`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Query Parameters (optional):**
+
+```
+position: home_top (optional: home_top, home_middle, home_bottom, dashboard)
+```
+
+**Example URLs:**
+
+-   `/api/banners` (all active banners)
+-   `/api/banners?position=home_top` (home top banners only)
+-   `/api/banners?position=home_middle` (home middle banners)
+-   `/api/banners?position=home_bottom` (home bottom banners)
+-   `/api/banners?position=dashboard` (dashboard banners)
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Banners fetched successfully",
+    "data": [
+        {
+            "id": 1,
+            "title": "Big Sale - Up to 70% Off",
+            "description": "Shop now and save big on all products",
+            "image_url": "https://cdn.example.com/banners/big-sale-70-off.jpg",
+            "redirect_type": "category",
+            "redirect_id": 1,
+            "redirect_url": null,
+            "position": "home_top",
+            "start_date": "2026-01-01T14:01:11.000000Z",
+            "end_date": "2026-01-18T14:01:11.000000Z",
+            "is_active": true,
+            "sort_order": 1,
+            "created_at": "2026-01-03T14:01:11.000000Z",
+            "updated_at": "2026-01-03T14:01:11.000000Z"
+        }
+    ]
+}
+```
+
+**Note:** Only returns active banners that are within their start_date and end_date range. Results are ordered by `sort_order` ASC, then by `created_at` DESC.
+
+**Test Data:**
+
+-   Positions: `home_top`, `home_middle`, `home_bottom`, `dashboard`
+-   Redirect Types: `product`, `category`, `external`, `none`
+
+---
+
 ## 📦 PRODUCT ENDPOINTS
 
-### 4. Get Categories
+### 5. Get Categories
 
 **GET** `/api/categories`
 
@@ -127,7 +187,7 @@ guest_token: guest_token_test_12345678901234567890 (optional)
 
 ---
 
-### 5. Get Products List
+### 6. Get Products List
 
 **GET** `/api/products`
 
@@ -174,7 +234,7 @@ limit: 15
 
 ---
 
-### 6. Get Product Details
+### 7. Get Product Details
 
 **GET** `/api/products/{id}`
 
@@ -199,21 +259,82 @@ limit: 15
 ```json
 {
   "success": true,
-  "message": "Products fetched successfully",
+  "message": "Product details fetched successfully",
   "data": {
     "id": 1,
     "name": "iPhone 15 Pro",
+    "description": "Latest iPhone with A17 Pro chip...",
+    "brand": {...},
+    "category": {...},
     "variants": [...],
-    "images": [...]
+    "images": [...],
+    "rating_summary": {
+      "average_rating": 4.6,
+      "total_reviews": 5,
+      "rating_breakup": {
+        "5": 3,
+        "4": 2,
+        "3": 0,
+        "2": 0,
+        "1": 0
+      }
+    },
+    "reviews": [
+      {
+        "rating": 5,
+        "title": "Perfect!",
+        "review": "Everything I expected and more. Fast delivery and great packaging.",
+        "verified": true,
+        "created_at": "2026-01-02"
+      },
+      {
+        "rating": 4,
+        "title": "Solid upgrade",
+        "review": "Upgraded from iPhone 13. The improvements are worth it, especially the camera.",
+        "verified": false,
+        "created_at": "2025-12-31"
+      }
+    ],
+    "questions_answers": [
+      {
+        "question": "Does this phone support wireless charging?",
+        "answers": [
+          {
+            "answer": "Yes, it supports MagSafe wireless charging and Qi wireless charging.",
+            "created_at": "2025-12-20"
+          },
+          {
+            "answer": "Yes, iPhone 15 Pro supports both MagSafe and standard Qi wireless charging.",
+            "created_at": "2025-12-21"
+          }
+        ]
+      },
+      {
+        "question": "What is the battery capacity?",
+        "answers": [
+          {
+            "answer": "The battery capacity is approximately 3274 mAh. It provides all-day battery life.",
+            "created_at": "2025-12-23"
+          }
+        ]
+      }
+    ]
   }
 }
 ```
+
+**Note:** 
+- Returns complete product details including variants, images, brand, and category
+- Includes rating summary with average rating, total reviews count, and star-wise breakup (1-5)
+- Shows latest 10 approved reviews (sorted by latest first)
+- Shows latest 5 approved questions with their approved answers
+- Only approved reviews, questions, and answers are included in the response
 
 ---
 
 ## 🛒 CART ENDPOINTS
 
-### 7. Add to Cart
+### 8. Add to Cart
 
 **POST** `/api/cart/add`
 
@@ -253,7 +374,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ---
 
-### 8. Get Cart
+### 9. Get Cart
 
 **GET** `/api/cart/cart`
 
@@ -302,7 +423,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ---
 
-### 9. Update Cart Item
+### 10. Update Cart Item
 
 **PUT** `/api/cart/update`
 
@@ -336,7 +457,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ---
 
-### 10. Remove Cart Item
+### 11. Remove Cart Item
 
 **DELETE** `/api/cart/item/{id}`
 
@@ -379,7 +500,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ## 🏠 ADDRESS ENDPOINTS (Requires Authentication)
 
-### 11. Add Address
+### 12. Add Address
 
 **POST** `/api/address/add`
 
@@ -428,7 +549,7 @@ is_default: true (optional: true/false)
 
 ---
 
-### 12. Get Addresses
+### 13. Get Addresses
 
 **GET** `/api/address/addresses`
 
@@ -463,7 +584,7 @@ is_default: true (optional: true/false)
 
 ## 🛍️ ORDER ENDPOINTS (Requires Authentication)
 
-### 13. Place Order
+### 14. Place Order
 
 **POST** `/api/order/place`
 
@@ -508,7 +629,7 @@ payment_method: cod (required: cod, online)
 
 ---
 
-### 14. Get Orders List
+### 15. Get Orders List
 
 **GET** `/api/order/orders`
 
@@ -552,7 +673,7 @@ limit: 15
 
 ---
 
-### 15. Get Order Details
+### 16. Get Order Details
 
 **GET** `/api/order/orders/{id}`
 
@@ -594,7 +715,7 @@ limit: 15
 
 ## 💳 PAYMENT ENDPOINTS (Requires Authentication)
 
-### 16. Initiate Payment
+### 17. Initiate Payment
 
 **POST** `/api/payment/initiate`
 
@@ -632,7 +753,7 @@ gateway: razorpay (required: razorpay, paytm, stripe)
 
 ---
 
-### 17. Verify Payment
+### 18. Verify Payment
 
 **POST** `/api/payment/verify`
 
@@ -667,7 +788,7 @@ status: success (required: success, failed)
 
 ## 🔄 RETURN ENDPOINTS (Requires Authentication)
 
-### 18. Request Return
+### 19. Request Return
 
 **POST** `/api/return/request`
 
@@ -714,7 +835,7 @@ reason: Product damaged during delivery. Screen has cracks. (minimum 10 characte
 Create a Postman environment with:
 
 ```
-base_url: http://localhost:8000/api
+base_url: http://127.0.0.1:8004/api
 token: (will be set after login)
 guest_token: guest_token_test_12345678901234567890
 ```
@@ -736,17 +857,18 @@ Content-Type: multipart/form-data (for POST/PUT)
 
 ### Test Sequence
 
-1. Get categories → `/api/categories`
-2. Get products → `/api/products`
-3. Get product details → `/api/products/1`
-4. Add to cart (guest) → `/api/cart/add` with `guest_token`
-5. Send OTP → `/api/auth/send-otp`
-6. Verify OTP → `/api/auth/verify-otp` (save token)
-7. Get cart (user) → `/api/cart/cart` with Bearer token
-8. Add address → `/api/address/add` with Bearer token
-9. Place order → `/api/order/place` with Bearer token
-10. Get orders → `/api/order/orders` with Bearer token
-11. Request return → `/api/return/request` with Bearer token
+1. Get banners → `/api/banners` or `/api/banners?position=home_top`
+2. Get categories → `/api/categories`
+3. Get products → `/api/products`
+4. Get product details → `/api/products/1`
+5. Add to cart (guest) → `/api/cart/add` with `guest_token`
+6. Send OTP → `/api/auth/send-otp`
+7. Verify OTP → `/api/auth/verify-otp` (save token)
+8. Get cart (user) → `/api/cart/cart` with Bearer token
+9. Add address → `/api/address/add` with Bearer token
+10. Place order → `/api/order/place` with Bearer token
+11. Get orders → `/api/order/orders` with Bearer token
+12. Request return → `/api/return/request` with Bearer token
 
 ---
 
@@ -802,6 +924,7 @@ Content-Type: multipart/form-data (for POST/PUT)
 | `/api/auth/send-otp`     | POST   | ❌   | ✅       |
 | `/api/auth/verify-otp`   | POST   | ❌   | ✅       |
 | `/api/auth/logout`       | POST   | ✅   | ❌       |
+| `/api/banners`           | GET    | ❌   | ❌       |
 | `/api/categories`        | GET    | ❌   | ❌       |
 | `/api/products`          | GET    | ❌   | ❌       |
 | `/api/products/{id}`     | GET    | ❌   | ❌       |

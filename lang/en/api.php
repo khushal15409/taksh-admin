@@ -19,6 +19,11 @@ return [
     'products_fetched' => 'Products fetched successfully',
     'product_not_found' => 'Product not found',
     'categories_fetched' => 'Categories fetched successfully',
+    'product' => [
+        'details_loaded' => 'Product details fetched successfully',
+        'reviews_loaded' => 'Reviews loaded successfully',
+        'questions_loaded' => 'Questions loaded successfully',
+    ],
     
     // Cart
     'item_added_to_cart' => 'Item added to cart successfully',
@@ -58,6 +63,12 @@ return [
     'return_requested' => 'Return requested successfully',
     'return_not_found' => 'Return not found',
     'return_reason_required' => 'Return reason is required',
+    
+    // Banners
+    'banners' => [
+        'fetched' => 'Banners fetched successfully',
+        'not_found' => 'No banners found',
+    ],
     
     // General
     'unauthorized' => 'Unauthorized access',

@@ -18,11 +18,15 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,            // Brands
             CategorySeeder::class,        // Categories
             ProductSeeder::class,         // Products, Variants, Attributes, Images
+            ProductReviewSeeder::class,   // Product Reviews
+            ProductQuestionSeeder::class, // Product Questions
+            ProductAnswerSeeder::class,   // Product Answers
             WarehouseSeeder::class,        // Warehouses & Inventory
             UserSeeder::class,            // Users
             AddressSeeder::class,          // Addresses
             CartSeeder::class,            // Carts & Cart Items
             OrderSeeder::class,           // Orders, Payments, Returns, Refunds
+            BannerSeeder::class,          // Banners
         ]);
     }
 }

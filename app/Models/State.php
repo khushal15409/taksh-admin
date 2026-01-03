@@ -20,7 +20,7 @@ class State extends Model
 
     public function warehouses()
     {
-        return $this->hasMany(Warehouse::class);
+        return $this->hasMany(FulfillmentCenter::class);
     }
 
     public function addresses()

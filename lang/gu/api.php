@@ -19,6 +19,11 @@ return [
     'products_fetched' => 'ઉત્પાદનો સફળતાપૂર્વક મેળવ્યા',
     'product_not_found' => 'ઉત્પાદન મળ્યું નથી',
     'categories_fetched' => 'શ્રેણીઓ સફળતાપૂર્વક મેળવી',
+    'product' => [
+        'details_loaded' => 'ઉત્પાદન વિગતો સફળતાપૂર્વક મેળવી',
+        'reviews_loaded' => 'સમીક્ષાઓ સફળતાપૂર્વક લોડ કરી',
+        'questions_loaded' => 'પ્રશ્નો સફળતાપૂર્વક લોડ કર્યા',
+    ],
     
     // Cart
     'item_added_to_cart' => 'આઇટમ સફળતાપૂર્વક કાર્ટમાં ઉમેરાયો',
@@ -58,6 +63,12 @@ return [
     'return_requested' => 'રિટર્ન સફળતાપૂર્વક વિનંતી કરી',
     'return_not_found' => 'રિટર્ન મળ્યું નથી',
     'return_reason_required' => 'રિટર્ન કારણ જરૂરી છે',
+    
+    // Banners
+    'banners' => [
+        'fetched' => 'બેનર સફળતાપૂર્વક મેળવ્યા',
+        'not_found' => 'કોઈ બેનર મળ્યું નથી',
+    ],
     
     // General
     'unauthorized' => 'અનધિકૃત પ્રવેશ',

@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Warehouse extends Model
+class FulfillmentCenter extends Model
 {
     use HasFactory;
+
+    protected $table = 'fulfillment_centers';
 
     protected $fillable = [
         'state_id',
@@ -46,11 +48,12 @@ class Warehouse extends Model
 
     public function warehouseProducts()
     {
-        return $this->hasMany(WarehouseProduct::class);
+        return $this->hasMany(WarehouseProduct::class, 'warehouse_id');
     }
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'warehouse_id');
     }
 }
+

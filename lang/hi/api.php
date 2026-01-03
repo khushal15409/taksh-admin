@@ -19,6 +19,11 @@ return [
     'products_fetched' => 'उत्पाद सफलतापूर्वक प्राप्त किए गए',
     'product_not_found' => 'उत्पाद नहीं मिला',
     'categories_fetched' => 'श्रेणियां सफलतापूर्वक प्राप्त की गईं',
+    'product' => [
+        'details_loaded' => 'उत्पाद विवरण सफलतापूर्वक प्राप्त किया गया',
+        'reviews_loaded' => 'समीक्षाएं सफलतापूर्वक लोड की गईं',
+        'questions_loaded' => 'प्रश्न सफलतापूर्वक लोड किए गए',
+    ],
     
     // Cart
     'item_added_to_cart' => 'आइटम सफलतापूर्वक कार्ट में जोड़ा गया',
@@ -58,6 +63,12 @@ return [
     'return_requested' => 'रिटर्न सफलतापूर्वक अनुरोध किया गया',
     'return_not_found' => 'रिटर्न नहीं मिला',
     'return_reason_required' => 'रिटर्न कारण आवश्यक है',
+    
+    // Banners
+    'banners' => [
+        'fetched' => 'बैनर सफलतापूर्वक प्राप्त किए गए',
+        'not_found' => 'कोई बैनर नहीं मिला',
+    ],
     
     // General
     'unauthorized' => 'अनधिकृत पहुंच',

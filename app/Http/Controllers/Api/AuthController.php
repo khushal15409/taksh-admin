@@ -72,7 +72,7 @@ class AuthController extends Controller
         $otp = $request->input('otp');
 
         // TEST MODE: Fixed OTP = 1234
-        if ($otp !== '1234') {
+        if ($otp !== "1234") {
             return $this->error('api.otp_invalid', 400);
         }
 
@@ -83,14 +83,23 @@ class AuthController extends Controller
             ->latest()
             ->first();
 
+        // In TEST MODE: If OTP is 1234 and no record exists, create one or skip validation
         if (!$otpVerification) {
-            return $this->error('api.otp_invalid', 400);
+            // For TEST MODE, if OTP is correct (1234), allow verification even without DB record
+            // Create a record for consistency
+            $otpVerification = OtpVerification::create([
+                'mobile' => $mobile,
+                'otp' => Hash::make('1234'),
+                'expires_at' => Carbon::now()->addMinutes(5),
+                'is_used' => false,
+            ]);
         }
 
         // Mark OTP as used
         $otpVerification->update(['is_used' => true]);
 
-        // Find or create user
+        // Find existing user or auto-register new user
+        // If user doesn't exist, create new user account automatically
         $user = User::firstOrCreate(
             ['mobile' => $mobile],
             [
@@ -100,9 +109,14 @@ class AuthController extends Controller
             ]
         );
 
-        // Update user verification status
+        // Update user verification status (in case user existed but wasn't verified)
         if (!$user->is_verified) {
             $user->update(['is_verified' => true]);
+        }
+
+        // Ensure user status is active
+        if ($user->status !== 'active') {
+            $user->update(['status' => 'active']);
         }
 
         // Generate Sanctum token

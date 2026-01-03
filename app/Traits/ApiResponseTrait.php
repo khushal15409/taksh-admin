@@ -56,5 +56,27 @@ trait ApiResponseTrait
             ],
         ], 422);
     }
+
+    /**
+     * Format validation errors from Validator or ValidationException.
+     *
+     * @param \Illuminate\Contracts\Validation\Validator|\Illuminate\Validation\ValidationException $validator
+     * @param string|null $message
+     * @return JsonResponse
+     */
+    protected function formatValidationErrors($validator, $message = null): JsonResponse
+    {
+        $errors = [];
+        
+        if ($validator instanceof \Illuminate\Validation\ValidationException) {
+            $errors = $validator->errors()->toArray();
+        } elseif (method_exists($validator, 'errors')) {
+            $errors = $validator->errors()->toArray();
+        } elseif (is_array($validator)) {
+            $errors = $validator;
+        }
+
+        return $this->validationError($errors, $message);
+    }
 }
 

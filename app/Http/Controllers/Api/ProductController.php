@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductReview;
+use App\Models\ProductQuestion;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 
@@ -91,7 +93,73 @@ class ProductController extends Controller
             return $this->error('api.product_not_found', 404);
         }
 
-        return $this->success($product, 'api.products_fetched');
+        // Get rating summary
+        $approvedReviews = ProductReview::where('product_id', $id)
+            ->where('is_approved', true);
+        
+        $totalReviews = $approvedReviews->count();
+        $averageRating = $totalReviews > 0 ? round($approvedReviews->avg('rating'), 1) : 0;
+        
+        // Rating breakup
+        $ratingBreakup = [
+            '5' => ProductReview::where('product_id', $id)->where('is_approved', true)->where('rating', 5)->count(),
+            '4' => ProductReview::where('product_id', $id)->where('is_approved', true)->where('rating', 4)->count(),
+            '3' => ProductReview::where('product_id', $id)->where('is_approved', true)->where('rating', 3)->count(),
+            '2' => ProductReview::where('product_id', $id)->where('is_approved', true)->where('rating', 2)->count(),
+            '1' => ProductReview::where('product_id', $id)->where('is_approved', true)->where('rating', 1)->count(),
+        ];
+        
+        $ratingSummary = [
+            'average_rating' => $averageRating,
+            'total_reviews' => $totalReviews,
+            'rating_breakup' => $ratingBreakup,
+        ];
+        
+        // Get reviews (latest first, limit 10)
+        $reviews = ProductReview::where('product_id', $id)
+            ->where('is_approved', true)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($review) {
+                return [
+                    'rating' => $review->rating,
+                    'title' => $review->review_title,
+                    'review' => $review->review_text,
+                    'verified' => $review->is_verified_purchase,
+                    'created_at' => $review->created_at->format('Y-m-d'),
+                ];
+            });
+        
+        // Get questions & answers (limit 5 questions)
+        $questions = ProductQuestion::where('product_id', $id)
+            ->where('is_approved', true)
+            ->with(['answers' => function ($query) {
+                $query->where('is_approved', true)
+                    ->orderBy('created_at', 'asc');
+            }])
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get()
+            ->map(function ($question) {
+                return [
+                    'question' => $question->question,
+                    'answers' => $question->answers->map(function ($answer) {
+                        return [
+                            'answer' => $answer->answer,
+                            'created_at' => $answer->created_at->format('Y-m-d'),
+                        ];
+                    })->toArray(),
+                ];
+            });
+        
+        // Convert product to array and add new fields
+        $productData = $product->toArray();
+        $productData['rating_summary'] = $ratingSummary;
+        $productData['reviews'] = $reviews;
+        $productData['questions_answers'] = $questions;
+
+        return $this->success($productData, 'api.product.details_loaded');
     }
 }
 

@@ -52,7 +52,7 @@ class WarehouseSeeder extends Seeder
             ],
         ];
 
-        DB::table('warehouses')->insert($warehouses);
+        DB::table('fulfillment_centers')->insert($warehouses);
 
         // Warehouse Products (Inventory)
         // Ensure all product variants have stock in at least one warehouse

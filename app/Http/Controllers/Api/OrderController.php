@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\Warehouse;
+use App\Models\FulfillmentCenter;
 use App\Models\WarehouseProduct;
 use App\Models\DeliveryType;
 use App\Traits\ApiResponseTrait;
@@ -25,7 +25,7 @@ class OrderController extends Controller
     {
         $request->validate([
             'address_id' => 'required|exists:addresses,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
+            'warehouse_id' => 'required|exists:fulfillment_centers,id',
             'delivery_type' => 'required|string|in:30_min,1_day,normal',
             'payment_method' => 'required|in:cod,online',
         ]);
@@ -48,7 +48,7 @@ class OrderController extends Controller
         }
 
         // Verify warehouse
-        $warehouse = Warehouse::find($request->warehouse_id);
+        $warehouse = FulfillmentCenter::find($request->warehouse_id);
         if (!$warehouse) {
             return $this->error('api.warehouse_not_found', 404);
         }

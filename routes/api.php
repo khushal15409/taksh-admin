@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReturnController;
+use App\Http\Controllers\Api\BannerController;
 
 // Public routes
 Route::prefix('auth')->group(function () {
@@ -18,6 +19,7 @@ Route::prefix('auth')->group(function () {
 Route::get('categories', [ProductController::class, 'categories']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{id}', [ProductController::class, 'show']);
+Route::get('banners', [BannerController::class, 'index']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
