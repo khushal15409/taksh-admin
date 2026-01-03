@@ -334,6 +334,67 @@
         .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
             background-color: #0177cd !important;
         }
+        /* Settings Dropdown Buttons - Sidebar Blue Gradient */
+        .settings-dropdown-btn {
+            display: flex !important;
+            align-items: center !important;
+            gap: 12px !important;
+            padding: 12px 16px !important;
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            color: #ffffff !important;
+            border-radius: 8px !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+            border: none !important;
+            width: 100% !important;
+            font-weight: 500 !important;
+        }
+        .settings-dropdown-btn:hover {
+            background: linear-gradient(135deg, #0e4da3 0%, #0177cd 100%) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(1, 119, 205, 0.3) !important;
+        }
+        .settings-dropdown-btn i {
+            font-size: 18px !important;
+        }
+        /* Navbar Round Buttons - Sidebar Blue Gradient */
+        .navbar-round-btn {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            padding: 10px 16px !important;
+            background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%) !important;
+            color: #ffffff !important;
+            border-radius: 50px !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+            border: none !important;
+            font-weight: 500 !important;
+            white-space: nowrap !important;
+        }
+        .navbar-round-btn:hover {
+            background: linear-gradient(135deg, #0e4da3 0%, #0177cd 100%) !important;
+            color: #ffffff !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(1, 119, 205, 0.3) !important;
+        }
+        .navbar-round-btn.active {
+            background: linear-gradient(135deg, #0e4da3 0%, #0177cd 100%) !important;
+            box-shadow: 0 4px 12px rgba(1, 119, 205, 0.4) !important;
+        }
+        .navbar-round-btn img {
+            width: 18px !important;
+            height: 18px !important;
+            filter: brightness(0) invert(1) !important;
+        }
+        .navbar-round-btn span {
+            color: #ffffff !important;
+            font-size: 14px !important;
+        }
+        .navbar-round-btn svg path {
+            stroke: #ffffff !important;
+        }
     </style>
     @stack('css_or_js')
     <script src="{{asset('assets/admin/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside-mini-cache.js')}}"></script>

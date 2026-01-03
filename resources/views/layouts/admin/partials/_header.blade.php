@@ -22,7 +22,7 @@
 
                     <li class="nav-item __nav-item">
                         <a href="{{ route('admin.dashboard')}}" id="tourb-6"
-                           class="__nav-link {{ Request::is('admin/users*') ? 'active' : '' }}">
+                           class="__nav-link navbar-round-btn {{ Request::is('admin/users*') ? 'active' : '' }}">
                             <img src="{{asset('assets/admin/img/new-img/user.svg')}}" alt="public/img">
                             <span>{{ translate('Users')}}</span>
                         </a>
@@ -30,7 +30,7 @@
 
                     <li class="nav-item __nav-item">
                         <a href="{{ route('admin.dashboard')}}" id="tourb-7"
-                           class="__nav-link {{ Request::is('admin/transactions*') ? 'active' : '' }}">
+                           class="__nav-link navbar-round-btn {{ Request::is('admin/transactions*') ? 'active' : '' }}">
                             <img src="{{asset('assets/admin/img/new-img/transaction-and-report.svg')}}"
                                  alt="public/img">
                             <span>{{ translate('Transactions & Reports')}}</span>
@@ -39,11 +39,11 @@
 
                     <li class="nav-item __nav-item">
                         <a href="{{ route('admin.dashboard') }}" id="tourb-3"
-                           class="__nav-link {{ Request::is('admin/business-settings*') ? 'active' : '' }}">
+                           class="__nav-link navbar-round-btn {{ Request::is('admin/business-settings*') ? 'active' : '' }}">
                             <img src="{{asset('assets/admin/img/new-img/setting-icon.svg')}}" alt="public/img">
                             <span>{{ translate('messages.Settings') }}</span>
                             <svg width="14" viewBox="0 0 14 14" fill="none">
-                                <path d="M2.33325 5.25L6.99992 9.91667L11.6666 5.25" stroke="#006161" stroke-width="1.5"
+                                <path d="M2.33325 5.25L6.99992 9.91667L11.6666 5.25" stroke="#ffffff" stroke-width="1.5"
                                       stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </a>
@@ -123,37 +123,12 @@
                     @if (\App\CentralLogics\Helpers::module_permission_check('order'))
                         <li class="nav-item __nav-item">
                             <a href="{{ route('admin.dashboard')}}" id="tourb-8"
-                               class="__nav-link {{ Request::is('admin/dispatch*') ? 'active' : '' }}">
+                               class="__nav-link navbar-round-btn {{ Request::is('admin/dispatch*') ? 'active' : '' }}">
                                 <img src="{{asset('assets/admin/img/new-img/dispatch.svg')}}" alt="public/img">
                                 <span>{{ translate('Dispatch Management')}}</span>
                             </a>
                         </li>
                     @endif
-
-
-                    <li class="nav-item max-sm-m-0 w-xxl-200px ml-auto flex-grow-0">
-                        <button type="button" id="modalOpener" class="title-color bg--secondary border-0 rounded justify-content-between w-100 align-items-center py-2 px-2 px-md-3 d-flex gap-1" data-toggle="modal" data-target="#staticBackdrop">
-                            <div class="align-items-center d-flex flex-grow-1 gap-1 justify-content-between">
-                                <span class="align-items-center d-none d-xxl-flex gap-2 text-muted">{{translate('Search_or')}}
-
-                                    <span class="bg-E7E6E8 border ctrlplusk d-md-block d-none font-bold fs-12 fw-bold lh-1 ms-1 px-1 rounded text-muted">Ctrl+K</span>
-
-                                </span>
-                                <img width="14" class="h-auto" src="{{asset('assets/admin/img/new-img/search.svg')}}" class="svg" alt="">
-                            </div>
-                        </button>
-                    </li>
-
-                    <li class="nav-item max-sm-m-0  mr-lg-3">
-                        <a class="btn btn-icon rounded-circle nav-msg-icon"
-                           href="{{route('admin.dashboard')}}">
-                            <img src="{{asset('assets/admin/img/new-img/message-icon.svg')}}" alt="public/img">
-                            @php($message = 0)
-                            @if($message!=0)
-                                <span class="btn-status btn-status-danger">{{ $message }}</span>
-                            @endif
-                        </a>
-                    </li>
                     <li class="nav-item max-sm-m-0">
                         <div class="hs-unfold">
                             <div>
@@ -192,85 +167,46 @@
                     </li>
                     @php($mod = null)
                     @php($is_logistics = false)
-                    <div class="nav-item __nav-item">
-                        <a href="javascript:void(0)" class="__nav-link module--nav-icon" id="tourb-0">
-                            @if ($is_logistics)
-                                <img src="{{asset('assets/admin/img/grocery.svg')}}"
-                                     class="onerror-image"
-                                     data-onerror-image="{{asset('assets/admin/img/new-img/module-icon.svg')}}"
-                                     width="20px" alt="public/img">
-                            @elseif ($mod)
-                                <img src="{{ $mod->icon_full_url }}"
-                                     class="onerror-image"
-                                     data-onerror-image="{{asset('assets/admin/img/new-img/module-icon.svg')}}"
-                                     width="20px" alt="public/img">
-                            @else
-                                <img src="{{asset('assets/admin/img/new-img/module-icon.svg')}}"
-                                     alt="public/img">
-                            @endif
-                            <span class="text-white">{{ $is_logistics ? 'Logistics' : ($mod ? $mod->module_name : translate('modules')) }}</span>
-                            <img src="{{asset('assets/admin/img/new-img/angle-white.svg')}}"
-                                 class="d-none d-lg-block ml-xl-2" alt="public/img">
+                    <li class="nav-item __nav-item ml-auto">
+                        <a href="javascript:void(0)" class="__nav-link navbar-round-btn" id="tourb-0">
+                            <img src="{{asset('assets/admin/img/new-img/setting-icon.svg')}}"
+                                 alt="public/img">
+                            <span>{{ translate('messages.Settings') }}</span>
+                            <svg width="14" viewBox="0 0 14 14" fill="none">
+                                <path d="M2.33325 5.25L6.99992 9.91667L11.6666 5.25" stroke="#ffffff" stroke-width="1.5"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </a>
                         <div class="__nav-module style-2" id="tourb-1">
-                            @php($modules = collect([]))
-                            @if(isset($modules) && ($modules->count()>0))
-                                <div class="__nav-module-header">
-                                    <div class="inner">
-                                        <div class="row g-3 align-items-center">
-                                            <div class="col-6">
-                                                <h5>{{translate('Modules Section')}}</h5>
-                                                <p class="m-0">
-                                                    {{translate('Select Module & Monitor your business module wise')}}
-                                                </p>
-                                            </div>
-
+                            <div class="__nav-module-header">
+                                <div class="inner">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-12">
+                                            <h5>{{translate('messages.Settings')}}</h5>
+                                            <p class="m-0">
+                                                {{translate('Manage your account and preferences')}}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="__nav-module-body">
-                                    <div class="__nav-module-items">
-                                        @foreach ($modules as $module)
-                                        @if(true)
-                                            <a href="javascript:"
-
-                                               data-module-id="{{ $module->id }}"
-                                               data-url="{{route('admin.dashboard')}}"
-                                               data-filter="module_id"
-
-                                               class="__nav-module-item set-module">
-                                                <div class="img w--70px ">
-                                                    <img src="{{ $module?->icon_full_url }}"
-
-                                                         data-onerror-image="{{asset('assets/admin/img/new-img/module/e-shop.svg')}}"
-                                                         alt="new-img" class="mw-100 onerror-image">
-                                                </div>
-                                                <div>
-                                                    {{ $module->module_name }}
-                                                </div>
-                                            </a>
-                                        @endif
-                                        @endforeach
-                                        @if (false)
-                                            <a href="{{ route('admin.dashboard') }}"
-                                               class="__nav-module-item" data-toggle="tooltip"
-                                               data-placement="top" title="{{ translate('add_new_module') }}">
-                                                <i class="tio-add display-3"></i>
-                                            </a>
-                                        @endif
-                                    </div>
+                            </div>
+                            <div class="__nav-module-body">
+                                <div class="__nav-module-items" style="display: flex; flex-direction: column; gap: 10px; padding: 15px;">
+                                    <a href="{{route('admin.dashboard')}}" class="settings-dropdown-btn" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%); color: #ffffff; border-radius: 8px; text-decoration: none; transition: all 0.3s ease; border: none; width: 100%;">
+                                        <i class="tio-user" style="font-size: 18px;"></i>
+                                        <span style="font-weight: 500;">{{translate('Profile')}}</span>
+                                    </a>
+                                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('header-logout-form').submit();" class="settings-dropdown-btn" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%); color: #ffffff; border-radius: 8px; text-decoration: none; transition: all 0.3s ease; border: none; width: 100%;">
+                                        <i class="tio-sign-out" style="font-size: 18px;"></i>
+                                        <span style="font-weight: 500;">{{translate('messages.sign_out')}}</span>
+                                    </a>
+                                    <form id="header-logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
                                 </div>
-                            @else
-                                <div class="__nav-module-body text-center py-5">
-                                    <img class="w--120px" src="{{ asset('assets/admin/img/empty-box.png') }}"
-                                         alt="">
-                                    <h2 class="my-4">{{ translate('Please, Enable or Create Module First') }}</h2>
-                                    <a href="{{ route('admin.dashboard') }}"
-                                       class="btn btn--primary">{{ translate('messages.Module Setup') }}</a>
-                                </div>
-                            @endif
+                            </div>
                         </div>
-                        </li>
+                    </li>
                 </ul>
                 <!-- End Navbar -->
             </div>
@@ -281,30 +217,6 @@
 <div id="headerFluid" class="d-none"></div>
 <div id="headerDouble" class="d-none"></div>
 
-<div class="modal fade removeSlideDown" id="staticBackdrop" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered max-w-520">
-        <div class="modal-content modal-content__search border-0">
-            <div class="d-flex flex-column gap-3 rounded-20 bg-card py-2 px-3">
-                <div class="d-flex gap-2 align-items-center position-relative">
-                    <form class="flex-grow-1" id="searchForm" action="{{ route('admin.dashboard') }}">
-                        @csrf
-                        <div class="d-flex align-items-center global-search-container">
-                            <input  autocomplete="off" class="form-control flex-grow-1 rounded-10 search-input" id="searchInput" maxlength="255" name="search" type="search" placeholder="{{ translate('Search_by_keyword') }}" aria-label="Search" autofocus>
-                        </div>
-                    </form>
-                    <div class="position-absolute right-0 pr-2">
-                        <button class="border-0 rounded px-2 py-1" type="button" data-dismiss="modal">{{ translate('Esc') }}</button>
-                    </div>
-                </div>
-                <div class="min-h-350">
-                    <div class="search-result" id="searchResults">
-                        <div class="text-center text-muted py-5">{{translate('It appears that you have not yet searched.')}}.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="toggle-tour">
     <a href="https://youtube.com/playlist?list=PLLFMbDpKMZBxgtX3n3rKJvO5tlU8-ae2Y" target="_blank"
