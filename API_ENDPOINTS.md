@@ -103,9 +103,82 @@ guest_token: guest_token_test_12345678901234567890 (optional)
 
 ---
 
+## 📊 DASHBOARD ENDPOINTS
+
+### 4. Get Dashboard Data
+
+**GET** `/api/dashboard`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Query Parameters:** None
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Dashboard data loaded successfully",
+  "data": {
+    "banners": [
+      {
+        "id": 1,
+        "title": "Big Sale - Up to 70% Off",
+        "image_url": "https://cdn.example.com/banners/big-sale-70-off.jpg",
+        "position": "home_top",
+        "redirect_type": "category",
+        "redirect_id": 1
+      }
+    ],
+    "trending_products": [
+      {
+        "id": 1,
+        "name": "iPhone 15 Pro",
+        "slug": "iphone-15-pro",
+        "short_description": "Premium smartphone with cutting-edge technology",
+        "price": 94900.00,
+        "image_url": "https://via.placeholder.com/500x500?text=iPhone+15+Pro",
+        "brand": "Apple"
+      }
+    ],
+    "latest_products": [
+      {
+        "id": 1,
+        "name": "iPhone 15 Pro",
+        "slug": "iphone-15-pro",
+        "short_description": "Premium smartphone with cutting-edge technology",
+        "price": 94900.00,
+        "image_url": "https://via.placeholder.com/500x500?text=iPhone+15+Pro",
+        "brand": "Apple"
+      }
+    ],
+    "categories": [
+      {
+        "id": 1,
+        "name": "Electronics",
+        "slug": "electronics",
+        "image_url": "https://cdn.example.com/categories/electronics.jpg",
+        "icon_url": "https://cdn.example.com/categories/icons/electronics.png"
+      }
+    ]
+  }
+}
+```
+
+**Note:** 
+- Returns all dashboard data in a single API call
+- Banners include only `home_top` and `home_middle` positions that are active and within date range
+- Trending products are marked with `is_trending = true` (limit 10)
+- Latest products are ordered by `created_at DESC` (limit 10)
+- Categories include only parent categories (no sub-categories) with image and icon URLs
+
+---
+
 ## 🎨 BANNER ENDPOINTS
 
-### 4. Get Banners
+### 5. Get Banners
 
 **GET** `/api/banners`
 
@@ -165,7 +238,7 @@ position: home_top (optional: home_top, home_middle, home_bottom, dashboard)
 
 ## 📦 PRODUCT ENDPOINTS
 
-### 5. Get Categories
+### 6. Get Categories
 
 **GET** `/api/categories`
 
@@ -187,7 +260,7 @@ position: home_top (optional: home_top, home_middle, home_bottom, dashboard)
 
 ---
 
-### 6. Get Products List
+### 7. Get Products List
 
 **GET** `/api/products`
 
@@ -234,7 +307,7 @@ limit: 15
 
 ---
 
-### 7. Get Product Details
+### 8. Get Product Details
 
 **GET** `/api/products/{id}`
 
@@ -334,7 +407,7 @@ limit: 15
 
 ## 🛒 CART ENDPOINTS
 
-### 8. Add to Cart
+### 9. Add to Cart
 
 **POST** `/api/cart/add`
 
@@ -374,7 +447,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ---
 
-### 9. Get Cart
+### 10. Get Cart
 
 **GET** `/api/cart/cart`
 
@@ -423,7 +496,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ---
 
-### 10. Update Cart Item
+### 11. Update Cart Item
 
 **PUT** `/api/cart/update`
 
@@ -457,7 +530,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ---
 
-### 11. Remove Cart Item
+### 12. Remove Cart Item
 
 **DELETE** `/api/cart/item/{id}`
 
@@ -500,7 +573,7 @@ guest_token: guest_token_test_12345678901234567890 (required if not logged in)
 
 ## 🏠 ADDRESS ENDPOINTS (Requires Authentication)
 
-### 12. Add Address
+### 13. Add Address
 
 **POST** `/api/address/add`
 
@@ -549,7 +622,7 @@ is_default: true (optional: true/false)
 
 ---
 
-### 13. Get Addresses
+### 14. Get Addresses
 
 **GET** `/api/address/addresses`
 
@@ -584,7 +657,7 @@ is_default: true (optional: true/false)
 
 ## 🛍️ ORDER ENDPOINTS (Requires Authentication)
 
-### 14. Place Order
+### 15. Place Order
 
 **POST** `/api/order/place`
 
@@ -629,7 +702,7 @@ payment_method: cod (required: cod, online)
 
 ---
 
-### 15. Get Orders List
+### 16. Get Orders List
 
 **GET** `/api/order/orders`
 
@@ -673,7 +746,7 @@ limit: 15
 
 ---
 
-### 16. Get Order Details
+### 17. Get Order Details
 
 **GET** `/api/order/orders/{id}`
 
@@ -715,7 +788,7 @@ limit: 15
 
 ## 💳 PAYMENT ENDPOINTS (Requires Authentication)
 
-### 17. Initiate Payment
+### 18. Initiate Payment
 
 **POST** `/api/payment/initiate`
 
@@ -753,7 +826,7 @@ gateway: razorpay (required: razorpay, paytm, stripe)
 
 ---
 
-### 18. Verify Payment
+### 19. Verify Payment
 
 **POST** `/api/payment/verify`
 
@@ -788,7 +861,7 @@ status: success (required: success, failed)
 
 ## 🔄 RETURN ENDPOINTS (Requires Authentication)
 
-### 19. Request Return
+### 20. Request Return
 
 **POST** `/api/return/request`
 
@@ -857,18 +930,19 @@ Content-Type: multipart/form-data (for POST/PUT)
 
 ### Test Sequence
 
-1. Get banners → `/api/banners` or `/api/banners?position=home_top`
-2. Get categories → `/api/categories`
-3. Get products → `/api/products`
-4. Get product details → `/api/products/1`
-5. Add to cart (guest) → `/api/cart/add` with `guest_token`
-6. Send OTP → `/api/auth/send-otp`
-7. Verify OTP → `/api/auth/verify-otp` (save token)
-8. Get cart (user) → `/api/cart/cart` with Bearer token
-9. Add address → `/api/address/add` with Bearer token
-10. Place order → `/api/order/place` with Bearer token
-11. Get orders → `/api/order/orders` with Bearer token
-12. Request return → `/api/return/request` with Bearer token
+1. Get dashboard → `/api/dashboard` (all dashboard data in one call)
+2. Get banners → `/api/banners` or `/api/banners?position=home_top`
+3. Get categories → `/api/categories`
+4. Get products → `/api/products`
+5. Get product details → `/api/products/1`
+6. Add to cart (guest) → `/api/cart/add` with `guest_token`
+7. Send OTP → `/api/auth/send-otp`
+8. Verify OTP → `/api/auth/verify-otp` (save token)
+9. Get cart (user) → `/api/cart/cart` with Bearer token
+10. Add address → `/api/address/add` with Bearer token
+11. Place order → `/api/order/place` with Bearer token
+12. Get orders → `/api/order/orders` with Bearer token
+13. Request return → `/api/return/request` with Bearer token
 
 ---
 
@@ -924,8 +998,9 @@ Content-Type: multipart/form-data (for POST/PUT)
 | `/api/auth/send-otp`     | POST   | ❌   | ✅       |
 | `/api/auth/verify-otp`   | POST   | ❌   | ✅       |
 | `/api/auth/logout`       | POST   | ✅   | ❌       |
-| `/api/banners`           | GET    | ❌   | ❌       |
-| `/api/categories`        | GET    | ❌   | ❌       |
+| `/api/dashboard`          | GET    | ❌   | ❌       |
+| `/api/banners`            | GET    | ❌   | ❌       |
+| `/api/categories`         | GET    | ❌   | ❌       |
 | `/api/products`          | GET    | ❌   | ❌       |
 | `/api/products/{id}`     | GET    | ❌   | ❌       |
 | `/api/cart/add`          | POST   | ⚠️   | ✅       |

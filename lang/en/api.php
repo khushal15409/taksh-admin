@@ -70,6 +70,12 @@ return [
         'not_found' => 'No banners found',
     ],
     
+    // Dashboard
+    'dashboard' => [
+        'loaded' => 'Dashboard data loaded successfully',
+        'failed' => 'Failed to load dashboard data',
+    ],
+    
     // General
     'unauthorized' => 'Unauthorized access',
     'not_found' => 'Resource not found',

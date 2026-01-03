@@ -17,7 +17,15 @@ class Product extends Model
         'description',
         'short_description',
         'status',
+        'is_trending',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_trending' => 'boolean',
+        ];
+    }
 
     public function category()
     {

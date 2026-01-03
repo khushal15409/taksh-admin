@@ -174,20 +174,20 @@ class ProductSeeder extends Seeder
         // Product Images
         $images = [
             // iPhone 15 Pro images
-            ['id' => 1, 'product_id' => 1, 'product_variant_id' => null, 'image_url' => 'https://via.placeholder.com/500x500?text=iPhone+15+Pro', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
-            ['id' => 2, 'product_id' => 1, 'product_variant_id' => 1, 'image_url' => 'https://via.placeholder.com/500x500?text=iPhone+15+Pro+128GB', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 1, 'product_id' => 1, 'product_variant_id' => null, 'image_url' => 'https://fastly.picsum.photos/id/15/500/500.jpg?hmac=15v15v15v15v15v15v15v15v15v15v15v15v15v15v15v', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 2, 'product_id' => 1, 'product_variant_id' => 1, 'image_url' => 'https://fastly.picsum.photos/id/16/500/500.jpg?hmac=16v16v16v16v16v16v16v16v16v16v16v16v16v16v16v', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             
             // Samsung Galaxy S24 images
-            ['id' => 3, 'product_id' => 2, 'product_variant_id' => null, 'image_url' => 'https://via.placeholder.com/500x500?text=Samsung+Galaxy+S24', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 3, 'product_id' => 2, 'product_variant_id' => null, 'image_url' => 'https://fastly.picsum.photos/id/17/500/500.jpg?hmac=17v17v17v17v17v17v17v17v17v17v17v17v17v17v17v', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             
             // Nike Air Max 90 images
-            ['id' => 4, 'product_id' => 3, 'product_variant_id' => null, 'image_url' => 'https://via.placeholder.com/500x500?text=Nike+Air+Max+90', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 4, 'product_id' => 3, 'product_variant_id' => null, 'image_url' => 'https://fastly.picsum.photos/id/18/500/500.jpg?hmac=18v18v18v18v18v18v18v18v18v18v18v18v18v18v18v', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             
             // Adidas Ultraboost images
-            ['id' => 5, 'product_id' => 4, 'product_variant_id' => null, 'image_url' => 'https://via.placeholder.com/500x500?text=Adidas+Ultraboost', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 5, 'product_id' => 4, 'product_variant_id' => null, 'image_url' => 'https://fastly.picsum.photos/id/19/500/500.jpg?hmac=19v19v19v19v19v19v19v19v19v19v19v19v19v19v19v', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
             
             // Sony Headphones images
-            ['id' => 6, 'product_id' => 5, 'product_variant_id' => null, 'image_url' => 'https://via.placeholder.com/500x500?text=Sony+WH-1000XM5', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['id' => 6, 'product_id' => 5, 'product_variant_id' => null, 'image_url' => 'https://fastly.picsum.photos/id/20/500/500.jpg?hmac=20v20v20v20v20v20v20v20v20v20v20v20v20v20v20v', 'is_primary' => true, 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()],
         ];
 
         DB::table('product_images')->insert($images);
