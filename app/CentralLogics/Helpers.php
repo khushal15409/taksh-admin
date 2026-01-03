@@ -92,5 +92,39 @@ class Helpers
         // You can implement actual permission checking later
         return true;
     }
+
+    public static function get_business_settings($name)
+    {
+        try {
+            $config = BusinessSetting::where('key', $name)->first();
+            return $config ? $config->value : null;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public static function getDisk()
+    {
+        $config = self::get_business_settings('local_storage');
+        return isset($config) && $config == 0 ? 's3' : 'public';
+    }
+
+    public static function upload(string $dir, string $format, $image = null)
+    {
+        try {
+            if ($image != null) {
+                $imageName = \Carbon\Carbon::now()->toDateString() . "-" . uniqid() . "." . $format;
+                if (!Storage::disk(self::getDisk())->exists($dir)) {
+                    Storage::disk(self::getDisk())->makeDirectory($dir);
+                }
+                Storage::disk(self::getDisk())->putFileAs($dir, $image, $imageName);
+            } else {
+                $imageName = 'def.png';
+            }
+        } catch (\Exception $e) {
+            $imageName = 'def.png';
+        }
+        return $imageName;
+    }
 }
 

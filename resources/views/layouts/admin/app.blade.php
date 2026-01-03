@@ -23,6 +23,131 @@
     <link rel="stylesheet" href="{{asset('assets/admin/css/emogi-area.css')}}">
     <link rel="stylesheet" href="{{asset('assets/admin/css/style.css')}}">
     <link rel="stylesheet" href="{{asset('assets/admin/intltelinput/css/intlTelInput.css')}}">
+    <style>
+        /* Custom Sidebar Gradient */
+        .js-navbar-vertical-aside,
+        .navbar-vertical-container,
+        .navbar-vertical-content.bg--005555,
+        .navbar-vertical-content {
+            background: linear-gradient(180deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        /* Ensure sidebar wrapper also has gradient */
+        #sidebarMain aside {
+            background: linear-gradient(180deg, #0177cd 0%, #0e4da3 100%) !important;
+        }
+        /* Dashboard Background Gradient */
+        body.footer-offset {
+            background: linear-gradient(135deg, #e0edff 0%, #d4e6ff 25%, #e8f2ff 50%, #d4e6ff 75%, #e0edff 100%) !important;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        /* Main content area with light gradient */
+        main#content.main {
+            background: linear-gradient(135deg, rgba(224, 237, 255, 0.6) 0%, rgba(212, 230, 255, 0.6) 50%, rgba(232, 242, 255, 0.6) 100%);
+            min-height: calc(100vh - 60px);
+        }
+        /* Dashboard container with subtle gradient overlay */
+        .content.container-fluid {
+            background: transparent;
+            position: relative;
+        }
+        /* Transparent Glassmorphism Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 32px rgba(1, 119, 205, 0.15), 0 2px 8px rgba(1, 119, 205, 0.1) !important;
+            border-radius: 16px !important;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            background: rgba(255, 255, 255, 0.35) !important;
+            box-shadow: 0 12px 40px rgba(1, 119, 205, 0.2), 0 4px 12px rgba(1, 119, 205, 0.15) !important;
+            transform: translateY(-2px);
+        }
+        /* Dashboard stat cards - transparent */
+        .__dashboard-card-2 {
+            background: rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(8px) saturate(150%);
+            -webkit-backdrop-filter: blur(8px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px rgba(1, 119, 205, 0.12) !important;
+            transition: all 0.3s ease;
+        }
+        .__dashboard-card-2:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 6px 20px rgba(1, 119, 205, 0.18) !important;
+            transform: translateY(-3px);
+        }
+        /* Order cards - transparent */
+        .order--card {
+            background: rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(8px) saturate(150%);
+            -webkit-backdrop-filter: blur(8px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 16px rgba(1, 119, 205, 0.12) !important;
+            transition: all 0.3s ease;
+        }
+        .order--card:hover {
+            background: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 6px 20px rgba(1, 119, 205, 0.18) !important;
+            transform: translateY(-3px);
+        }
+        /* Remove card body background */
+        .card-body {
+            background: transparent !important;
+        }
+        /* Page header styling */
+        .page-header {
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 12px !important;
+            padding: 20px !important;
+            margin-bottom: 20px !important;
+        }
+        /* Chart and content cards - transparent */
+        .card.h-100 {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 32px rgba(1, 119, 205, 0.15) !important;
+            border-radius: 16px !important;
+        }
+        .card.h-100:hover {
+            background: rgba(255, 255, 255, 0.35) !important;
+            box-shadow: 0 12px 40px rgba(1, 119, 205, 0.2) !important;
+        }
+        /* Card headers - transparent */
+        .card-header {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 16px 16px 0 0 !important;
+        }
+        /* Table styling inside cards */
+        .table {
+            background: transparent !important;
+        }
+        .table thead th {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        .table tbody td {
+            border-color: rgba(255, 255, 255, 0.15) !important;
+        }
+        /* Ensure text remains readable */
+        .card-title, .card-subtitle, h1, h2, h3, h4, h5, h6 {
+            color: #1e293b !important;
+        }
+        .page-header-title, .page-header-text {
+            color: #1e293b !important;
+        }
+    </style>
     @stack('css_or_js')
     <script src="{{asset('assets/admin/vendor/hs-navbar-vertical-aside/hs-navbar-vertical-aside-mini-cache.js')}}"></script>
     <link rel="stylesheet" href="{{asset('assets/admin/css/toastr.css')}}">

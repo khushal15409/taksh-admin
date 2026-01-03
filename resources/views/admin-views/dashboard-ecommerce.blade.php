@@ -16,13 +16,13 @@
                     <div class="d-flex align-items-center">
                         <img src="{{asset('assets/admin/img/eshop.svg')}}" width="38" alt="img">
                         <div class="w-0 flex-grow pl-2">
-                            <h1 class="page-header-title mb-0">Ecommerce {{translate('messages.Dashboard')}}.</h1>
-                            <p class="page-header-text m-0">{{translate('Hello, Here You Can Manage Your')}} Ecommerce {{translate('orders by Zone.')}}</p>
+                            <h1 class="page-header-title mb-0">{{translate('messages.Dashboard')}}</h1>
+                            <!-- <p class="page-header-text m-0">{{translate('Hello, Here You Can Manage Your')}} Ecommerce {{translate('orders by Zone.')}}</p> -->
                         </div>
                     </div>
                 </div>
 
-                <div class="col-sm-auto min--280">
+                <!-- <div class="col-sm-auto min--280">
                     <select name="zone_id" class="form-control js-select2-custom fetch_data_zone_wise">
                         <option value="all">{{ translate('messages.All_Zones') }}</option>
                         @php
@@ -36,15 +36,15 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
+                </div> -->
             </div>
         </div>
         <!-- End Page Header -->
 
         <!-- Stats -->
-        <div class="card mb-3">
-            <div class="card-body pt-0">
-                <div class="d-flex flex-wrap align-items-center justify-content-end">
+        <div class="card mb-3" style="background: transparent !important; border: none !important; box-shadow: none !important;">
+            <div class="card-body pt-0" style="background: transparent !important;">
+                <!-- <div class="d-flex flex-wrap align-items-center justify-content-end">
                     <div class="status-filter-wrap">
                         <div class="statistics-btn-grp">
                             <label>
@@ -61,7 +61,7 @@
                             </label>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row g-2" id="order_stats">
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                         <div class="__dashboard-card-2">

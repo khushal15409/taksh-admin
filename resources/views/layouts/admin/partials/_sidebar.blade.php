@@ -4,12 +4,13 @@
             <div class="navbar-brand-wrapper justify-content-between">
                 <!-- Logo -->
                 @php($store_logo = \App\Models\BusinessSetting::where(['key' => 'logo'])->first())
+                @php($storage_type = (isset($store_logo) && isset($store_logo->storage) && is_array($store_logo->storage) && isset($store_logo->storage[0])) ? $store_logo->storage[0]->value : 'public')
                 <a class="navbar-brand" href="{{ route('admin.dashboard') }}" aria-label="Front">
                        <img class="navbar-brand-logo initial--36 onerror-image onerror-image" data-onerror-image="{{ asset('assets/admin/img/160x160/img2.jpg') }}"
-                    src="{{ $store_logo?->value ? asset('storage/' . $store_logo->value) : asset('assets/admin/img/160x160/img2.jpg') }}"
+                    src="{{\App\CentralLogics\Helpers::get_full_url('business', $store_logo?->value ?? '', $storage_type, 'favicon')}}"
                     alt="Logo">
                     <img class="navbar-brand-logo-mini initial--36 onerror-image onerror-image" data-onerror-image="{{ asset('assets/admin/img/160x160/img2.jpg') }}"
-                    src="{{ $store_logo?->value ? asset('storage/' . $store_logo->value) : asset('assets/admin/img/160x160/img2.jpg') }}"
+                    src="{{\App\CentralLogics\Helpers::get_full_url('business', $store_logo?->value ?? '', $storage_type, 'favicon')}}"
                     alt="Logo">
                 </a>
                 <!-- End Logo -->
@@ -35,12 +36,6 @@
 
             <!-- Content -->
             <div class="navbar-vertical-content bg--005555" id="navbar-vertical-content">
-                <form class="sidebar--search-form">
-                    <div class="search--form-group">
-                        <button type="button" class="btn"><i class="tio-search"></i></button>
-                        <input type="text" class="form-control form--control" placeholder="{{ translate('Search Menu...') }}" id="search-sidebar-menu">
-                    </div>
-                </form>
                 <ul class="navbar-nav navbar-nav-lg nav-tabs">
                     <!-- Dashboards -->
                     <li class="navbar-vertical-aside-has-menu {{ Request::is('admin') ? 'show active' : '' }}">
@@ -1106,6 +1101,42 @@
                 @endif
                 <!-- End Employee -->
 
+                <!-- Logistics Management -->
+                <li class="nav-item">
+                    <small class="nav-subtitle">Logistics Management</small>
+                    <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                </li>
+                <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/logistics/warehouse*') ? 'active' : '' }}">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{route('admin.logistics.warehouse.index')}}" title="Warehouse Creation">
+                        <i class="tio-shop-outlined nav-icon"></i>
+                        <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate text-capitalize">Warehouse Creation</span>
+                    </a>
+                </li>
+                <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/logistics/miniwarehouse*') ? 'active' : '' }}">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{route('admin.logistics.miniwarehouse.index')}}" title="Miniwarehouse Creation">
+                        <i class="tio-shop-outlined nav-icon"></i>
+                        <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate text-capitalize">Miniwarehouse Creation</span>
+                    </a>
+                </li>
+                <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/logistics/lm-center*') ? 'active' : '' }}">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{route('admin.logistics.lm-center.index')}}" title="LM Center Creation">
+                        <i class="tio-map nav-icon"></i>
+                        <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate text-capitalize">LM Center Creation</span>
+                    </a>
+                </li>
+                <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/logistics/fm-rt-center*') ? 'active' : '' }}">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{route('admin.logistics.fm-rt-center.index')}}" title="FM/RT Center Creation">
+                        <i class="tio-map nav-icon"></i>
+                        <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate text-capitalize">FM/RT Center Creation</span>
+                    </a>
+                </li>
+                <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/logistics/pending-mapping*') ? 'active' : '' }}">
+                    <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{route('admin.logistics.pending-mapping.index')}}" title="Pending Mapping">
+                        <i class="tio-shop-outlined nav-icon"></i>
+                        <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate text-capitalize">Pending Mapping</span>
+                    </a>
+                </li>
+                <!-- End Logistics Management -->
 
                 <li class="nav-item py-5">
 
@@ -1192,14 +1223,5 @@
         }
     });
 
-    var $rows = $('#navbar-vertical-content li');
-    $('#search-sidebar-menu').keyup(function() {
-        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-
-        $rows.show().filter(function() {
-            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-            return !~text.indexOf(val);
-        }).hide();
-    });
 </script>
 @endpush
