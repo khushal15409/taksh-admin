@@ -1195,9 +1195,12 @@
 
                             <div class="dropdown-divider"></div>
 
-                            <a class="dropdown-item log-out" href="javascript:">
+                            <a class="dropdown-item log-out" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <span class="text-truncate pr-2" title="Sign out">{{translate('messages.sign_out')}}</span>
                             </a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
                         </div>
                     </div>
                 </li>

@@ -10,7 +10,8 @@ Route::get('/', function () {
 // Login Routes
 Route::get('login', [App\Http\Controllers\LoginController::class, 'login'])->name('login');
 Route::post('login', [App\Http\Controllers\LoginController::class, 'submit'])->name('login.post');
-Route::get('logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
+Route::post('logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
+Route::get('logout', [App\Http\Controllers\LoginController::class, 'logout'])->name('logout'); // Fallback for GET requests
 Route::get('reload-captcha', [App\Http\Controllers\LoginController::class, 'reloadCaptcha'])->name('reload-captcha');
 Route::get('reset-password', [App\Http\Controllers\LoginController::class, 'reset_password'])->name('reset-password');
 
