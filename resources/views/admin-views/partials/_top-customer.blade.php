@@ -2,7 +2,7 @@
     <h5 class="card-title d-flex justify-content-between">
         <span>{{ translate('messages.top_customers') }}</span>
     </h5>
-    <a href="{{ route('admin.dashboard')) }}"
+    <a href="{{ route('admin.dashboard') }}"
         class="fz-12px font-medium text-006AE5">{{ translate('view_all') }}</a>
 </div>
 
@@ -12,7 +12,7 @@
         <div class="top--selling">
 
             @forelse($top_customers as $key=>$item)
-                <a class="grid--card" href="{{ route('admin.dashboard')]]) }}">
+                <a class="grid--card" href="{{ route('admin.dashboard') }}">
                     <img class="onerror-image"
                         data-onerror-image="{{ asset('assets/admin/img/160x160/img1.jpg') }}"
                         src="{{ $item->image_full_url ?? asset('assets/admin/img/160x160/img1.jpg') }}">

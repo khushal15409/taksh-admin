@@ -1,4 +1,4 @@
-@php($params = session('dash_params'))
+@php($params = $params ?? session('dash_params') ?? ['zone_id' => 'all'])
 
 <div class="position-relative pie-chart">
     <div id="dognut-pie"></div>

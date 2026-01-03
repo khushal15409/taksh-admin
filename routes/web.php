@@ -17,5 +17,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('order', [App\Http\Controllers\Admin\DashboardController::class, 'order'])->name('order');
         Route::post('zone', [App\Http\Controllers\Admin\DashboardController::class, 'zone'])->name('zone');
         Route::post('user-overview', [App\Http\Controllers\Admin\DashboardController::class, 'user_overview'])->name('user-overview');
+        Route::post('commission-overview', [App\Http\Controllers\Admin\DashboardController::class, 'commission_overview'])->name('commission-overview');
     });
 });
