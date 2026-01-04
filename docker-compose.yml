@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: taksh-admin
+    restart: unless-stopped
+    ports:
+      - "8004:80" # localhost:8004 → container:80
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
