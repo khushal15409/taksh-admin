@@ -18,6 +18,7 @@ class Product extends Model
         'short_description',
         'status',
         'is_trending',
+        'is_latest',
         'is_express_30',
     ];
 
@@ -25,6 +26,7 @@ class Product extends Model
     {
         return [
             'is_trending' => 'boolean',
+            'is_latest' => 'boolean',
             'is_express_30' => 'boolean',
         ];
     }

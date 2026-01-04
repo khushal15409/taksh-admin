@@ -720,6 +720,35 @@
                     @endif
                     <!-- End Food -->
 
+                    <!-- Product Management -->
+                    <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/product*') || Request::is('admin/categories*') ? 'active' : '' }}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:void(0)"
+                            title="{{ translate('messages.product_management') }}">
+                            <i class="tio-shop nav-icon"></i>
+                            <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                {{ translate('messages.product_management') }}
+                            </span>
+                        </a>
+                        <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                            style="display:{{ Request::is('admin/product*') || Request::is('admin/categories*') ? 'block' : 'none' }}">
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/categories*') ? 'active' : '' }}"
+                                   href="{{ route('admin.categories.index') }}">
+                                    <span class="tio-circle nav-indicator-icon"></span>
+                                    <span class="text-truncate">{{ translate('messages.categories') }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/products*') ? 'active' : '' }}"
+                                   href="{{ route('admin.products.index') }}">
+                                    <span class="tio-circle nav-indicator-icon"></span>
+                                    <span class="text-truncate">{{ translate('messages.products') }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- End Product Management -->
+
                     <!-- Store Store -->
                     <li class="nav-item">
                         <small class="nav-subtitle"

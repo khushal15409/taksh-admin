@@ -69,4 +69,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
     // Banner Routes
     Route::resource('banner', App\Http\Controllers\Admin\BannerController::class);
     Route::post('banner/status', [App\Http\Controllers\Admin\BannerController::class, 'statusToggle'])->name('banner.status');
+    
+    // Category Routes
+    Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
+    Route::post('categories/status', [App\Http\Controllers\Admin\CategoryController::class, 'statusToggle'])->name('categories.status');
+    
+    // Product Routes
+    Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
+    Route::post('products/status', [App\Http\Controllers\Admin\ProductController::class, 'statusToggle'])->name('products.status');
+    Route::post('products/flag', [App\Http\Controllers\Admin\ProductController::class, 'flagToggle'])->name('products.flag');
+    Route::delete('products/image/{id}', [App\Http\Controllers\Admin\ProductController::class, 'deleteImage'])->name('products.delete-image');
+    Route::get('get-cities', [App\Http\Controllers\Admin\ProductController::class, 'getCities'])->name('get-cities');
+    Route::get('get-fulfillment-centers', [App\Http\Controllers\Admin\ProductController::class, 'getFulfillmentCenters'])->name('get-fulfillment-centers');
 });
