@@ -219,7 +219,7 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/order') ? 'active' : '' }}">
+                        <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/orders*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.orders') }}">
                                 <i class="tio-shopping-cart nav-icon"></i>
@@ -228,138 +228,75 @@
                                 </span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display:{{ Request::is('admin/order*') ? 'block' : 'none' }}">
-                                <li class="nav-item {{ Request::is('admin/order/list/all') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.dashboard') }}"
+                                style="display:{{ Request::is('admin/orders*') ? 'block' : 'none' }}">
+                                <li class="nav-item {{ Request::is('admin/orders') && !Request::is('admin/orders/*') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('admin.orders.index') }}"
                                         title="{{ translate('messages.all_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.all') }}
-                                            <span class="badge badge-soft-info badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.all_orders') }}</span>
+                                            <span class="badge badge-soft-dark badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['all'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/scheduled') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.scheduled_orders') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.scheduled') }}
-                                            <span class="badge badge-soft-info badge-pill ml-1">
-                                                0
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/pending') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
+                                <li class="nav-item {{ Request::is('admin/orders/pending') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.orders.pending') }}"
                                         title="{{ translate('messages.pending_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.pending') }}
-                                            <span class="badge badge-soft-info badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.pending_orders') }}</span>
+                                            <span class="badge badge-soft-warning badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['pending'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-
-                                <li class="nav-item {{ Request::is('admin/order/list/accepted') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.accepted_orders') }}">
+                                <li class="nav-item {{ Request::is('admin/orders/confirmed') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.orders.confirmed') }}"
+                                        title="{{ translate('messages.confirmed_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.accepted') }}
-                                            <span class="badge badge-soft-success badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.confirmed_orders') }}</span>
+                                            <span class="badge badge-soft-info badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['confirmed'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/processing') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.processing_orders') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.processing') }}
-                                            <span class="badge badge-soft-warning badge-pill ml-1">
-                                                0
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li
-                                    class="nav-item {{ Request::is('admin/order/list/item_on_the_way') ? 'active' : '' }}">
-                                    <a class="nav-link text-capitalize" href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.order_on_the_way') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.order_on_the_way') }}
-                                            <span class="badge badge-soft-warning badge-pill ml-1">
-                                                0
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/delivered') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
+                                <li class="nav-item {{ Request::is('admin/orders/delivered') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.orders.delivered') }}"
                                         title="{{ translate('messages.delivered_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.delivered') }}
-                                            <span class="badge badge-soft-success badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.delivered_orders') }}</span>
+                                            <span class="badge badge-soft-success badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['delivered'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/canceled') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.canceled_orders') }}">
+                                <li class="nav-item {{ Request::is('admin/orders/cancelled') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.orders.cancelled') }}"
+                                        title="{{ translate('messages.cancelled_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.canceled') }}
-                                            <span class="badge badge-soft-warning bg-light badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.cancelled_orders') }}</span>
+                                            <span class="badge badge-soft-danger badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['cancelled'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/failed') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.payment_failed_orders') }}">
+                                <li class="nav-item {{ Request::is('admin/orders/express-30*') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.orders.express-30.index') }}"
+                                        title="{{ translate('messages.express_30_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container text-capitalize">
-                                            {{ translate('messages.payment_failed') }}
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                                0
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="nav-item {{ Request::is('admin/order/list/refunded') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('messages.refunded_orders') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.refunded') }}
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                                0
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                                <li
-                                    class="nav-item {{ Request::is('admin/order/offline/payment/list*') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('Offline_Payments') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('messages.Offline_Payments') }}
-                                            <span class="badge badge-soft-danger bg-light badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.express_30_orders') }}</span>
+                                            <span class="badge badge-soft-primary badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['express_30'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
@@ -383,12 +320,12 @@
                                 <li
                                     class="nav-item {{ Request::is('admin/refund/requested') || Request::is('admin/refund/rejected') || Request::is('admin/refund/refunded') ? 'active' : '' }}">
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                        title="{{ translate('Refund Requests') }} ">
+                                        title="{{ translate('messages.order_refunds') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container">
-                                            {{ translate('Refund Requests') }}
-                                            <span class="badge badge-soft-danger badge-pill ml-1">
-                                                0
+                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                            <span>{{ translate('messages.order_refunds') }}</span>
+                                            <span class="badge badge-soft-secondary badge-pill ml-auto">
+                                                {{ isset($orderCounts) ? number_format($orderCounts['refunds'] ?? 0) : 0 }}
                                             </span>
                                         </span>
                                     </a>
