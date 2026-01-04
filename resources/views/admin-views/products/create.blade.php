@@ -218,14 +218,66 @@
                                     </div>
                                 </div>
 
-                                <!-- Pricing -->
+                                <!-- Product Attributes & Variants -->
                                 <div class="col-md-12 mt-3">
-                                    <h5 class="mb-3">Pricing (Default Variant)</h5>
+                                    <h5 class="mb-3">{{ translate('messages.product_attributes') }} & {{ translate('messages.product_variants') }}</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="input-label">{{ translate('messages.select_attributes') }}</label>
+                                        <div class="row" id="attributes-container">
+                                            @foreach($attributes as $attribute)
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card p-3">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input attribute-checkbox" type="checkbox" 
+                                                                   name="selected_attributes[]" 
+                                                                   value="{{ $attribute->id }}" 
+                                                                   id="attr_{{ $attribute->id }}"
+                                                                   data-attribute-id="{{ $attribute->id }}">
+                                                            <label class="form-check-label font-weight-bold" for="attr_{{ $attribute->id }}">
+                                                                {{ $attribute->name }}
+                                                            </label>
+                                                        </div>
+                                                        <div class="attribute-values mt-2" id="attr_values_{{ $attribute->id }}" style="display: none;">
+                                                            @foreach($attribute->values as $value)
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input attribute-value-checkbox" 
+                                                                           type="checkbox" 
+                                                                           name="attribute_values[{{ $attribute->id }}][]" 
+                                                                           value="{{ $value->id }}" 
+                                                                           id="attr_val_{{ $value->id }}"
+                                                                           data-attribute-id="{{ $attribute->id }}">
+                                                                    <label class="form-check-label" for="attr_val_{{ $value->id }}">
+                                                                        {{ $value->value }}
+                                                                    </label>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-primary mt-2" id="generate-variants-btn" style="display: none;">
+                                            {{ translate('messages.generate_variants') }}
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Generated Variants -->
+                                <div class="col-md-12 mt-3" id="variants-section" style="display: none;">
+                                    <h5 class="mb-3">{{ translate('messages.product_variants') }}</h5>
+                                    <div id="variants-container"></div>
+                                </div>
+
+                                <!-- Pricing (Default Variant - Keep for backward compatibility) -->
+                                <div class="col-md-12 mt-3">
+                                    <h5 class="mb-3">Default Variant (Optional - if no attributes selected)</h5>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="input-label" for="variant_sku">SKU <span class="text-danger">*</span></label>
-                                        <input type="text" name="variant_sku" id="variant_sku" class="form-control" placeholder="Enter SKU" value="{{ old('variant_sku') }}" required maxlength="255">
+                                        <label class="input-label" for="variant_sku">SKU</label>
+                                        <input type="text" name="variant_sku" id="variant_sku" class="form-control" placeholder="Enter SKU" value="{{ old('variant_sku') }}" maxlength="255">
                                         @error('variant_sku')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -233,8 +285,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="input-label" for="variant_price">Price <span class="text-danger">*</span></label>
-                                        <input type="number" name="variant_price" id="variant_price" class="form-control" placeholder="0.00" value="{{ old('variant_price') }}" step="0.01" min="0" required>
+                                        <label class="input-label" for="variant_price">Price</label>
+                                        <input type="number" name="variant_price" id="variant_price" class="form-control" placeholder="0.00" value="{{ old('variant_price') }}" step="0.01" min="0">
                                         @error('variant_price')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
@@ -251,8 +303,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="input-label" for="variant_status">Variant Status <span class="text-danger">*</span></label>
-                                        <select name="variant_status" id="variant_status" class="form-control" required>
+                                        <label class="input-label" for="variant_status">Variant Status</label>
+                                        <select name="variant_status" id="variant_status" class="form-control">
                                             <option value="active" {{ old('variant_status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
                                             <option value="inactive" {{ old('variant_status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                         </select>
@@ -331,6 +383,219 @@
 <script>
     var imageFiles = [];
     var maxFileSize = 15 * 1024 * 1024; // 15MB in bytes
+    
+    // Variant Generation Logic
+    var selectedAttributes = {};
+    var generatedVariants = [];
+    
+    // Show/hide attribute values when attribute is selected
+    $(document).on('change', '.attribute-checkbox', function() {
+        var attributeId = $(this).data('attribute-id');
+        var valuesContainer = $('#attr_values_' + attributeId);
+        
+        if ($(this).is(':checked')) {
+            valuesContainer.show();
+            selectedAttributes[attributeId] = [];
+        } else {
+            valuesContainer.hide();
+            delete selectedAttributes[attributeId];
+            // Uncheck all values
+            valuesContainer.find('.attribute-value-checkbox').prop('checked', false);
+            updateGenerateButton();
+        }
+    });
+    
+    // Track selected attribute values
+    $(document).on('change', '.attribute-value-checkbox', function() {
+        var attributeId = $(this).data('attribute-id');
+        var valueId = $(this).val();
+        
+        if (!selectedAttributes[attributeId]) {
+            selectedAttributes[attributeId] = [];
+        }
+        
+        if ($(this).is(':checked')) {
+            if (selectedAttributes[attributeId].indexOf(valueId) === -1) {
+                selectedAttributes[attributeId].push(valueId);
+            }
+        } else {
+            selectedAttributes[attributeId] = selectedAttributes[attributeId].filter(id => id != valueId);
+        }
+        
+        updateGenerateButton();
+    });
+    
+    function updateGenerateButton() {
+        var hasSelectedAttributes = Object.keys(selectedAttributes).length > 0;
+        var hasSelectedValues = Object.values(selectedAttributes).some(values => values.length > 0);
+        
+        if (hasSelectedAttributes && hasSelectedValues) {
+            $('#generate-variants-btn').show();
+        } else {
+            $('#generate-variants-btn').hide();
+            $('#variants-section').hide();
+            generatedVariants = [];
+        }
+    }
+    
+    // Generate variants from attribute combinations
+    $('#generate-variants-btn').on('click', function() {
+        generateVariants();
+    });
+    
+    function generateVariants() {
+        // Get all attribute-value combinations
+        var attributeData = {};
+        $('.attribute-checkbox:checked').each(function() {
+            var attrId = $(this).data('attribute-id');
+            var attrName = $(this).closest('.card').find('label').text().trim();
+            var values = [];
+            
+            $('#attr_values_' + attrId + ' .attribute-value-checkbox:checked').each(function() {
+                var valueId = $(this).val();
+                var valueText = $(this).closest('.form-check').find('label').text().trim();
+                values.push({id: valueId, text: valueText});
+            });
+            
+            if (values.length > 0) {
+                attributeData[attrId] = {name: attrName, values: values};
+            }
+        });
+        
+        if (Object.keys(attributeData).length === 0) {
+            alert('{{ translate('messages.select_at_least_one_attribute_value') }}');
+            return;
+        }
+        
+        // Generate all combinations
+        var combinations = generateCombinations(attributeData);
+        
+        // Clear existing variants
+        generatedVariants = [];
+        $('#variants-container').empty();
+        $('#variants-section').show();
+        
+        // Create variant rows
+        combinations.forEach(function(combo, index) {
+            var variantId = 'variant_' + index;
+            var variantName = combo.map(c => c.value).join(' / ');
+            var variantData = {
+                id: variantId,
+                attributes: combo,
+                name: variantName
+            };
+            generatedVariants.push(variantData);
+            
+            var variantHtml = createVariantRow(variantId, variantName, combo, index);
+            $('#variants-container').append(variantHtml);
+        });
+    }
+    
+    function generateCombinations(attributeData) {
+        var attributeIds = Object.keys(attributeData);
+        var combinations = [];
+        
+        function combine(index, currentCombo) {
+            if (index === attributeIds.length) {
+                combinations.push([...currentCombo]);
+                return;
+            }
+            
+            var attrId = attributeIds[index];
+            var values = attributeData[attrId].values;
+            
+            values.forEach(function(value) {
+                currentCombo.push({
+                    attributeId: attrId,
+                    attributeName: attributeData[attrId].name,
+                    valueId: value.id,
+                    value: value.text
+                });
+                combine(index + 1, currentCombo);
+                currentCombo.pop();
+            });
+        }
+        
+        combine(0, []);
+        return combinations;
+    }
+    
+    function createVariantRow(variantId, variantName, attributes, index) {
+        var attributesHtml = attributes.map(function(attr) {
+            return '<input type="hidden" name="variants[' + index + '][attributes][' + attr.attributeId + ']" value="' + attr.valueId + '">';
+        }).join('');
+        
+        return `
+            <div class="card mb-3 variant-row" data-variant-id="${variantId}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">${variantName}</h6>
+                        <button type="button" class="btn btn-sm btn-danger remove-variant" data-variant-id="${variantId}">
+                            <i class="tio-delete-outlined"></i> Remove
+                        </button>
+                    </div>
+                    ${attributesHtml}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="input-label">SKU <span class="text-danger">*</span></label>
+                                <input type="text" name="variants[${index}][sku]" class="form-control variant-sku" required maxlength="255" placeholder="Enter SKU">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Price <span class="text-danger">*</span></label>
+                                <input type="number" name="variants[${index}][price]" class="form-control variant-price" required step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Sale Price</label>
+                                <input type="number" name="variants[${index}][sale_price]" class="form-control variant-sale-price" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Stock <span class="text-danger">*</span></label>
+                                <input type="number" name="variants[${index}][stock_qty]" class="form-control variant-stock" required min="0" placeholder="0" value="0">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Status <span class="text-danger">*</span></label>
+                                <select name="variants[${index}][status]" class="form-control variant-status" required>
+                                    <option value="active" selected>Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Remove variant
+    $(document).on('click', '.remove-variant', function() {
+        var variantId = $(this).data('variant-id');
+        $(this).closest('.variant-row').remove();
+        generatedVariants = generatedVariants.filter(v => v.id !== variantId);
+        
+        // Re-index variants
+        $('#variants-container .variant-row').each(function(index) {
+            $(this).find('input, select').each(function() {
+                var name = $(this).attr('name');
+                if (name) {
+                    name = name.replace(/variants\[\d+\]/, 'variants[' + index + ']');
+                    $(this).attr('name', name);
+                }
+            });
+        });
+        
+        if ($('#variants-container .variant-row').length === 0) {
+            $('#variants-section').hide();
+        }
+    });
     
     // Dependent dropdowns for State, City, Fulfillment Center
     $(document).ready(function() {
@@ -499,7 +764,7 @@
         }
 
         // Real-time validation on blur
-        var requiredFields = ['name', 'category_id', 'status', 'state_id', 'city_id', 'fulfillment_center_id', 'stock_qty', 'variant_sku', 'variant_price', 'variant_status'];
+        var requiredFields = ['name', 'category_id', 'status', 'state_id', 'city_id', 'fulfillment_center_id', 'stock_qty'];
         requiredFields.forEach(function(fieldId) {
             var field = document.getElementById(fieldId);
             if (field) {
@@ -696,6 +961,68 @@
                     }
                 }
             });
+            
+            // Validate variants if generated
+            if ($('#variants-section').is(':visible') && $('#variants-container .variant-row').length > 0) {
+                var variantSkus = [];
+                $('#variants-container .variant-row').each(function() {
+                    var skuInput = $(this).find('.variant-sku');
+                    var priceInput = $(this).find('.variant-price');
+                    var stockInput = $(this).find('.variant-stock');
+                    
+                    var sku = skuInput.val().trim();
+                    var price = parseFloat(priceInput.val());
+                    var stock = parseInt(stockInput.val());
+                    
+                    if (!sku) {
+                        isValid = false;
+                        if (!firstErrorField) {
+                            firstErrorField = skuInput[0];
+                        }
+                        showError(skuInput.attr('id') || 'variant-sku', 'Variant SKU is required');
+                    } else if (variantSkus.indexOf(sku) !== -1) {
+                        isValid = false;
+                        if (!firstErrorField) {
+                            firstErrorField = skuInput[0];
+                        }
+                        showError(skuInput.attr('id') || 'variant-sku', 'Duplicate SKU: ' + sku);
+                    } else {
+                        variantSkus.push(sku);
+                    }
+                    
+                    if (!price || isNaN(price) || price < 0) {
+                        isValid = false;
+                        if (!firstErrorField) {
+                            firstErrorField = priceInput[0];
+                        }
+                        showError(priceInput.attr('id') || 'variant-price', 'Variant price must be a valid number >= 0');
+                    }
+                    
+                    if (stock === '' || isNaN(stock) || stock < 0) {
+                        isValid = false;
+                        if (!firstErrorField) {
+                            firstErrorField = stockInput[0];
+                        }
+                        showError(stockInput.attr('id') || 'variant-stock', 'Variant stock must be a valid number >= 0');
+                    }
+                });
+            } else if (!$('#variant_sku').val() || !$('#variant_price').val()) {
+                // Validate default variant if no generated variants
+                if (!$('#variant_sku').val()) {
+                    isValid = false;
+                    if (!firstErrorField) {
+                        firstErrorField = document.getElementById('variant_sku');
+                    }
+                    showError('variant_sku', 'SKU is required');
+                }
+                if (!$('#variant_price').val()) {
+                    isValid = false;
+                    if (!firstErrorField) {
+                        firstErrorField = document.getElementById('variant_price');
+                    }
+                    showError('variant_price', 'Price is required');
+                }
+            }
 
             // Validate sale price if provided
             if (salePriceField && salePriceField.value.trim()) {

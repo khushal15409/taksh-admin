@@ -235,6 +235,115 @@
                                     </div>
                                 </div>
 
+                                <!-- Product Attributes & Variants -->
+                                <div class="col-md-12 mt-3">
+                                    <h5 class="mb-3">{{ translate('messages.product_attributes') }} & {{ translate('messages.product_variants') }}</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="input-label">{{ translate('messages.select_attributes') }}</label>
+                                        <div class="row" id="attributes-container">
+                                            @foreach($attributes as $attribute)
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="card p-3">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input attribute-checkbox" type="checkbox" 
+                                                                   name="selected_attributes[]" 
+                                                                   value="{{ $attribute->id }}" 
+                                                                   id="attr_{{ $attribute->id }}"
+                                                                   data-attribute-id="{{ $attribute->id }}">
+                                                            <label class="form-check-label font-weight-bold" for="attr_{{ $attribute->id }}">
+                                                                {{ $attribute->name }}
+                                                            </label>
+                                                        </div>
+                                                        <div class="attribute-values mt-2" id="attr_values_{{ $attribute->id }}" style="display: none;">
+                                                            @foreach($attribute->values as $value)
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input attribute-value-checkbox" 
+                                                                           type="checkbox" 
+                                                                           name="attribute_values[{{ $attribute->id }}][]" 
+                                                                           value="{{ $value->id }}" 
+                                                                           id="attr_val_{{ $value->id }}"
+                                                                           data-attribute-id="{{ $attribute->id }}">
+                                                                    <label class="form-check-label" for="attr_val_{{ $value->id }}">
+                                                                        {{ $value->value }}
+                                                                    </label>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-primary mt-2" id="generate-variants-btn" style="display: none;">
+                                            {{ translate('messages.generate_variants') }}
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Existing Variants -->
+                                <div class="col-md-12 mt-3">
+                                    <h5 class="mb-3">Existing {{ translate('messages.product_variants') }}</h5>
+                                    <div id="existing-variants-container">
+                                        @foreach($product->variants as $index => $variant)
+                                            <div class="card mb-3 variant-row" data-variant-id="{{ $variant->id }}">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h6 class="mb-0">
+                                                            @if($variant->variantAttributes->isNotEmpty())
+                                                                {{ $variant->variantAttributes->map(function($va) { return $va->attributeValue->value; })->join(' / ') }}
+                                                            @else
+                                                                Variant #{{ $index + 1 }}
+                                                            @endif
+                                                        </h6>
+                                                        <div>
+                                                            <input type="hidden" name="existing_variants[{{ $variant->id }}][id]" value="{{ $variant->id }}">
+                                                            <button type="button" class="btn btn-sm btn-danger remove-existing-variant" data-variant-id="{{ $variant->id }}">
+                                                                <i class="tio-delete-outlined"></i> Disable
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label class="input-label">SKU <span class="text-danger">*</span></label>
+                                                                <input type="text" name="existing_variants[{{ $variant->id }}][sku]" class="form-control" value="{{ $variant->sku }}" required maxlength="255">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="input-label">Price <span class="text-danger">*</span></label>
+                                                                <input type="number" name="existing_variants[{{ $variant->id }}][price]" class="form-control" value="{{ $variant->price }}" required step="0.01" min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="input-label">Sale Price</label>
+                                                                <input type="number" name="existing_variants[{{ $variant->id }}][sale_price]" class="form-control" value="{{ $variant->sale_price }}" step="0.01" min="0">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <div class="form-group">
+                                                                <label class="input-label">Status <span class="text-danger">*</span></label>
+                                                                <select name="existing_variants[{{ $variant->id }}][status]" class="form-control" required>
+                                                                    <option value="active" {{ $variant->status == 'active' ? 'selected' : '' }}>Active</option>
+                                                                    <option value="inactive" {{ $variant->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                
+                                <!-- Generated New Variants -->
+                                <div class="col-md-12 mt-3" id="variants-section" style="display: none;">
+                                    <h5 class="mb-3">New {{ translate('messages.product_variants') }}</h5>
+                                    <div id="variants-container"></div>
+                                </div>
+
                                 <!-- Images -->
                                 <div class="col-md-12 mt-3">
                                     <h5 class="mb-3">Product Images</h5>
@@ -321,6 +430,211 @@
 @push('script_2')
 <script>
     var maxFileSize = 15 * 1024 * 1024; // 15MB in bytes
+    
+    // Variant Generation Logic
+    var selectedAttributes = {};
+    var generatedVariants = [];
+    
+    // Show/hide attribute values when attribute is selected
+    $(document).on('change', '.attribute-checkbox', function() {
+        var attributeId = $(this).data('attribute-id');
+        var valuesContainer = $('#attr_values_' + attributeId);
+        
+        if ($(this).is(':checked')) {
+            valuesContainer.show();
+            selectedAttributes[attributeId] = [];
+        } else {
+            valuesContainer.hide();
+            delete selectedAttributes[attributeId];
+            valuesContainer.find('.attribute-value-checkbox').prop('checked', false);
+            updateGenerateButton();
+        }
+    });
+    
+    $(document).on('change', '.attribute-value-checkbox', function() {
+        var attributeId = $(this).data('attribute-id');
+        var valueId = $(this).val();
+        
+        if (!selectedAttributes[attributeId]) {
+            selectedAttributes[attributeId] = [];
+        }
+        
+        if ($(this).is(':checked')) {
+            if (selectedAttributes[attributeId].indexOf(valueId) === -1) {
+                selectedAttributes[attributeId].push(valueId);
+            }
+        } else {
+            selectedAttributes[attributeId] = selectedAttributes[attributeId].filter(id => id != valueId);
+        }
+        
+        updateGenerateButton();
+    });
+    
+    function updateGenerateButton() {
+        var hasSelectedAttributes = Object.keys(selectedAttributes).length > 0;
+        var hasSelectedValues = Object.values(selectedAttributes).some(values => values.length > 0);
+        
+        if (hasSelectedAttributes && hasSelectedValues) {
+            $('#generate-variants-btn').show();
+        } else {
+            $('#generate-variants-btn').hide();
+            $('#variants-section').hide();
+            generatedVariants = [];
+        }
+    }
+    
+    $('#generate-variants-btn').on('click', function() {
+        generateVariants();
+    });
+    
+    function generateVariants() {
+        var attributeData = {};
+        $('.attribute-checkbox:checked').each(function() {
+            var attrId = $(this).data('attribute-id');
+            var attrName = $(this).closest('.card').find('label').text().trim();
+            var values = [];
+            
+            $('#attr_values_' + attrId + ' .attribute-value-checkbox:checked').each(function() {
+                var valueId = $(this).val();
+                var valueText = $(this).closest('.form-check').find('label').text().trim();
+                values.push({id: valueId, text: valueText});
+            });
+            
+            if (values.length > 0) {
+                attributeData[attrId] = {name: attrName, values: values};
+            }
+        });
+        
+        if (Object.keys(attributeData).length === 0) {
+            alert('{{ translate('messages.select_at_least_one_attribute_value') }}');
+            return;
+        }
+        
+        var combinations = generateCombinations(attributeData);
+        generatedVariants = [];
+        $('#variants-container').empty();
+        $('#variants-section').show();
+        
+        combinations.forEach(function(combo, index) {
+            var variantId = 'variant_' + Date.now() + '_' + index;
+            var variantName = combo.map(c => c.value).join(' / ');
+            var variantData = {id: variantId, attributes: combo, name: variantName};
+            generatedVariants.push(variantData);
+            
+            var variantHtml = createVariantRow(variantId, variantName, combo, index);
+            $('#variants-container').append(variantHtml);
+        });
+    }
+    
+    function generateCombinations(attributeData) {
+        var attributeIds = Object.keys(attributeData);
+        var combinations = [];
+        
+        function combine(index, currentCombo) {
+            if (index === attributeIds.length) {
+                combinations.push([...currentCombo]);
+                return;
+            }
+            
+            var attrId = attributeIds[index];
+            var values = attributeData[attrId].values;
+            
+            values.forEach(function(value) {
+                currentCombo.push({
+                    attributeId: attrId,
+                    attributeName: attributeData[attrId].name,
+                    valueId: value.id,
+                    value: value.text
+                });
+                combine(index + 1, currentCombo);
+                currentCombo.pop();
+            });
+        }
+        
+        combine(0, []);
+        return combinations;
+    }
+    
+    function createVariantRow(variantId, variantName, attributes, index) {
+        var attributesHtml = attributes.map(function(attr) {
+            return '<input type="hidden" name="variants[' + index + '][attributes][' + attr.attributeId + ']" value="' + attr.valueId + '">';
+        }).join('');
+        
+        return `
+            <div class="card mb-3 variant-row" data-variant-id="${variantId}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0">${variantName}</h6>
+                        <button type="button" class="btn btn-sm btn-danger remove-variant" data-variant-id="${variantId}">
+                            <i class="tio-delete-outlined"></i> Remove
+                        </button>
+                    </div>
+                    ${attributesHtml}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="input-label">SKU <span class="text-danger">*</span></label>
+                                <input type="text" name="variants[${index}][sku]" class="form-control variant-sku" required maxlength="255" placeholder="Enter SKU">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Price <span class="text-danger">*</span></label>
+                                <input type="number" name="variants[${index}][price]" class="form-control variant-price" required step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Sale Price</label>
+                                <input type="number" name="variants[${index}][sale_price]" class="form-control variant-sale-price" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="input-label">Status <span class="text-danger">*</span></label>
+                                <select name="variants[${index}][status]" class="form-control variant-status" required>
+                                    <option value="active" selected>Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    $(document).on('click', '.remove-variant', function() {
+        var variantId = $(this).data('variant-id');
+        $(this).closest('.variant-row').remove();
+        generatedVariants = generatedVariants.filter(v => v.id !== variantId);
+        
+        $('#variants-container .variant-row').each(function(index) {
+            $(this).find('input, select').each(function() {
+                var name = $(this).attr('name');
+                if (name) {
+                    name = name.replace(/variants\[\d+\]/, 'variants[' + index + ']');
+                    $(this).attr('name', name);
+                }
+            });
+        });
+        
+        if ($('#variants-container .variant-row').length === 0) {
+            $('#variants-section').hide();
+        }
+    });
+    
+    // Disable existing variant (soft delete)
+    $(document).on('click', '.remove-existing-variant', function() {
+        if (confirm('Are you sure you want to disable this variant? It will be set to inactive status.')) {
+            var variantId = $(this).data('variant-id');
+            var variantRow = $(this).closest('.variant-row');
+            variantRow.find('select[name*="[status]"]').val('inactive');
+            variantRow.find('input, select').prop('disabled', true);
+            variantRow.addClass('opacity-50');
+            $(this).html('<i class="tio-checkmark-circle"></i> Disabled').removeClass('btn-danger').addClass('btn-secondary');
+        }
+    });
     
     // Dependent dropdowns for State, City, Fulfillment Center
     $(document).ready(function() {
