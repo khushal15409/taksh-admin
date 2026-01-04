@@ -29,6 +29,7 @@
         background: #f9fafb;
         cursor: pointer;
         position: relative;
+        height: 0px;
     }
     .dropzone-custom:hover {
         border-color: #3b82f6;
@@ -48,9 +49,6 @@
     }
     .dropzone-custom label.dz-message {
         pointer-events: auto;
-        display: block;
-        width: 100%;
-        min-height: 200px;
     }
     .dropzone-custom .dz-message i {
         font-size: 48px;

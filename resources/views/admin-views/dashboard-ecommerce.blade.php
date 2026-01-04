@@ -269,7 +269,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
                                             <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
-                                            <span>Order Connected to Hub</span>
+                                            <span>Order Connected Center to Hub</span>
                                         </h6>
                                         <span class="card-title text-info">
                                             {{$data['connected_to_hub'] ?? 0}}
@@ -278,13 +278,43 @@
                                 </a>
                             </div>
 
-                            <!-- 12. Order Received at Center -->
+                            <!-- 12. Order Received at Hub -->
                             <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                                 <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
                                             <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
-                                            <span>Order Received at Center</span>
+                                            <span>Order Received at Hub</span>
+                                        </h6>
+                                        <span class="card-title text-3F8CE8">
+                                            {{$data['order_received_at_hub'] ?? 0}}
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- 13. Order Connected Hub to Center -->
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                                <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                                            <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                                            <span>Order Connected Hub to Center</span>
+                                        </h6>
+                                        <span class="card-title text-info">
+                                            {{$data['order_connected_hub_to_center'] ?? 0}}
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <!-- 14. Order Received at Center -->
+                            <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                                <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                                            <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                                            <span>Order Received at Destination</span>
                                         </h6>
                                         <span class="card-title text-3F8CE8">
                                             {{$data['received_at_center'] ?? 0}}
@@ -404,7 +434,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
                                             <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
-                                            <span>Return to Origin Connected to Hub</span>
+                                            <span>Return to Origin Connected Center to Hub</span>
                                         </h6>
                                         <span class="card-title text-info">
                                             {{$data['return_connected_to_hub'] ?? 0}}

@@ -523,17 +523,25 @@
                 return true;
             }
             
-            // If clicking on the label or its children, let the label handle it naturally
-            if (clickedElement.closest('label[for="warehouse_images_input"]').length > 0) {
-                return true; // Let the label handle the click
+            // Don't trigger if clicking on existing images
+            if (clickedElement.closest('.existing-image-wrapper').length > 0) {
+                return true;
             }
             
-            // For other areas of dropzone, trigger file input
+            // For all other clicks (including label and "click to browse" text), trigger file input
             var input = document.getElementById('warehouse_images_input');
             if (input) {
+                e.preventDefault();
+                e.stopPropagation();
                 input.click();
             }
             return false;
+        });
+        
+        // Also ensure the label click works
+        dropzone.find('label[for="warehouse_images_input"]').on('click', function(e) {
+            e.stopPropagation(); // Prevent event bubbling to dropzone
+            // The label's natural behavior will trigger the file input
         });
 
         // Handle file selection

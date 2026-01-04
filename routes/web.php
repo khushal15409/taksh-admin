@@ -28,6 +28,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::post('commission-overview', [App\Http\Controllers\Admin\DashboardController::class, 'commission_overview'])->name('commission-overview');
     });
     
+    // Profile routes
+    Route::get('profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
+    Route::post('profile/update', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::post('profile/update-password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.update-password');
+    
     // Logistics Routes
     Route::group(['prefix' => 'logistics', 'as' => 'logistics.'], function () {
         Route::get('warehouse', [App\Http\Controllers\Admin\Logistics\WarehouseController::class, 'index'])->name('warehouse.index');
