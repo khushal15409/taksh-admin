@@ -1,6 +1,6 @@
 @extends('layouts.admin.app')
 
-@section('title',\App\Models\BusinessSetting::where(['key'=>'business_name'])->first()->value ?? 'Dashboard')
+@section('title',\App\Models\BusinessSetting::where(['key'=>'business_name'])->first()->value??translate('messages.dashboard'))
 
 @push('css_or_js')
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -440,87 +440,56 @@
             },
         };
 
-        try {
-            let donutElement = document.querySelector("#dognut-pie");
-            if (donutElement && typeof ApexCharts !== 'undefined') {
-                chart = new ApexCharts(donutElement, options);
-                chart.render();
-            }
-        } catch (e) {
-            console.error('Error rendering donut chart:', e);
-        }
+        chart = new ApexCharts(document.querySelector("#dognut-pie"), options);
+        chart.render();
 
-        try {
-            options = {
-                series: [{
-                    name: 'Gross Sale',
-                    data: [60, 40, 80, 31, 42, 109, 100, 50, 30, 80, 65, 35]
-                }],
-                chart: {
-                    height: 350,
-                    type: 'area',
-                    toolbar: {
-                        show: false
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 2,
-                },
-                fill: {
-                    type: 'gradient',
-                    colors: ['#76ffcd'],
-                },
-                xaxis: {
-                    categories: ["{{ translate('Jan') }}", "{{ translate('Feb') }}", "{{ translate('Mar') }}", "{{ translate('Apr') }}", "{{ translate('May') }}", "{{ translate('Jun') }}", "{{ translate('Jul') }}", "{{ translate('Aug') }}", "{{ translate('Sep') }}", "{{ translate('Oct') }}", "{{ translate('Nov') }}", "{{ translate('Dec') }}" ]
-                },
-                tooltip: {
-                    x: {
-                        format: 'dd/MM/yy HH:mm'
-                    },
-                },
-            };
-
-            let growSaleElement = document.querySelector("#grow-sale-chart");
-            if (growSaleElement && typeof ApexCharts !== 'undefined') {
-                chart = new ApexCharts(growSaleElement, options);
-                chart.render();
-            }
-        } catch (e) {
-            console.error('Error rendering grow sale chart:', e);
+    options = {
+          series: [{
+          name: 'Gross Sale',
+          data: [60, 40, 80, 31, 42, 109, 100, 50, 30, 80, 65, 35]
+        }],
+          chart: {
+          height: 350,
+          type: 'area',
+          toolbar: {
+            show:false
         }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          curve: 'smooth',
+          width: 2,
+        },
+        fill: {
+            type: 'gradient',
+            colors: ['#76ffcd'],
+        },
+        xaxis: {
+        //   type: 'datetime',
+          categories: ["{{ translate('Jan') }}", "{{ translate('Feb') }}", "{{ translate('Mar') }}", "{{ translate('Apr') }}", "{{ translate('May') }}", "{{ translate('Jun') }}", "{{ translate('Jul') }}", "{{ translate('Aug') }}", "{{ translate('Sep') }}", "{{ translate('Oct') }}", "{{ translate('Nov') }}", "{{ translate('Dec') }}" ]
+        },
+        tooltip: {
+          x: {
+            format: 'dd/MM/yy HH:mm'
+          },
+        },
+        };
+
+        chart = new ApexCharts(document.querySelector("#grow-sale-chart"), options);
+        chart.render();
 
     <!-- Dognut Pie Chart -->
         // INITIALIZATION OF CHARTJS
         // =======================================================
-        try {
-            if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-                Chart.plugins.unregister(ChartDataLabels);
-            }
+        Chart.plugins.unregister(ChartDataLabels);
 
-            if (typeof $.HSCore !== 'undefined' && typeof $.HSCore.components !== 'undefined' && typeof $.HSCore.components.HSChartJS !== 'undefined') {
-                $('.js-chart').each(function () {
-                    try {
-                        $.HSCore.components.HSChartJS.init($(this));
-                    } catch (e) {
-                        console.error('Error initializing chart:', e);
-                    }
-                });
+        $('.js-chart').each(function () {
+            $.HSCore.components.HSChartJS.init($(this));
+        });
 
-                if ($('#updatingData').length) {
-                    try {
-                        let updatingChart = $.HSCore.components.HSChartJS.init($('#updatingData'));
-                    } catch (e) {
-                        console.error('Error initializing updating chart:', e);
-                    }
-                }
-            }
-        } catch (e) {
-            console.error('Error initializing ChartJS:', e);
-        }
+        let updatingChart = $.HSCore.components.HSChartJS.init($('#updatingData'));
 
         function order_stats_update(type) {
             $.ajaxSetup({
@@ -528,33 +497,20 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $.ajax({
+            $.post({
                 url: '{{route('admin.dashboard-stats.order')}}',
-                type: 'POST',
                 data: {
                     statistics_type: type
                 },
                 beforeSend: function () {
-                    if ($('#loading').length) {
-                        $('#loading').show()
-                    }
+                    $('#loading').show()
                 },
                 success: function (data) {
-                    if (data && data.view) {
-                        insert_param('statistics_type',type);
-                        $('#order_stats').html(data.view)
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error updating order stats:', error);
-                    if ($('#loading').length) {
-                        $('#loading').hide()
-                    }
+                    insert_param('statistics_type',type);
+                    $('#order_stats').html(data.view)
                 },
                 complete: function () {
-                    if ($('#loading').length) {
-                        $('#loading').hide()
-                    }
+                    $('#loading').hide()
                 }
             });
         }
@@ -566,59 +522,28 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $.ajax({
+            $.post({
                 url: '{{route('admin.dashboard-stats.zone')}}',
-                type: 'POST',
                 data: {
                     zone_id: zone_id
                 },
                 beforeSend: function () {
-                    if ($('#loading').length) {
-                        $('#loading').show()
-                    }
+                    $('#loading').show()
                 },
                 success: function (data) {
-                    if (data) {
-                        insert_param('zone_id', zone_id);
-                        if (data.order_stats && $('#order_stats').length) {
-                            $('#order_stats').html(data.order_stats);
-                        }
-                        if (data.user_overview && $('#user-overview-board').length) {
-                            $('#user-overview-board').html(data.user_overview);
-                        }
-                        if (data.monthly_graph && $('#monthly-earning-graph').length) {
-                            $('#monthly-earning-graph').html(data.monthly_graph);
-                        }
-                        if (data.popular_restaurants && $('#popular-restaurants-view').length) {
-                            $('#popular-restaurants-view').html(data.popular_restaurants);
-                        }
-                        if (data.top_deliveryman && $('#top-deliveryman-view').length) {
-                            $('#top-deliveryman-view').html(data.top_deliveryman);
-                        }
-                        if (data.top_rated_foods && $('#top-rated-foods-view').length) {
-                            $('#top-rated-foods-view').html(data.top_rated_foods);
-                        }
-                        if (data.top_restaurants && $('#top-restaurants-view').length) {
-                            $('#top-restaurants-view').html(data.top_restaurants);
-                        }
-                        if (data.top_selling_foods && $('#top-selling-foods-view').length) {
-                            $('#top-selling-foods-view').html(data.top_selling_foods);
-                        }
-                        if (data.stat_zone && $('#stat_zone').length) {
-                            $('#stat_zone').html(data.stat_zone);
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error updating zone stats:', error);
-                    if ($('#loading').length) {
-                        $('#loading').hide()
-                    }
+                    insert_param('zone_id', zone_id);
+                    $('#order_stats').html(data.order_stats);
+                    $('#user-overview-board').html(data.user_overview);
+                    $('#monthly-earning-graph').html(data.monthly_graph);
+                    $('#popular-restaurants-view').html(data.popular_restaurants);
+                    $('#top-deliveryman-view').html(data.top_deliveryman);
+                    $('#top-rated-foods-view').html(data.top_rated_foods);
+                    $('#top-restaurants-view').html(data.top_restaurants);
+                    $('#top-selling-foods-view').html(data.top_selling_foods);
+                    $('#stat_zone').html(data.stat_zone);
                 },
                 complete: function () {
-                    if ($('#loading').length) {
-                        $('#loading').hide()
-                    }
+                    $('#loading').hide()
                 }
             });
         })
@@ -630,51 +555,23 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-            $.ajax({
+            $.post({
                 url: '{{route('admin.dashboard-stats.user-overview')}}',
-                type: 'POST',
                 data: {
                     user_overview: type
                 },
                 beforeSend: function () {
-                    if ($('#loading').length) {
-                        $('#loading').show()
-                    }
+                    $('#loading').show()
                 },
                 success: function (data) {
-                    if (data && data.view) {
-                        insert_param('user_overview',type);
-                        if ($('#user-overview-board').length) {
-                            $('#user-overview-board').html(data.view)
-                        }
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error updating user overview:', error);
-                    if ($('#loading').length) {
-                        $('#loading').hide()
-                    }
+                    insert_param('user_overview',type);
+                    $('#user-overview-board').html(data.view)
                 },
                 complete: function () {
-                    if ($('#loading').length) {
-                        $('#loading').hide()
-                    }
+                    $('#loading').hide()
                 }
             });
         })
-
-        // Handle statistics radio buttons
-        $('input[name="statistics"]').on('change', function() {
-            let type = $(this).closest('label').find('span').text().toLowerCase().replace(/\s+/g, '_');
-            if (type === 'this_year') {
-                type = 'year';
-            } else if (type === 'this_month') {
-                type = 'month';
-            } else if (type === 'this_week') {
-                type = 'week';
-            }
-            order_stats_update(type);
-        });
 
         function insert_param(key, value) {
             key = encodeURIComponent(key);

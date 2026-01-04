@@ -1,143 +1,378 @@
-<div class="col-sm-6 col-lg-3">
+<div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="__dashboard-card-2">
-        <img src="{{asset('/public/assets/admin/img/dashboard/grocery/items.svg')}}" alt="dashboard/grocery">
-        <h6 class="name">Items</h6>
-        <h3 class="count">{{ $data['total_items'] }}</h3>
-        <div class="subtxt">{{ $data['new_items'] }} {{ translate('newly added') }}</div>
+        <img src="{{asset('assets/admin/img/dashboard/stats/orders.svg')}}" alt="dashboard/stats">
+        <h6 class="name">Total Order</h6>
+        <h3 class="count">{{ $data['total_orders'] ?? 0 }}</h3>
+        <div class="subtxt">{{ $data['new_orders'] ?? 0 }} {{ translate('newly added') }}</div>
     </div>
 </div>
-<div class="col-sm-6 col-lg-3">
+<div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="__dashboard-card-2">
-        <img src="{{asset('/public/assets/admin/img/dashboard/grocery/orders.svg')}}" alt="dashboard/grocery">
-        <h6 class="name">Orders</h6>
-        <h3 class="count">{{ $data['total_orders'] }}</h3>
-        <div class="subtxt">{{ $data['new_orders'] }} {{ translate('newly added') }}</div>
+        <img src="{{asset('assets/admin/img/dashboard/grocery/delivered.svg')}}" alt="dashboard/stats">
+        <h6 class="name">Total Success</h6>
+        <h3 class="count">{{ $data['total_delivered'] ?? $data['delivered'] ?? 0 }}</h3>
+        <div class="subtxt">Delivered orders</div>
     </div>
 </div>
-<div class="col-sm-6 col-lg-3">
+<div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="__dashboard-card-2">
-        <img src="{{asset('/public/assets/admin/img/dashboard/grocery/stores.svg')}}" alt="dashboard/grocery">
-        <h6 class="name">Stores</h6>
-        <h3 class="count">{{ $data['total_stores'] }}</h3>
-        <div class="subtxt">{{ $data['new_stores'] }} {{ translate('newly added') }}</div>
+        <img src="{{asset('assets/admin/img/order-status/canceled.svg')}}" alt="dashboard/stats">
+        <h6 class="name">Total Cancel</h6>
+        <h3 class="count">{{ $data['total_canceled'] ?? $data['canceled'] ?? 0 }}</h3>
+        <div class="subtxt">Canceled orders</div>
     </div>
 </div>
-<div class="col-sm-6 col-lg-3">
+<div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="__dashboard-card-2">
-        <img src="{{asset('/public/assets/admin/img/dashboard/grocery/customers.svg')}}" alt="dashboard/grocery">
-        <h6 class="name">Customers</h6>
-        <h3 class="count">{{ $data['total_customers'] }}</h3>
-        <div class="subtxt">{{ $data['new_customers'] }} {{ translate('newly added') }}</div>
+        <img src="{{asset('assets/admin/img/dashboard/stats/customers.svg')}}" alt="dashboard/stats">
+        <h6 class="name">Total Customer</h6>
+        <h3 class="count">{{ $data['total_customers'] ?? 0 }}</h3>
+        <div class="subtxt">{{ $data['new_customers'] ?? 0 }} {{ translate('newly added') }}</div>
+    </div>
+</div>
+<div class="col-6 col-sm-4 col-md-3 col-lg-2">
+    <div class="__dashboard-card-2">
+        <img src="{{asset('assets/admin/img/dashboard/stats/stores.svg')}}" alt="dashboard/stats">
+        <h6 class="name">Total Seller</h6>
+        <h3 class="count">{{ $data['total_sellers'] ?? $data['total_stores'] ?? 0 }}</h3>
+        <div class="subtxt">{{ $data['new_stores'] ?? 0 }} {{ translate('newly added') }}</div>
+    </div>
+</div>
+<div class="col-6 col-sm-4 col-md-3 col-lg-2">
+    <div class="__dashboard-card-2">
+        <img src="{{asset('assets/admin/img/dashboard/stats/products.svg')}}" alt="dashboard/stats">
+        <h6 class="name">Total Services</h6>
+        <h3 class="count">{{ $data['total_services'] ?? $data['total_items'] ?? 0 }}</h3>
+        <div class="subtxt">{{ $data['new_items'] ?? 0 }} {{ translate('newly added') }}</div>
     </div>
 </div>
 <div class="col-12">
     <div class="row g-2">
-        <div class="col-sm-6 col-lg-3">
+        <!-- 1. Order Received -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('messages.unassigned_orders')}}</span>
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Received</span>
                     </h6>
                     <span class="card-title text-3F8CE8">
-                        {{$data['searching_for_dm']}}
+                        {{$data['order_received'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <!-- 2. Order Accepted -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/accepted.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('Accepted by Delivery Man')}}</span>
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/accepted.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Accepted</span>
                     </h6>
                     <span class="card-title text-success">
-                        {{$data['accepted_by_dm']}}
+                        {{$data['order_accepted'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
-        <div class="col-sm-6 col-lg-3">
+
+        <!-- 3. Order Rejected -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/packaging.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('Packaging')}}</span>
+                        <img src="{{asset('assets/admin/img/order-status/canceled.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Rejected</span>
+                    </h6>
+                    <span class="card-title text-danger">
+                        {{$data['order_rejected'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 4. Ready to Ship -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/packaging.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Ready to Ship</span>
                     </h6>
                     <span class="card-title text-FFA800">
-                        {{$data['preparing_in_rs']}}
+                        {{$data['ready_to_ship'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <!-- 5. Taksh Assigned -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('Out for Delivery')}}</span>
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/accepted.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Taksh Assigned</span>
+                    </h6>
+                    <span class="card-title text-info">
+                        {{$data['taksh_assigned'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 6. Un-Assigned Pending -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Un-Assigned Pending</span>
+                    </h6>
+                    <span class="card-title text-warning">
+                        {{$data['unassigned_pending'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 7. Other Logistics Assigned -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/accepted.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Other Logistics Assigned</span>
+                    </h6>
+                    <span class="card-title text-info">
+                        {{$data['other_logistics_assigned'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 8. Total Assigned -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/accepted.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Total Assigned</span>
+                    </h6>
+                    <span class="card-title text-primary">
+                        {{$data['total_assigned'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 9. Out for Pickup -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/packaging.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Out for Pickup</span>
+                    </h6>
+                    <span class="card-title text-FFA800">
+                        {{$data['out_for_pickup'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 10. Order Picked-Up -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Picked-Up</span>
                     </h6>
                     <span class="card-title text-success">
-                        {{$data['picked_up']}}
+                        {{$data['order_picked_up'] ?? $data['picked_up'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <!-- 11. Order Connected to Hub -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/delivered.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('messages.delivered')}}</span>
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Connected to Hub</span>
+                    </h6>
+                    <span class="card-title text-info">
+                        {{$data['connected_to_hub'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 12. Order Received at Center -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Received at Center</span>
+                    </h6>
+                    <span class="card-title text-3F8CE8">
+                        {{$data['received_at_center'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 13. Out for Delivery -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Out for Delivery</span>
                     </h6>
                     <span class="card-title text-success">
-                        {{$data['delivered']}}
+                        {{$data['out_for_delivery'] ?? $data['picked_up'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <!-- 14. Order Delivered -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/canceled.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('messages.canceled')}}</span>
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/delivered.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Delivered</span>
                     </h6>
-                    <span class="card-title text-danger">
-                        {{$data['canceled']}}
+                    <span class="card-title text-success">
+                        {{$data['order_delivered'] ?? $data['delivered'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <!-- 15. Order Rescheduled -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/refunded.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('messages.refunded')}}</span>
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Rescheduled</span>
                     </h6>
-                    <span class="card-title text-danger">
-                        {{$data['refunded']}}
+                    <span class="card-title text-warning">
+                        {{$data['order_rescheduled'] ?? 0}}
                     </span>
                 </div>
             </a>
         </div>
 
-        <div class="col-sm-6 col-lg-3">
+        <!-- 16. Order Cancelled -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
             <a class="order--card h-100" href="{{route('admin.dashboard')}}">
                 <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
-                        <img src="{{asset('/public/assets/admin/img/order-status/payment-failed.svg')}}" alt="dashboard" class="oder--card-icon">
-                        <span>{{translate('messages.payment_failed')}}</span>
+                        <img src="{{asset('assets/admin/img/order-status/canceled.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Cancelled</span>
                     </h6>
                     <span class="card-title text-danger">
-                        {{$data['refund_requested']}}
+                        {{$data['order_canceled'] ?? $data['canceled'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 17. On Hold -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/order-status/canceled.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>On Hold</span>
+                    </h6>
+                    <span class="card-title text-warning">
+                        {{$data['on_hold'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 18. Order Reattempt -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Order Reattempt</span>
+                    </h6>
+                    <span class="card-title text-info">
+                        {{$data['reattempt'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 19. Return to Origin -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Return to Origin</span>
+                    </h6>
+                    <span class="card-title text-warning">
+                        {{$data['return_to_origin'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 20. Return to Origin Connected to Hub -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Return to Origin Connected to Hub</span>
+                    </h6>
+                    <span class="card-title text-info">
+                        {{$data['return_connected_to_hub'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 21. Received at Hub -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/unassigned.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Received at Hub</span>
+                    </h6>
+                    <span class="card-title text-3F8CE8">
+                        {{$data['received_at_hub'] ?? 0}}
+                    </span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 22. Hub Connected to Destination -->
+        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+            <a class="order--card h-100" href="{{route('admin.dashboard')}}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle d-flex justify-content-between m-0 align-items-center">
+                        <img src="{{asset('assets/admin/img/dashboard/grocery/out-for.svg')}}" alt="dashboard" class="oder--card-icon">
+                        <span>Hub Connected to Destination</span>
+                    </h6>
+                    <span class="card-title text-info">
+                        {{$data['hub_connected_to_destination'] ?? 0}}
                     </span>
                 </div>
             </a>

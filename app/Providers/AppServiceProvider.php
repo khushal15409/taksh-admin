@@ -11,7 +11,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Load helper functions for staging compatibility
+        if (file_exists($helperFile = app_path('helpers.php'))) {
+            require_once $helperFile;
+        }
     }
 
     /**

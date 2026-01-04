@@ -7,13 +7,23 @@
             @endif
         </span>
     </h5>
-    @php($params = session('dash_params'))
-    @if ($params['zone_id'] != 'all')
-        @php($zone_name = \App\Models\Zone::where('id', $params['zone_id'])->first()->name)
+    @php
+        $params = $params ?? session('dash_params') ?? ['zone_id' => 'all'];
+        $zone_id = $params['zone_id'] ?? 'all';
+    @endphp
+    @if ($zone_id != 'all' && class_exists('\App\Models\Zone'))
+        @php
+            try {
+                $zone = \App\Models\Zone::where('id', $zone_id)->first();
+                $zone_name = $zone ? $zone->name : translate('messages.all');
+            } catch (\Exception $e) {
+                $zone_name = translate('messages.all');
+            }
+        @endphp
     @else
         @php($zone_name = translate('messages.all'))
     @endif
-    <a href="{{ route('admin.dashboard')) }}" class="fz-12px font-medium text-006AE5">{{ translate('view_all') }}</a>
+    <a href="{{ route('admin.dashboard') }}" class="fz-12px font-medium text-006AE5">{{ translate('view_all') }}</a>
 </div>
 
 <div class="card-body">
@@ -21,7 +31,7 @@
     @if (count($top_sell) > 0)
         <div class="top--selling">
             @foreach ($top_sell as $key => $item)
-                <a class="grid--card" href="{{ route('admin.dashboard')]]) }}">
+                <a class="grid--card" href="{{ route('admin.dashboard') }}">
                     <img class="initial--28 onerror-image"
                         src="{{ $item['image_full_url'] ?? asset('public/assets/admin/img/placeholder-2.png') }}"
                         data-onerror-image="{{ asset('public/assets/admin/img/placeholder-2.png') }}"
