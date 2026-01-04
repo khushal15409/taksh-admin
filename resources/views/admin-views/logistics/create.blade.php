@@ -27,6 +27,7 @@
         background: #f9fafb;
         cursor: pointer;
         position: relative;
+        height: 0px;
     }
     .dropzone-custom:hover {
         border-color: #3b82f6;
