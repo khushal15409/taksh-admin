@@ -19,6 +19,8 @@ class FulfillmentCenter extends Model
         'latitude',
         'longitude',
         'supports_30_min_delivery',
+        'supports_express_30',
+        'express_radius_km',
         'status',
     ];
 
@@ -28,6 +30,7 @@ class FulfillmentCenter extends Model
             'latitude' => 'decimal:8',
             'longitude' => 'decimal:8',
             'supports_30_min_delivery' => 'boolean',
+            'supports_express_30' => 'boolean',
         ];
     }
 

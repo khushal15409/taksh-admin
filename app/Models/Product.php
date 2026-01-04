@@ -18,12 +18,14 @@ class Product extends Model
         'short_description',
         'status',
         'is_trending',
+        'is_express_30',
     ];
 
     protected function casts(): array
     {
         return [
             'is_trending' => 'boolean',
+            'is_express_30' => 'boolean',
         ];
     }
 

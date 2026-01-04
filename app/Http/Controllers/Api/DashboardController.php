@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\FulfillmentCenter;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -19,6 +21,14 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+        // Get nearest fulfillment center if latitude and longitude provided
+        $nearestFulfillmentCenterId = null;
+        if ($request->has('latitude') && $request->has('longitude')) {
+            $nearestFulfillmentCenterId = $this->getNearestFulfillmentCenter(
+                $request->input('latitude'),
+                $request->input('longitude')
+            );
+        }
         // Fetch banners (home_top and home_middle positions)
         $banners = Banner::where('is_active', true)
             ->whereIn('position', ['home_top', 'home_middle'])
@@ -35,23 +45,33 @@ class DashboardController extends Controller
             ->get();
 
         // Fetch trending products (limit 10)
-        $trendingProducts = Product::with(['brand', 'category', 'variants' => function ($query) {
-                $query->where('status', 'active')
-                    ->orderBy('sale_price', 'asc')
-                    ->limit(1);
-            }, 'images' => function ($query) {
-                $query->where('is_primary', true)
-                    ->limit(1);
-            }])
+        $trendingProductsQuery = Product::with(['brand', 'category', 'variants' => function ($query) {
+            $query->where('status', 'active')
+                ->orderBy('sale_price', 'asc')
+                ->limit(1);
+        }, 'images' => function ($query) {
+            $query->where('is_primary', true)
+                ->limit(1);
+        }])
             ->where('status', 'active')
-            ->where('is_trending', true)
+            ->where('is_trending', true);
+
+        // Filter by nearest fulfillment center if provided
+        if ($nearestFulfillmentCenterId) {
+            $trendingProductsQuery->whereHas('variants.warehouseProducts', function ($query) use ($nearestFulfillmentCenterId) {
+                $query->where('warehouse_id', $nearestFulfillmentCenterId)
+                    ->where('stock_qty', '>', 0);
+            });
+        }
+
+        $trendingProducts = $trendingProductsQuery
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->map(function ($product) {
                 $variant = $product->variants->first();
                 $image = $product->images->first();
-                
+
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
@@ -64,22 +84,32 @@ class DashboardController extends Controller
             });
 
         // Fetch latest products (limit 10)
-        $latestProducts = Product::with(['brand', 'category', 'variants' => function ($query) {
-                $query->where('status', 'active')
-                    ->orderBy('sale_price', 'asc')
-                    ->limit(1);
-            }, 'images' => function ($query) {
-                $query->where('is_primary', true)
-                    ->limit(1);
-            }])
-            ->where('status', 'active')
+        $latestProductsQuery = Product::with(['brand', 'category', 'variants' => function ($query) {
+            $query->where('status', 'active')
+                ->orderBy('sale_price', 'asc')
+                ->limit(1);
+        }, 'images' => function ($query) {
+            $query->where('is_primary', true)
+                ->limit(1);
+        }])
+            ->where('status', 'active');
+
+        // Filter by nearest fulfillment center if provided
+        if ($nearestFulfillmentCenterId) {
+            $latestProductsQuery->whereHas('variants.warehouseProducts', function ($query) use ($nearestFulfillmentCenterId) {
+                $query->where('warehouse_id', $nearestFulfillmentCenterId)
+                    ->where('stock_qty', '>', 0);
+            });
+        }
+
+        $latestProducts = $latestProductsQuery
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->map(function ($product) {
                 $variant = $product->variants->first();
                 $image = $product->images->first();
-                
+
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
@@ -114,5 +144,40 @@ class DashboardController extends Controller
         ];
 
         return $this->success($data, 'api.dashboard.loaded');
+    }
+
+    /**
+     * Get nearest fulfillment center using Haversine formula
+     * 
+     * @param float $latitude
+     * @param float $longitude
+     * @return int|null
+     */
+    private function getNearestFulfillmentCenter($latitude, $longitude)
+    {
+        if (!is_numeric($latitude) || !is_numeric($longitude)) {
+            return null;
+        }
+
+        $latitude = (float) $latitude;
+        $longitude = (float) $longitude;
+
+        // Haversine formula to calculate distance (in km)
+        // Radius: 30 km
+        $radius = 30;
+
+        $nearestFulfillmentCenter = FulfillmentCenter::select('fulfillment_centers.*')
+            ->selectRaw(
+                '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
+                [$latitude, $longitude, $latitude]
+            )
+            ->where('status', 'active')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->havingRaw('distance <= ?', [$radius])
+            ->orderBy('distance', 'asc')
+            ->first();
+
+        return $nearestFulfillmentCenter ? $nearestFulfillmentCenter->id : null;
     }
 }
