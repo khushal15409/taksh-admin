@@ -192,7 +192,7 @@
                             </div>
                             <div class="__nav-module-body">
                                 <div class="__nav-module-items" style="display: flex; flex-direction: column; gap: 10px; padding: 15px;">
-                                    <a href="{{route('admin.dashboard')}}" class="settings-dropdown-btn" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%); color: #ffffff; border-radius: 8px; text-decoration: none; transition: all 0.3s ease; border: none; width: 100%;">
+                                    <a href="{{route('admin.profile')}}" class="settings-dropdown-btn" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #0177cd 0%, #0e4da3 100%); color: #ffffff; border-radius: 8px; text-decoration: none; transition: all 0.3s ease; border: none; width: 100%;">
                                         <i class="tio-user" style="font-size: 18px;"></i>
                                         <span style="font-weight: 500;">{{translate('Profile')}}</span>
                                     </a>

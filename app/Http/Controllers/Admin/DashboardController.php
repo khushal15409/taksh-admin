@@ -49,6 +49,8 @@ class DashboardController extends Controller
             'order_picked_up' => 0,
             'picked_up' => 0,
             'connected_to_hub' => 0,
+            'order_received_at_hub' => 0,
+            'order_connected_hub_to_center' => 0,
             'received_at_center' => 0,
             'out_for_delivery' => 0,
             'order_delivered' => 1,
