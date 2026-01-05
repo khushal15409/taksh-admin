@@ -51,5 +51,9 @@ return [
     'failed_to_delete_image' => 'छवि हटाने में विफल',
     'Invalid flag' => 'अमान्य फ्लैग',
     'SKU already exists' => 'SKU पहले से मौजूद है',
+    
+    // Dashboard
+    'total_orders' => 'कुल ऑर्डर',
+    'newly_added' => 'नए जोड़े गए',
 ];
 

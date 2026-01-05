@@ -158,5 +158,9 @@ return [
     'payment_failed' => 'Payment Failed',
     'refunded' => 'Refunded',
     'order_refunds' => 'Order Refunds',
+    
+    // Dashboard
+    'total_orders' => 'Total Orders',
+    'newly_added' => 'Newly added',
 ];
 

@@ -51,5 +51,9 @@ return [
     'failed_to_delete_image' => 'છબી કાઢવામાં નિષ્ફળ',
     'Invalid flag' => 'અમાન્ય ફ્લેગ',
     'SKU already exists' => 'SKU પહેલેથી અસ્તિત્વમાં છે',
+    
+    // Dashboard
+    'total_orders' => 'કુલ ઓર્ડર',
+    'newly_added' => 'નવા ઉમેરાયા',
 ];
 

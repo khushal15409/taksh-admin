@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -18,14 +19,20 @@ class DashboardController extends Controller
             'commission_overview' => $request['commission_overview'] ?? 'this_year',
         ];
 
-        // Mock data for ecommerce dashboard
+        // Fetch real data from database
+        $totalOrders = Order::count();
+        $todayOrders = Order::whereDate('created_at', today())->count();
+        $totalDelivered = Order::where('order_status', 'delivered')->count();
+        $totalCanceled = Order::where('order_status', 'cancelled')->count();
+
+        // Ecommerce dashboard data
         $data = [
-            'total_orders' => 11,
-            'new_orders' => 7,
-            'total_delivered' => 1,
-            'delivered' => 1,
-            'total_canceled' => 0,
-            'canceled' => 0,
+            'total_orders' => $totalOrders,
+            'new_orders' => $todayOrders,
+            'total_delivered' => $totalDelivered,
+            'delivered' => $totalDelivered,
+            'total_canceled' => $totalCanceled,
+            'canceled' => $totalCanceled,
             'total_customers' => 11,
             'new_customers' => 9,
             'total_sellers' => 1,
@@ -101,14 +108,20 @@ class DashboardController extends Controller
 
     public function order(Request $request)
     {
+        // Fetch real data from database
+        $totalOrders = Order::count();
+        $todayOrders = Order::whereDate('created_at', today())->count();
+        $totalDelivered = Order::where('order_status', 'delivered')->count();
+        $totalCanceled = Order::where('order_status', 'cancelled')->count();
+
         // Ecommerce dashboard order stats
         $data = [
-            'total_orders' => 11,
-            'new_orders' => 7,
-            'total_delivered' => 1,
-            'delivered' => 1,
-            'total_canceled' => 0,
-            'canceled' => 0,
+            'total_orders' => $totalOrders,
+            'new_orders' => $todayOrders,
+            'total_delivered' => $totalDelivered,
+            'delivered' => $totalDelivered,
+            'total_canceled' => $totalCanceled,
+            'canceled' => $totalCanceled,
             'total_customers' => 11,
             'new_customers' => 9,
             'total_sellers' => 1,
@@ -159,7 +172,7 @@ class DashboardController extends Controller
             'commission_overview' => $session_params['commission_overview'] ?? 'this_year',
         ];
         session()->put('dash_params', $params);
-        
+
         // Simplified zone stats - return empty data for now
         $data = [
             'searching_for_dm' => 0,
@@ -225,14 +238,20 @@ class DashboardController extends Controller
             'commission_overview' => $request['commission_overview'] ?? 'this_year',
         ];
 
-        // Mock data for ecommerce dashboard
+        // Fetch real data from database
+        $totalOrders = Order::count();
+        $todayOrders = Order::whereDate('created_at', today())->count();
+        $totalDelivered = Order::where('order_status', 'delivered')->count();
+        $totalCanceled = Order::where('order_status', 'cancelled')->count();
+
+        // Ecommerce dashboard data
         $data = [
-            'total_orders' => 11,
-            'new_orders' => 7,
-            'total_delivered' => 1,
-            'delivered' => 1,
-            'total_canceled' => 0,
-            'canceled' => 0,
+            'total_orders' => $totalOrders,
+            'new_orders' => $todayOrders,
+            'total_delivered' => $totalDelivered,
+            'delivered' => $totalDelivered,
+            'total_canceled' => $totalCanceled,
+            'canceled' => $totalCanceled,
             'total_customers' => 11,
             'new_customers' => 9,
             'total_sellers' => 1,
@@ -258,9 +277,9 @@ class DashboardController extends Controller
             'connected_to_hub' => 0,
             'received_at_center' => 0,
             'out_for_delivery' => 0,
-            'order_delivered' => 1,
+            'order_delivered' => $totalDelivered,
             'order_rescheduled' => 0,
-            'order_canceled' => 0,
+            'order_canceled' => $totalCanceled,
             'on_hold' => 0,
             'reattempt' => 0,
             'return_to_origin' => 0,
@@ -320,4 +339,3 @@ class DashboardController extends Controller
         ], 200);
     }
 }
-
