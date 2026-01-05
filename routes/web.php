@@ -70,4 +70,38 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         
         Route::get('pending-mapping', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'index'])->name('pending-mapping.index');
     });
+    
+    // Banner Routes
+    Route::resource('banner', App\Http\Controllers\Admin\BannerController::class);
+    Route::post('banner/status', [App\Http\Controllers\Admin\BannerController::class, 'statusToggle'])->name('banner.status');
+    
+    // Category Routes
+    Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
+    Route::post('categories/status', [App\Http\Controllers\Admin\CategoryController::class, 'statusToggle'])->name('categories.status');
+    
+    // Product Routes
+    Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
+    Route::post('products/status', [App\Http\Controllers\Admin\ProductController::class, 'statusToggle'])->name('products.status');
+    Route::post('products/flag', [App\Http\Controllers\Admin\ProductController::class, 'flagToggle'])->name('products.flag');
+    Route::delete('products/image/{id}', [App\Http\Controllers\Admin\ProductController::class, 'deleteImage'])->name('products.delete-image');
+    Route::get('get-cities', [App\Http\Controllers\Admin\ProductController::class, 'getCities'])->name('get-cities');
+    Route::get('get-fulfillment-centers', [App\Http\Controllers\Admin\ProductController::class, 'getFulfillmentCenters'])->name('get-fulfillment-centers');
+    
+    // Order Routes
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('index');
+        Route::get('pending', [App\Http\Controllers\Admin\OrderController::class, 'pending'])->name('pending');
+        Route::get('confirmed', [App\Http\Controllers\Admin\OrderController::class, 'confirmed'])->name('confirmed');
+        Route::get('delivered', [App\Http\Controllers\Admin\OrderController::class, 'delivered'])->name('delivered');
+        Route::get('cancelled', [App\Http\Controllers\Admin\OrderController::class, 'cancelled'])->name('cancelled');
+        
+        // Express-30 Orders (must be before {id} route)
+        Route::prefix('express-30')->name('express-30.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\ExpressOrderController::class, 'index'])->name('index');
+            Route::get('{id}', [App\Http\Controllers\Admin\ExpressOrderController::class, 'show'])->name('show');
+        });
+        
+        // Order detail (must be last to avoid conflicts)
+        Route::get('{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
+    });
 });

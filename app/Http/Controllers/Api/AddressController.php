@@ -27,7 +27,7 @@ class AddressController extends Controller
             'pincode' => 'required|string',
             'landmark' => 'nullable|string',
             'type' => 'nullable|in:home,work,other',
-            'is_default' => 'nullable|boolean',
+            'is_default' => 'required|boolean',
         ]);
 
         $user = $request->user();
@@ -68,4 +68,3 @@ class AddressController extends Controller
         return $this->success($addresses, 'api.addresses_fetched');
     }
 }
-

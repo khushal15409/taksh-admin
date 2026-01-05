@@ -27,7 +27,10 @@ class DatabaseSeeder extends Seeder
             CartSeeder::class,            // Carts & Cart Items
             OrderSeeder::class,           // Orders, Payments, Returns, Refunds
             BannerSeeder::class,          // Banners
-            DashboardDataSeeder::class,   // Dashboard Data (Category Images, Trending Products)
+            DashboardDataSeeder::class,  // Dashboard Data (Category Images, Trending Products)
+            SuperAdminSeeder::class,     // Super Admin
+            Express30Seeder::class,       // Express 30 Delivery
+
         ]);
     }
 }

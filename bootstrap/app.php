@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->api(prepend: [
+            \App\Http\Middleware\ForceJsonResponse::class,
             \App\Http\Middleware\SetLocale::class,
         ]);
     })
@@ -28,6 +29,28 @@ return Application::configure(basePath: dirname(__DIR__))
                         'errors' => $e->errors(),
                     ],
                 ], 422);
+            }
+        });
+
+        // Handle authentication errors for API routes
+        // Priority: Always return JSON for API routes, regardless of Accept header
+        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, \Illuminate\Http\Request $request) {
+            // Check if it's an API route first (most important)
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('api.unauthorized'),
+                    'data' => [],
+                ], 401);
+            }
+            
+            // Also handle JSON requests
+            if ($request->expectsJson() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('api.unauthorized'),
+                    'data' => [],
+                ], 401);
             }
         });
     })->create();

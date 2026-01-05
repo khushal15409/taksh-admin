@@ -119,60 +119,61 @@ guest_token: guest_token_test_12345678901234567890 (optional)
 
 ```json
 {
-  "success": true,
-  "message": "Dashboard data loaded successfully",
-  "data": {
-    "banners": [
-      {
-        "id": 1,
-        "title": "Big Sale - Up to 70% Off",
-        "image_url": "https://cdn.example.com/banners/big-sale-70-off.jpg",
-        "position": "home_top",
-        "redirect_type": "category",
-        "redirect_id": 1
-      }
-    ],
-    "trending_products": [
-      {
-        "id": 1,
-        "name": "iPhone 15 Pro",
-        "slug": "iphone-15-pro",
-        "short_description": "Premium smartphone with cutting-edge technology",
-        "price": 94900.00,
-        "image_url": "https://via.placeholder.com/500x500?text=iPhone+15+Pro",
-        "brand": "Apple"
-      }
-    ],
-    "latest_products": [
-      {
-        "id": 1,
-        "name": "iPhone 15 Pro",
-        "slug": "iphone-15-pro",
-        "short_description": "Premium smartphone with cutting-edge technology",
-        "price": 94900.00,
-        "image_url": "https://via.placeholder.com/500x500?text=iPhone+15+Pro",
-        "brand": "Apple"
-      }
-    ],
-    "categories": [
-      {
-        "id": 1,
-        "name": "Electronics",
-        "slug": "electronics",
-        "image_url": "https://cdn.example.com/categories/electronics.jpg",
-        "icon_url": "https://cdn.example.com/categories/icons/electronics.png"
-      }
-    ]
-  }
+    "success": true,
+    "message": "Dashboard data loaded successfully",
+    "data": {
+        "banners": [
+            {
+                "id": 1,
+                "title": "Big Sale - Up to 70% Off",
+                "image_url": "https://cdn.example.com/banners/big-sale-70-off.jpg",
+                "position": "home_top",
+                "redirect_type": "category",
+                "redirect_id": 1
+            }
+        ],
+        "trending_products": [
+            {
+                "id": 1,
+                "name": "iPhone 15 Pro",
+                "slug": "iphone-15-pro",
+                "short_description": "Premium smartphone with cutting-edge technology",
+                "price": 94900.0,
+                "image_url": "https://via.placeholder.com/500x500?text=iPhone+15+Pro",
+                "brand": "Apple"
+            }
+        ],
+        "latest_products": [
+            {
+                "id": 1,
+                "name": "iPhone 15 Pro",
+                "slug": "iphone-15-pro",
+                "short_description": "Premium smartphone with cutting-edge technology",
+                "price": 94900.0,
+                "image_url": "https://via.placeholder.com/500x500?text=iPhone+15+Pro",
+                "brand": "Apple"
+            }
+        ],
+        "categories": [
+            {
+                "id": 1,
+                "name": "Electronics",
+                "slug": "electronics",
+                "image_url": "https://cdn.example.com/categories/electronics.jpg",
+                "icon_url": "https://cdn.example.com/categories/icons/electronics.png"
+            }
+        ]
+    }
 }
 ```
 
-**Note:** 
-- Returns all dashboard data in a single API call
-- Banners include only `home_top` and `home_middle` positions that are active and within date range
-- Trending products are marked with `is_trending = true` (limit 10)
-- Latest products are ordered by `created_at DESC` (limit 10)
-- Categories include only parent categories (no sub-categories) with image and icon URLs
+**Note:**
+
+-   Returns all dashboard data in a single API call
+-   Banners include only `home_top` and `home_middle` positions that are active and within date range
+-   Trending products are marked with `is_trending = true` (limit 10)
+-   Latest products are ordered by `created_at DESC` (limit 10)
+-   Categories include only parent categories (no sub-categories) with image and icon URLs
 
 ---
 
@@ -396,12 +397,13 @@ limit: 15
 }
 ```
 
-**Note:** 
-- Returns complete product details including variants, images, brand, and category
-- Includes rating summary with average rating, total reviews count, and star-wise breakup (1-5)
-- Shows latest 10 approved reviews (sorted by latest first)
-- Shows latest 5 approved questions with their approved answers
-- Only approved reviews, questions, and answers are included in the response
+**Note:**
+
+-   Returns complete product details including variants, images, brand, and category
+-   Includes rating summary with average rating, total reviews count, and star-wise breakup (1-5)
+-   Shows latest 10 approved reviews (sorted by latest first)
+-   Shows latest 5 approved questions with their approved answers
+-   Only approved reviews, questions, and answers are included in the response
 
 ---
 
@@ -993,31 +995,137 @@ Content-Type: multipart/form-data (for POST/PUT)
 
 ## 🔗 QUICK REFERENCE
 
-| Endpoint                 | Method | Auth | FormData |
-| ------------------------ | ------ | ---- | -------- |
-| `/api/auth/send-otp`     | POST   | ❌   | ✅       |
-| `/api/auth/verify-otp`   | POST   | ❌   | ✅       |
-| `/api/auth/logout`       | POST   | ✅   | ❌       |
-| `/api/dashboard`          | GET    | ❌   | ❌       |
-| `/api/banners`            | GET    | ❌   | ❌       |
-| `/api/categories`         | GET    | ❌   | ❌       |
-| `/api/products`          | GET    | ❌   | ❌       |
-| `/api/products/{id}`     | GET    | ❌   | ❌       |
-| `/api/cart/add`          | POST   | ⚠️   | ✅       |
-| `/api/cart/cart`         | GET    | ⚠️   | ❌       |
-| `/api/cart/update`       | PUT    | ⚠️   | ✅       |
-| `/api/cart/item/{id}`    | DELETE | ⚠️   | ❌       |
-| `/api/address/add`       | POST   | ✅   | ✅       |
-| `/api/address/addresses` | GET    | ✅   | ❌       |
-| `/api/order/place`       | POST   | ✅   | ✅       |
-| `/api/order/orders`      | GET    | ✅   | ❌       |
-| `/api/order/orders/{id}` | GET    | ✅   | ❌       |
-| `/api/payment/initiate`  | POST   | ✅   | ✅       |
-| `/api/payment/verify`    | POST   | ✅   | ✅       |
-| `/api/return/request`    | POST   | ✅   | ✅       |
+| Endpoint                   | Method | Auth | FormData |
+| -------------------------- | ------ | ---- | -------- |
+| `/api/auth/send-otp`       | POST   | ❌   | ✅       |
+| `/api/auth/verify-otp`     | POST   | ❌   | ✅       |
+| `/api/auth/logout`         | POST   | ✅   | ❌       |
+| `/api/dashboard`           | GET    | ❌   | ❌       |
+| `/api/banners`             | GET    | ❌   | ❌       |
+| `/api/categories`          | GET    | ❌   | ❌       |
+| `/api/products`            | GET    | ❌   | ❌       |
+| `/api/products/{id}`       | GET    | ❌   | ❌       |
+| `/api/cart/add`            | POST   | ⚠️   | ✅       |
+| `/api/cart/cart`           | GET    | ⚠️   | ❌       |
+| `/api/cart/update`         | PUT    | ⚠️   | ✅       |
+| `/api/cart/item/{id}`      | DELETE | ⚠️   | ❌       |
+| `/api/address/add`         | POST   | ✅   | ✅       |
+| `/api/address/addresses`   | GET    | ✅   | ❌       |
+| `/api/order/place`         | POST   | ✅   | ✅       |
+| `/api/order/orders`        | GET    | ✅   | ❌       |
+| `/api/order/orders/{id}`   | GET    | ✅   | ❌       |
+| `/api/payment/initiate`    | POST   | ✅   | ✅       |
+| `/api/payment/verify`      | POST   | ✅   | ✅       |
+| `/api/return/request`      | POST   | ✅   | ✅       |
+| `/api/express-30/products` | GET    | ❌   | ❌       |
+| `/api/express-30/order`    | POST   | ✅   | ✅       |
 
 **Legend:**
 
 -   ❌ = Not required
 -   ✅ = Required
 -   ⚠️ = Optional (works with or without auth)
+
+---
+
+## ⚡ EXPRESS 30 DELIVERY ENDPOINTS
+
+### 21. Get Express 30 Products
+
+**GET** `/api/express-30/products`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Query Parameters (FormData):**
+
+```
+latitude: 23.0225
+longitude: 72.5714
+```
+
+**Description:** Fetches products eligible for 30-minute delivery from the nearest fulfillment center. Automatically finds the nearest active fulfillment center within the express delivery radius (default 5-7 km) using latitude and longitude coordinates.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "30-minute delivery products fetched",
+    "data": {
+        "fulfillment_center": {
+            "id": 1,
+            "name": "Ahmedabad Central Warehouse"
+        },
+        "products": [
+            {
+                "id": 1,
+                "name": "iPhone 15 Pro",
+                "slug": "iphone-15-pro",
+                "variants": [
+                    {
+                        "id": 1,
+                        "sku": "IPH15P-128-BLK",
+                        "price": 99900.0,
+                        "sale_price": 94900.0,
+                        "available_stock": 50
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+**Note:** Only returns products marked as `is_express_30 = true` with available stock (stock_qty - reserved_qty > 0) in the nearest fulfillment center that supports express delivery.
+
+---
+
+### 22. Place Express 30 Order
+
+**POST** `/api/express-30/order`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required)
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+product_id[]: 1
+product_id[]: 2
+quantity[]: 2
+quantity[]: 1
+address_id: 1
+payment_method: online (required: online, cod)
+latitude: 23.0225
+longitude: 72.5714
+```
+
+**Description:** Places an order with 30-minute delivery. Automatically assigns the order to the nearest fulfillment center, validates stock availability, reserves inventory, and sets estimated delivery time to 30 minutes from order placement.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Order placed with 30-minute delivery",
+    "data": {
+        "order_id": 123,
+        "order_number": "EXPXXXXXXXX",
+        "estimated_delivery": "2026-01-03 18:30"
+    }
+}
+```
+
+**Note:**
+
+-   Product IDs and quantities must be arrays with matching counts
+-   All products must be marked as `is_express_30 = true`
+-   Order is automatically assigned to nearest fulfillment center within express radius
+-   Stock is reserved immediately upon order placement
+-   Estimated delivery time is set to current time + 30 minutes
+
+---

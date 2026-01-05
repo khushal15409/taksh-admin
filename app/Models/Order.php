@@ -15,6 +15,7 @@ class Order extends Model
         'address_id',
         'order_number',
         'delivery_type',
+        'estimated_delivery_time',
         'payment_method',
         'payment_status',
         'order_status',
@@ -25,6 +26,7 @@ class Order extends Model
     {
         return [
             'total_amount' => 'decimal:2',
+            'estimated_delivery_time' => 'datetime',
         ];
     }
 

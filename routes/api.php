@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\Express30Controller;
 
 // Public routes
 Route::prefix('auth')->group(function () {
@@ -22,6 +23,11 @@ Route::get('categories', [ProductController::class, 'categories']);
 Route::get('products', [ProductController::class, 'index']);
 Route::get('products/{id}', [ProductController::class, 'show']);
 Route::get('banners', [BannerController::class, 'index']);
+
+// Express 30 Delivery routes
+Route::prefix('express-30')->group(function () {
+    Route::get('products', [Express30Controller::class, 'products']);
+});
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
@@ -48,12 +54,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('return')->group(function () {
         Route::post('request', [ReturnController::class, 'store']);
     });
+
+    Route::prefix('express-30')->group(function () {
+        Route::post('order', [Express30Controller::class, 'placeOrder']);
+    });
 });
 
 // Cart routes (can be accessed with or without auth)
 Route::prefix('cart')->group(function () {
     Route::post('add', [CartController::class, 'add']);
     Route::get('cart', [CartController::class, 'index']);
-    Route::put('update', [CartController::class, 'update']);
+    Route::post('update', [CartController::class, 'update']);
     Route::delete('item/{id}', [CartController::class, 'destroy']);
 });

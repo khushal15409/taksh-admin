@@ -76,8 +76,16 @@ return [
         'failed' => 'Failed to load dashboard data',
     ],
     
+    // Express 30 Delivery
+    'express' => [
+        'products_loaded' => '30-minute delivery products fetched',
+        'order_placed' => 'Order placed with 30-minute delivery',
+        'not_available' => '30-minute delivery is not available in your area',
+        'product_not_eligible' => 'Product is not eligible for 30-minute delivery',
+    ],
+    
     // General
-    'unauthorized' => 'Unauthorized access',
+    'unauthorized' => 'Authentication required. Please provide a valid Bearer token.',
     'not_found' => 'Resource not found',
     'server_error' => 'Internal server error',
 ];

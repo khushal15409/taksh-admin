@@ -1,26 +1,32 @@
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-    <div class="__dashboard-card-2">
-        <img src="{{asset('assets/admin/img/dashboard/stats/orders.svg')}}" alt="dashboard/stats">
-        <h6 class="name">Total Order</h6>
-        <h3 class="count">{{ $data['total_orders'] ?? 0 }}</h3>
-        <div class="subtxt">{{ $data['new_orders'] ?? 0 }} {{ translate('newly added') }}</div>
-    </div>
+    <a href="{{ route('admin.orders.index') }}" class="text-decoration-none">
+        <div class="__dashboard-card-2" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow=''">
+            <img src="{{asset('assets/admin/img/dashboard/stats/orders.svg')}}" alt="dashboard/stats">
+            <h6 class="name">{{ translate('messages.total_orders') }}</h6>
+            <h3 class="count">{{ $data['total_orders'] ?? 0 }}</h3>
+            <div class="subtxt">{{ $data['new_orders'] ?? 0 }} {{ translate('messages.newly_added') }}</div>
+        </div>
+    </a>
 </div>
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-    <div class="__dashboard-card-2">
-        <img src="{{asset('assets/admin/img/dashboard/grocery/delivered.svg')}}" alt="dashboard/stats">
-        <h6 class="name">Total Success</h6>
-        <h3 class="count">{{ $data['total_delivered'] ?? $data['delivered'] ?? 0 }}</h3>
-        <div class="subtxt">Delivered orders</div>
-    </div>
+    <a href="{{ route('admin.orders.delivered') }}" class="text-decoration-none">
+        <div class="__dashboard-card-2" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow=''">
+            <img src="{{asset('assets/admin/img/dashboard/grocery/delivered.svg')}}" alt="dashboard/stats">
+            <h6 class="name">Total Success</h6>
+            <h3 class="count">{{ $data['total_delivered'] ?? $data['delivered'] ?? 0 }}</h3>
+            <div class="subtxt">Delivered orders</div>
+        </div>
+    </a>
 </div>
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-    <div class="__dashboard-card-2">
-        <img src="{{asset('assets/admin/img/order-status/canceled.svg')}}" alt="dashboard/stats">
-        <h6 class="name">Total Cancel</h6>
-        <h3 class="count">{{ $data['total_canceled'] ?? $data['canceled'] ?? 0 }}</h3>
-        <div class="subtxt">Canceled orders</div>
-    </div>
+    <a href="{{ route('admin.orders.cancelled') }}" class="text-decoration-none">
+        <div class="__dashboard-card-2" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow=''">
+            <img src="{{asset('assets/admin/img/order-status/canceled.svg')}}" alt="dashboard/stats">
+            <h6 class="name">Total Cancel</h6>
+            <h3 class="count">{{ $data['total_canceled'] ?? $data['canceled'] ?? 0 }}</h3>
+            <div class="subtxt">Canceled orders</div>
+        </div>
+    </a>
 </div>
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="__dashboard-card-2">
