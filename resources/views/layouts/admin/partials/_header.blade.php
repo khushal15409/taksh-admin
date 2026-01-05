@@ -24,7 +24,23 @@
                         <a href="{{ route('admin.dashboard')}}" id="tourb-6"
                            class="__nav-link navbar-round-btn {{ Request::is('admin/users*') ? 'active' : '' }}">
                             <img src="{{asset('assets/admin/img/new-img/user.svg')}}" alt="public/img">
-                            <span>{{ translate('Users')}}</span>
+                            <span>{{ translate('Admin Users')}}</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item __nav-item">
+                        <a href="{{ route('admin.dashboard')}}" id="tourb-6"
+                           class="__nav-link navbar-round-btn {{ Request::is('admin/users*') ? 'active' : '' }}">
+                            <img src="{{asset('assets/admin/img/new-img/user.svg')}}" alt="public/img">
+                            <span>{{ translate('Ecommerce Users')}}</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item __nav-item">
+                        <a href="{{ route('admin.dashboard')}}" id="tourb-8"
+                           class="__nav-link navbar-round-btn {{ Request::is('admin/salesman-near-by-user*') ? 'active' : '' }}">
+                            <img src="{{asset('assets/admin/img/new-img/user.svg')}}" alt="public/img">
+                            <span>{{ translate('Salesman Users')}}</span>
                         </a>
                     </li>
 
@@ -33,11 +49,11 @@
                            class="__nav-link navbar-round-btn {{ Request::is('admin/transactions*') ? 'active' : '' }}">
                             <img src="{{asset('assets/admin/img/new-img/transaction-and-report.svg')}}"
                                  alt="public/img">
-                            <span>{{ translate('Transactions & Reports')}}</span>
+                            <span>{{ translate('Vandor Users')}}</span>
                         </a>
                     </li>
 
-                    <li class="nav-item __nav-item">
+                    <!-- <li class="nav-item __nav-item">
                         <a href="{{ route('admin.dashboard') }}" id="tourb-3"
                            class="__nav-link navbar-round-btn {{ Request::is('admin/business-settings*') ? 'active' : '' }}">
                             <img src="{{asset('assets/admin/img/new-img/setting-icon.svg')}}" alt="public/img">
@@ -119,13 +135,13 @@
                                 </div>
                             </div>
                         </div>
-                    </li>
+                    </li> -->
                     @if (\App\CentralLogics\Helpers::module_permission_check('order'))
                         <li class="nav-item __nav-item">
                             <a href="{{ route('admin.dashboard')}}" id="tourb-8"
                                class="__nav-link navbar-round-btn {{ Request::is('admin/dispatch*') ? 'active' : '' }}">
                                 <img src="{{asset('assets/admin/img/new-img/dispatch.svg')}}" alt="public/img">
-                                <span>{{ translate('Dispatch Management')}}</span>
+                                <span>{{ translate('Delivery Users')}}</span>
                             </a>
                         </li>
                     @endif
