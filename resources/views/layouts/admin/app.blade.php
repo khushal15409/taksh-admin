@@ -576,6 +576,79 @@
                 setTimeout(maintainSidebarVisibility, 50);
             }
         });
+
+        // Sidebar Menu Toggle Functionality
+        // Vendor Users button - Show only vendor menus
+        const vendorOnlyToggle = document.getElementById('vendor-only-toggle');
+        if (vendorOnlyToggle) {
+            vendorOnlyToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Hide all non-vendor menu items
+                document.querySelectorAll('#navbar-vertical-content .non-vendor-menu').forEach(function(el) {
+                    el.style.display = 'none';
+                });
+                
+                // Also hide menu items that don't have vendor-menu class (fallback)
+                document.querySelectorAll('#navbar-vertical-content .navbar-vertical-aside-has-menu').forEach(function(el) {
+                    if (!el.classList.contains('vendor-menu')) {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // Hide nav-item subtitles that are not vendor-related
+                document.querySelectorAll('#navbar-vertical-content .nav-item').forEach(function(el) {
+                    if (!el.classList.contains('vendor-menu')) {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // Show all vendor menu items
+                document.querySelectorAll('#navbar-vertical-content .vendor-menu').forEach(function(el) {
+                    el.style.display = '';
+                });
+                
+                // Add active state to Vendor Users button
+                vendorOnlyToggle.classList.add('active');
+                
+                // Remove active state from All Menus button
+                const showAllToggle = document.getElementById('show-all-menus-toggle');
+                if (showAllToggle) {
+                    showAllToggle.classList.remove('active');
+                }
+            });
+        }
+
+        // All Menus button - Show all menus (default view)
+        const showAllMenusToggle = document.getElementById('show-all-menus-toggle');
+        if (showAllMenusToggle) {
+            showAllMenusToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Show all menu items (both vendor and non-vendor)
+                document.querySelectorAll('#navbar-vertical-content .non-vendor-menu, #navbar-vertical-content .vendor-menu').forEach(function(el) {
+                    el.style.display = '';
+                });
+                
+                // Show all menu items (fallback for items without explicit classes)
+                document.querySelectorAll('#navbar-vertical-content .navbar-vertical-aside-has-menu').forEach(function(el) {
+                    el.style.display = '';
+                });
+                
+                // Show all nav-item subtitles
+                document.querySelectorAll('#navbar-vertical-content .nav-item').forEach(function(el) {
+                    el.style.display = '';
+                });
+                
+                // Remove active state from Vendor Users button
+                if (vendorOnlyToggle) {
+                    vendorOnlyToggle.classList.remove('active');
+                }
+                
+                // Add active state to All Menus button
+                showAllMenusToggle.classList.add('active');
+            });
+        }
     });
 </script>
 
