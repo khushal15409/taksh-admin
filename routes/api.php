@@ -11,6 +11,13 @@ use App\Http\Controllers\Api\ReturnController;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\Express30Controller;
+use App\Http\Controllers\Api\Vendor\AuthController as VendorAuthController;
+use App\Http\Controllers\Api\Salesman\AuthController as SalesmanAuthController;
+use App\Http\Controllers\Api\Salesman\VendorVerificationController;
+use App\Http\Controllers\Api\Salesman\LocationController;
+use App\Http\Controllers\Api\Salesman\VendorController as SalesmanVendorController;
+use App\Http\Controllers\Admin\VendorApprovalController;
+use App\Http\Controllers\Admin\VendorAssignmentController;
 
 // Public routes
 Route::prefix('auth')->group(function () {
@@ -66,4 +73,34 @@ Route::prefix('cart')->group(function () {
     Route::get('cart', [CartController::class, 'index']);
     Route::post('update', [CartController::class, 'update']);
     Route::delete('item/{id}', [CartController::class, 'destroy']);
+});
+
+// Vendor Registration (Public)
+Route::prefix('vendor')->group(function () {
+    Route::post('register', [VendorAuthController::class, 'register']);
+    Route::post('login', [VendorAuthController::class, 'login']);
+});
+
+// Salesman Login (Public)
+Route::prefix('salesman')->group(function () {
+    Route::post('login', [SalesmanAuthController::class, 'login']);
+});
+
+// Salesman routes (require authentication and salesman role)
+Route::middleware(['auth:sanctum', 'role:salesman'])->prefix('salesman')->group(function () {
+    // Location management
+    Route::post('location/update', [LocationController::class, 'update']);
+
+    // Nearby vendors (auto-matched by location)
+    Route::get('vendors/nearby', [SalesmanVendorController::class, 'nearby']);
+
+    // Vendor verification
+    Route::post('vendor/{vendor_id}/verify', [VendorVerificationController::class, 'verify']);
+});
+
+// Admin API routes (require authentication and super-admin role)
+Route::middleware(['auth:sanctum', 'role:super-admin'])->prefix('admin')->group(function () {
+    Route::post('vendor/{vendor_id}/assign-salesman', [VendorAssignmentController::class, 'assignSalesman']);
+    Route::post('vendor/{vendor_id}/approve', [VendorApprovalController::class, 'approve']);
+    Route::post('vendor/{vendor_id}/reject', [VendorApprovalController::class, 'reject']);
 });

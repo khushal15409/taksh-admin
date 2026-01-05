@@ -686,6 +686,42 @@
                     </li>
                     <!-- End Product Management -->
 
+                    <!-- Vendor Management -->
+                    <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/vendor*') ? 'active' : '' }}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:void(0)"
+                            title="Vendor Management">
+                            <i class="tio-user nav-icon"></i>
+                            <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
+                                Vendor Management
+                            </span>
+                        </a>
+                        <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                            style="display:{{ Request::is('admin/vendor*') ? 'block' : 'none' }}">
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/vendor/assignment*') ? 'active' : '' }}"
+                                   href="{{ route('admin.vendor.assignment.index') }}">
+                                    <span class="tio-circle nav-indicator-icon"></span>
+                                    <span class="text-truncate">Vendor Assignment</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/vendor/approval*') ? 'active' : '' }}"
+                                   href="{{ route('admin.vendor.approval.index') }}">
+                                    <span class="tio-circle nav-indicator-icon"></span>
+                                    <span class="text-truncate">Vendor Approval</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('admin/salesmen*') ? 'active' : '' }}"
+                                   href="{{ route('admin.salesmen.index') }}">
+                                    <span class="tio-circle nav-indicator-icon"></span>
+                                    <span class="text-truncate">Salesmen</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- End Vendor Management -->
+
                     <!-- Store Store -->
                     <li class="nav-item">
                         <small class="nav-subtitle"

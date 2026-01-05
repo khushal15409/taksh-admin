@@ -1129,3 +1129,491 @@ longitude: 72.5714
 -   Estimated delivery time is set to current time + 30 minutes
 
 ---
+
+## 🏪 VENDOR REGISTRATION & APPROVAL ENDPOINTS
+
+### 23. Vendor Registration
+
+**POST** `/api/vendor/register`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+-   `Content-Type: multipart/form-data` (required for file uploads)
+
+**Body (FormData):**
+
+**🏪 Shop Details (Required):**
+
+```
+shop_name: ABC Shop (required)
+shop_address: 123 Main Street, Shop Area (required)
+shop_pincode: 400001 (required, max 10 characters)
+shop_latitude: 19.0760 (optional, decimal)
+shop_longitude: 72.8777 (optional, decimal)
+category_id: 1 (optional, must exist in categories table)
+shop_images[]: [file1.jpg, file2.jpg] (optional, multiple images, max 15MB each)
+```
+
+**👤 Owner Details (Required):**
+
+```
+owner_name: John Doe (required)
+owner_address: 456 Owner Street (required)
+owner_pincode: 400002 (required, max 10 characters)
+owner_latitude: 19.0760 (optional, decimal)
+owner_longitude: 72.8777 (optional, decimal)
+owner_image: [file.jpg] (optional, max 15MB)
+```
+
+**📞 Contact (Required):**
+
+```
+mobile_number: 7777777771 (required, 10 digits, unique)
+email: vendor@example.com (required, unique)
+```
+
+**📄 Documents (Required):**
+
+```
+aadhaar_file: [file.pdf/jpg/png] (required, max 15MB)
+aadhaar_number: 123456789012 (required, max 12 characters)
+pan_file: [file.pdf/jpg/png] (required, max 15MB)
+pan_number: ABCDE1234F (required, max 10 characters)
+bank_file: [file.pdf/jpg/png] (required, max 15MB)
+bank_account_number: 1234567890 (required, max 50 characters)
+ifsc_code: BKID0001234 (required, max 11 characters)
+gst_file: [file.pdf/jpg/png] (required if non_gst_file not provided, max 15MB)
+gst_number: GST123456 (required if gst_file provided, max 15 characters)
+non_gst_file: [file.pdf/jpg/png] (required if gst_file not provided, max 15MB)
+fssai_file: [file.pdf/jpg/png] (required, max 15MB)
+msme_file: [file.pdf/jpg/png] (optional, max 15MB)
+shop_agreement_file: [file.pdf/jpg/png] (optional, max 15MB)
+```
+
+**Backward Compatibility (Optional - for old API calls):**
+
+```
+vendor_name: ABC Store (optional, uses owner_name if not provided)
+address: 123 Main Street (optional, uses shop_address if not provided)
+state_id: 1 (optional, must exist in states table)
+city_id: 1 (optional, must exist in cities table)
+pincode: 400001 (optional, uses shop_pincode if not provided)
+bank_name: Bank of India (optional)
+```
+
+**Description:** Registers a new vendor with detailed onboarding information including shop details, owner details, geo-location, images, and mandatory documents. Creates a user account with `user_type = vendor`, `vendor_status = pending`, and `is_active = false`. All documents are stored in `vendor_documents` table with `is_verified = false`. No password required. Vendor must wait for admin approval before login.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Vendor registration successful. Waiting for admin approval.",
+    "data": {
+        "vendor_id": 1,
+        "user_id": 10,
+        "documents_uploaded": 7,
+        "message": "Vendor registration successful. Waiting for admin approval."
+    }
+}
+```
+
+**Note:**
+
+-   Vendor status will be `pending` and verification status will be `pending` after registration.
+-   All documents are uploaded and stored securely in `vendor_documents` table.
+-   Shop images are stored as JSON array.
+-   Either `gst_file` OR `non_gst_file` is required (not both).
+-   Maximum file size: 15MB per file.
+-   Files accepted: JPEG, PNG, JPG, GIF (for images), PDF (for documents).
+
+---
+
+### 24. Vendor Login (OTP)
+
+**POST** `/api/vendor/login`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile_number: 7777777771 (required, 10 digits)
+otp: 1234 (required, fixed OTP for testing)
+```
+
+**Description:** Allows vendor to login using mobile number and OTP. Vendor can only login if:
+
+-   `user_type = vendor`
+-   `vendor_status = approved`
+-   `verification_status = approved`
+-   `is_active = true`
+
+Otherwise returns approval pending message.
+
+**Response (Success):**
+
+```json
+{
+    "success": true,
+    "message": "Vendor login successful.",
+    "data": {
+        "user": {
+            "id": 10,
+            "mobile": "7777777771",
+            "name": "Vendor 1",
+            "email": "vendor1@taksh.com",
+            "user_type": "vendor"
+        },
+        "vendor": {
+            "id": 1,
+            "vendor_name": "Vendor 1",
+            "shop_name": "Shop 1"
+        },
+        "token": "1|xxxxxxxxxxxxxxxxxxxx"
+    }
+}
+```
+
+**Response (Not Approved):**
+
+```json
+{
+    "success": false,
+    "message": "Vendor account is not approved yet. Please wait for admin approval.",
+    "data": null
+}
+```
+
+**Test Data:**
+
+-   Mobile: `7777777771`, `7777777772` (from seeder)
+-   OTP: `1234` (fixed for all)
+
+---
+
+### 25. Salesman Login (OTP)
+
+**POST** `/api/salesman/login`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile_number: 8888888881 (required, 10 digits)
+otp: 1234 (required, fixed OTP for testing)
+```
+
+**Description:** Allows salesman to login using mobile number and OTP. Only users with `user_type = salesman` can login.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Salesman login successful.",
+    "data": {
+        "user": {
+            "id": 8,
+            "mobile": "8888888881",
+            "name": "Salesman 1",
+            "email": "salesman1@taksh.com",
+            "user_type": "salesman"
+        },
+        "token": "1|xxxxxxxxxxxxxxxxxxxx"
+    }
+}
+```
+
+**Test Data:**
+
+-   Mobile: `8888888881`, `8888888882` (from seeder)
+-   OTP: `1234` (fixed for all)
+
+---
+
+### 26. View Assigned Vendors (Salesman)
+
+**GET** `/api/salesman/vendors`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required, salesman token)
+-   `Accept-Language: en` (optional)
+
+**Description:** Returns list of vendors assigned to the logged-in salesman with `verification_status = assigned`.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Operation successful",
+    "data": {
+        "vendors": [
+            {
+                "id": 1,
+                "vendor_name": "Vendor 1",
+                "shop_name": "Shop 1",
+                "mobile_number": "7777777771",
+                "email": "vendor1@taksh.com",
+                "address": "123 Main Street",
+                "state": "Maharashtra",
+                "city": "Mumbai",
+                "pincode": "400001",
+                "verification_status": "assigned",
+                "created_at": "2026-01-05T07:15:00.000000Z"
+            }
+        ]
+    }
+}
+```
+
+---
+
+### 27. Submit Vendor Verification (Salesman)
+
+**POST** `/api/salesman/vendor/{vendor_id}/verify`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required, salesman token)
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `vendor_id`: Vendor ID (required)
+
+**Body (FormData):**
+
+```
+shop_photo: [file] (required, image, max 15MB, jpeg/png/jpg/gif)
+license_photo: [file] (optional, image, max 15MB, jpeg/png/jpg/gif)
+latitude: 23.0225 (optional, numeric, between -90 and 90)
+longitude: 72.5714 (optional, numeric, between -180 and 180)
+remarks: Shop verified, all documents checked (optional, max 1000 characters)
+```
+
+**Description:** Allows salesman to submit verification for an assigned vendor. Creates a verification record and updates vendor status to `verified`. Vendor must be assigned to the logged-in salesman and have `verification_status = assigned`.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Vendor verification submitted successfully.",
+    "data": {
+        "vendor_id": 1,
+        "message": "Vendor verification submitted successfully."
+    }
+}
+```
+
+**Note:** After verification, vendor status changes to `verified` and is ready for admin approval.
+
+---
+
+### 28. Assign Salesman to Vendor (Super Admin)
+
+**POST** `/api/admin/vendor/{vendor_id}/assign-salesman`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required, super-admin token)
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `vendor_id`: Vendor ID (required)
+
+**Body (FormData):**
+
+```
+salesman_id: 8 (required, must exist in users table with user_type = salesman)
+```
+
+**Description:** Super admin assigns a salesman to a pending vendor. Updates `assigned_salesman_id` and sets `verification_status = assigned`.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Salesman assigned successfully.",
+    "data": {
+        "vendor_id": 1,
+        "salesman_id": 8,
+        "message": "Salesman assigned successfully."
+    }
+}
+```
+
+**Note:** Only super-admin role can access this endpoint. Salesman must have `user_type = salesman`.
+
+---
+
+### 29. Approve Vendor (Super Admin)
+
+**POST** `/api/admin/vendor/{vendor_id}/approve`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required, super-admin token)
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `vendor_id`: Vendor ID (required)
+
+**Body:** None
+
+**Description:** Super admin approves a verified vendor. Updates vendor status to `approved`, sets `is_active = true`, and assigns vendor role permissions. Vendor can now login.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Vendor approved successfully.",
+    "data": {
+        "vendor_id": 1,
+        "message": "Vendor approved successfully."
+    }
+}
+```
+
+**Note:** Vendor must have `verification_status = verified` before approval. Only super-admin role can access this endpoint.
+
+---
+
+### 30. Reject Vendor (Super Admin)
+
+**POST** `/api/admin/vendor/{vendor_id}/reject`
+
+**Headers:**
+
+-   `Authorization: Bearer {token}` (required, super-admin token)
+-   `Accept-Language: en` (optional)
+
+**URL Parameters:**
+
+-   `vendor_id`: Vendor ID (required)
+
+**Body:** None
+
+**Description:** Super admin rejects a vendor. Updates vendor status to `rejected` and sets `is_active = false`. Vendor cannot login.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Vendor rejected successfully.",
+    "data": {
+        "vendor_id": 1,
+        "message": "Vendor rejected successfully."
+    }
+}
+```
+
+**Note:** Only super-admin role can access this endpoint.
+
+---
+
+## 📋 VENDOR SYSTEM FLOW
+
+### Complete Vendor Onboarding Flow
+
+1. **Vendor Registration:** POST `/api/vendor/register`
+
+    - Vendor submits registration form
+    - Status: `pending`, `verification_status: pending`
+    - Vendor cannot login yet
+
+2. **Admin Assigns Salesman:** POST `/api/admin/vendor/{vendor_id}/assign-salesman`
+
+    - Super admin assigns a salesman
+    - Status: `verification_status: assigned`
+
+3. **Salesman Verifies Vendor:** POST `/api/salesman/vendor/{vendor_id}/verify`
+
+    - Salesman visits vendor location
+    - Uploads shop photos and documents
+    - Status: `verification_status: verified`
+
+4. **Admin Approves Vendor:** POST `/api/admin/vendor/{vendor_id}/approve`
+
+    - Super admin reviews and approves
+    - Status: `approved`, `is_active: true`
+    - Vendor can now login
+
+5. **Vendor Login:** POST `/api/vendor/login`
+    - Vendor logs in with mobile + OTP
+    - Receives authentication token
+
+### Test Sequence
+
+1. Register vendor → `/api/vendor/register`
+2. Login as super admin → `/api/auth/verify-otp` (mobile: 9999999999)
+3. Assign salesman → `/api/admin/vendor/{vendor_id}/assign-salesman`
+4. Login as salesman → `/api/salesman/login` (mobile: 8888888881)
+5. View assigned vendors → `/api/salesman/vendors`
+6. Verify vendor → `/api/salesman/vendor/{vendor_id}/verify`
+7. Approve vendor → `/api/admin/vendor/{vendor_id}/approve`
+8. Vendor login → `/api/vendor/login` (mobile: 7777777771)
+
+---
+
+## 🔗 VENDOR SYSTEM QUICK REFERENCE
+
+| Endpoint                                 | Method | Auth | FormData | Role Required |
+| ---------------------------------------- | ------ | ---- | -------- | ------------- |
+| `/api/vendor/register`                   | POST   | ❌   | ✅       | -             |
+| `/api/vendor/login`                      | POST   | ❌   | ✅       | -             |
+| `/api/salesman/login`                    | POST   | ❌   | ✅       | -             |
+| `/api/salesman/vendors`                  | GET    | ✅   | ❌       | salesman      |
+| `/api/salesman/vendor/{id}/verify`       | POST   | ✅   | ✅       | salesman      |
+| `/api/admin/vendor/{id}/assign-salesman` | POST   | ✅   | ✅       | super-admin   |
+| `/api/admin/vendor/{id}/approve`         | POST   | ✅   | ❌       | super-admin   |
+| `/api/admin/vendor/{id}/reject`          | POST   | ✅   | ❌       | super-admin   |
+
+**Legend:**
+
+-   ❌ = Not required
+-   ✅ = Required
+-   `salesman` = Requires salesman role
+-   `super-admin` = Requires super-admin role
+
+---
+
+## 🧪 VENDOR SYSTEM TEST DATA
+
+### Users (from VendorSystemSeeder)
+
+-   **Super Admin:** `9999999999` (OTP: `1234`)
+-   **Salesman 1:** `8888888881` (OTP: `1234`)
+-   **Salesman 2:** `8888888882` (OTP: `1234`)
+-   **Vendor 1 (Pending):** `7777777771` (OTP: `1234`)
+-   **Vendor 2 (Verified):** `7777777772` (OTP: `1234`)
+
+### Vendor Status Flow
+
+-   `pending` → Vendor registered, waiting for salesman assignment
+-   `assigned` → Salesman assigned, waiting for verification
+-   `verified` → Salesman verified, waiting for admin approval
+-   `approved` → Admin approved, vendor can login
+-   `rejected` → Admin rejected, vendor cannot login
+
+### Spatie Roles
+
+-   `super-admin` - Full access to vendor management
+-   `salesman` - Can verify assigned vendors
+-   `vendor` - Can login and access vendor features (after approval)
+
+---

@@ -88,5 +88,69 @@ return [
     'unauthorized' => 'Authentication required. Please provide a valid Bearer token.',
     'not_found' => 'Resource not found',
     'server_error' => 'Internal server error',
+    
+    // Vendor
+    'vendor' => [
+        'register' => [
+            'pending' => 'Vendor registration successful. Waiting for admin approval.',
+            'success' => 'Vendor registration completed successfully.',
+            'verification_required' => 'Documents uploaded. Verification required.',
+        ],
+        'document' => [
+            'uploaded' => 'Documents uploaded successfully.',
+        ],
+        'assigned_to_salesman' => 'Salesman assigned successfully.',
+        'verified_by_salesman' => 'Vendor verified by salesman successfully.',
+        'approved' => 'Vendor approved successfully.',
+        'rejected' => 'Vendor rejected successfully.',
+        'login' => [
+            'success' => 'Vendor login successful.',
+            'not_approved' => 'Vendor account is not approved yet. Please wait for admin approval.',
+        ],
+        'verification' => [
+            'invalid_status' => 'Vendor is not in assigned status.',
+            'submitted' => 'Vendor verification submitted successfully.',
+        ],
+        'approval' => [
+            'not_verified' => 'Vendor must be verified by salesman before approval.',
+        ],
+    ],
+    
+    // Salesman
+    'salesman' => [
+        'login' => [
+            'success' => 'Salesman login successful.',
+            'inactive' => 'Your account is inactive. Please contact administrator.',
+            'location' => [
+                'updated' => 'Location updated successfully.',
+            ],
+        ],
+        'location' => [
+            'updated' => 'Location updated successfully.',
+            'required' => 'Please update your location to see nearby vendors.',
+        ],
+        'vendors' => [
+            'nearby' => 'Nearby vendors fetched successfully.',
+        ],
+        'verification' => [
+            'submitted' => 'Vendor verification submitted successfully.',
+            'too_far' => 'Vendor is too far away. Maximum distance is 15 KM.',
+        ],
+        'created' => [
+            'success' => 'Salesman created successfully.',
+        ],
+        'updated' => [
+            'success' => 'Salesman updated successfully.',
+        ],
+        'status' => [
+            'updated' => 'Salesman status updated successfully.',
+        ],
+    ],
+    'vendor' => [
+        'verification' => [
+            'too_far' => 'Vendor is too far away. Maximum distance is 15 KM.',
+            'location_missing' => 'Vendor location coordinates are missing.',
+        ],
+    ],
 ];
 
