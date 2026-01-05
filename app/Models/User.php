@@ -20,6 +20,9 @@ class User extends Authenticatable
         'image',
         'is_verified',
         'status',
+        'user_type',
+        'vendor_status',
+        'is_active',
     ];
 
     protected $hidden = [];
@@ -28,6 +31,7 @@ class User extends Authenticatable
     {
         return [
             'is_verified' => 'boolean',
+            'is_active' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
@@ -46,5 +50,25 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function vendor()
+    {
+        return $this->hasOne(Vendor::class);
+    }
+
+    public function assignedVendors()
+    {
+        return $this->hasMany(Vendor::class, 'assigned_salesman_id');
+    }
+
+    public function location()
+    {
+        return $this->hasOne(SalesmanLocation::class, 'salesman_id');
+    }
+
+    public function salesmanProfile()
+    {
+        return $this->hasOne(SalesmanProfile::class);
     }
 }

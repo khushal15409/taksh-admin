@@ -1,0 +1,331 @@
+<?php
+
+namespace App\Http\Controllers\Api\Vendor;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Vendor\RegisterRequest;
+use App\Http\Requests\Api\Vendor\LoginRequest;
+use App\Models\User;
+use App\Models\Vendor;
+use App\Models\VendorDocument;
+use App\Models\OtpVerification;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
+use Spatie\Permission\Models\Role;
+
+class AuthController extends Controller
+{
+    use ApiResponseTrait;
+
+    /**
+     * Vendor Registration
+     */
+    public function register(RegisterRequest $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Use owner_name as vendor_name if vendor_name not provided (backward compatibility)
+            $vendorName = $request->vendor_name ?? $request->owner_name;
+
+            // Create user account
+            $user = User::create([
+                'mobile' => $request->mobile_number,
+                'name' => $vendorName,
+                'email' => $request->email,
+                'user_type' => 'vendor',
+                'vendor_status' => 'pending',
+                'is_active' => false,
+                'is_verified' => false,
+                'status' => 'active',
+            ]);
+
+            // Assign vendor role (inactive)
+            $vendorRole = Role::firstOrCreate(['name' => 'vendor']);
+            $user->assignRole($vendorRole);
+
+            // Upload shop images
+            $shopImages = [];
+            if ($request->hasFile('shop_images')) {
+                foreach ($request->file('shop_images') as $image) {
+                    $path = $image->store('vendors/shop_images', 'public');
+                    $shopImages[] = $path;
+                }
+            }
+
+            // Upload owner image
+            $ownerImagePath = null;
+            if ($request->hasFile('owner_image')) {
+                $ownerImagePath = $request->file('owner_image')->store('vendors/owner_images', 'public');
+            }
+
+            // Prepare vendor data
+            $vendorData = [
+                'user_id' => $user->id,
+                'vendor_name' => $vendorName,
+                'owner_name' => $request->owner_name,
+                'shop_name' => $request->shop_name,
+                'shop_address' => $request->shop_address,
+                'shop_pincode' => $request->shop_pincode,
+                'shop_latitude' => $request->shop_latitude,
+                'shop_longitude' => $request->shop_longitude,
+                'category_id' => $request->category_id,
+                'shop_images' => !empty($shopImages) ? $shopImages : null,
+                'owner_address' => $request->owner_address,
+                'owner_pincode' => $request->owner_pincode,
+                'owner_latitude' => $request->owner_latitude,
+                'owner_longitude' => $request->owner_longitude,
+                'owner_image' => $ownerImagePath,
+                'email' => $request->email,
+                'mobile_number' => $request->mobile_number,
+                'status' => 'pending',
+                'verification_status' => 'pending',
+            ];
+
+            // Backward compatibility: Use old fields if provided, otherwise use new fields
+            $vendorData['address'] = $request->address ?? $request->shop_address;
+            $vendorData['state_id'] = $request->state_id;
+            $vendorData['city_id'] = $request->city_id;
+            $vendorData['pincode'] = $request->pincode ?? $request->shop_pincode;
+            
+            // Bank details (backward compatibility)
+            if ($request->bank_name) {
+                $vendorData['bank_name'] = $request->bank_name;
+            }
+            if ($request->account_number) {
+                $vendorData['account_number'] = $request->account_number;
+            } elseif ($request->bank_account_number) {
+                $vendorData['account_number'] = $request->bank_account_number;
+            }
+            if ($request->ifsc_code) {
+                $vendorData['ifsc_code'] = $request->ifsc_code;
+            }
+            
+            // GST and PAN (backward compatibility)
+            if ($request->gst_number) {
+                $vendorData['gst_number'] = $request->gst_number;
+            }
+            if ($request->pan_number) {
+                $vendorData['pan_number'] = $request->pan_number;
+            }
+
+            // Create vendor record
+            $vendor = Vendor::create($vendorData);
+
+            // Upload and save documents
+            $documents = [];
+
+            // Aadhaar
+            if ($request->hasFile('aadhaar_file')) {
+                $aadhaarPath = $request->file('aadhaar_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'aadhaar',
+                    'document_number' => $request->aadhaar_number,
+                    'document_file' => $aadhaarPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // PAN
+            if ($request->hasFile('pan_file')) {
+                $panPath = $request->file('pan_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'pan',
+                    'document_number' => $request->pan_number,
+                    'document_file' => $panPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // Bank
+            if ($request->hasFile('bank_file')) {
+                $bankPath = $request->file('bank_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'bank',
+                    'document_number' => $request->bank_account_number,
+                    'document_file' => $bankPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // GST or Non-GST
+            if ($request->hasFile('gst_file')) {
+                $gstPath = $request->file('gst_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'gst',
+                    'document_number' => $request->gst_number,
+                    'document_file' => $gstPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            } elseif ($request->hasFile('non_gst_file')) {
+                $nonGstPath = $request->file('non_gst_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'non_gst',
+                    'document_number' => null,
+                    'document_file' => $nonGstPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // MSME (optional)
+            if ($request->hasFile('msme_file')) {
+                $msmePath = $request->file('msme_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'msme',
+                    'document_number' => null,
+                    'document_file' => $msmePath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // FSSAI
+            if ($request->hasFile('fssai_file')) {
+                $fssaiPath = $request->file('fssai_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'fssai',
+                    'document_number' => null,
+                    'document_file' => $fssaiPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // Shop Agreement (optional)
+            if ($request->hasFile('shop_agreement_file')) {
+                $agreementPath = $request->file('shop_agreement_file')->store('vendors/documents', 'public');
+                $documents[] = [
+                    'vendor_id' => $vendor->id,
+                    'document_type' => 'shop_agreement',
+                    'document_number' => null,
+                    'document_file' => $agreementPath,
+                    'is_verified' => false,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // Bulk insert documents
+            if (!empty($documents)) {
+                VendorDocument::insert($documents);
+            }
+
+            DB::commit();
+
+            return $this->success([
+                'vendor_id' => $vendor->id,
+                'user_id' => $user->id,
+                'documents_uploaded' => count($documents),
+                'message' => 'Vendor registration successful. Waiting for admin approval.',
+            ], 'vendor.register.pending');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Vendor registration error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->error('api.server_error', 500);
+        }
+    }
+
+    /**
+     * Vendor Login (OTP)
+     */
+    public function login(LoginRequest $request)
+    {
+        $mobile = $request->mobile_number;
+        $otp = $request->otp;
+
+        // TEST MODE: Fixed OTP = 1234
+        if ($otp !== "1234") {
+            return $this->error('api.otp_invalid', 400);
+        }
+
+        // Find user
+        $user = User::where('mobile', $mobile)
+            ->where('user_type', 'vendor')
+            ->first();
+
+        if (!$user) {
+            return $this->error('api.not_found', 404);
+        }
+
+        // Check if vendor is approved
+        $vendor = $user->vendor;
+        if (!$vendor) {
+            return $this->error('vendor.login.not_approved', 403);
+        }
+
+        // Check approval status
+        if ($user->vendor_status !== 'approved' || 
+            $vendor->status !== 'approved' || 
+            !$user->is_active) {
+            return $this->error('vendor.login.not_approved', 403);
+        }
+
+        // Verify OTP (TEST MODE: accept 1234)
+        $otpVerification = OtpVerification::where('mobile', $mobile)
+            ->where('is_used', false)
+            ->where('expires_at', '>', Carbon::now())
+            ->latest()
+            ->first();
+
+        if (!$otpVerification && $otp === "1234") {
+            // Create OTP record for consistency in TEST MODE
+            $otpVerification = OtpVerification::create([
+                'mobile' => $mobile,
+                'otp' => Hash::make('1234'),
+                'expires_at' => Carbon::now()->addMinutes(5),
+                'is_used' => false,
+            ]);
+        }
+
+        if ($otpVerification) {
+            $otpVerification->update(['is_used' => true]);
+        }
+
+        // Generate Sanctum token
+        $token = $user->createToken('vendor-app')->plainTextToken;
+
+        return $this->success([
+            'user' => [
+                'id' => $user->id,
+                'mobile' => $user->mobile,
+                'name' => $user->name,
+                'email' => $user->email,
+                'user_type' => $user->user_type,
+            ],
+            'vendor' => [
+                'id' => $vendor->id,
+                'vendor_name' => $vendor->vendor_name,
+                'shop_name' => $vendor->shop_name,
+            ],
+            'token' => $token,
+        ], 'vendor.login.success');
+    }
+}

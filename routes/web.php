@@ -104,4 +104,32 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         // Order detail (must be last to avoid conflicts)
         Route::get('{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
     });
+    
+    // Vendor Management Routes
+    Route::prefix('vendor')->name('vendor.')->group(function () {
+        // Vendor Assignment
+        Route::prefix('assignment')->name('assignment.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'index'])->name('index');
+            Route::get('{id}', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'show'])->name('show');
+            Route::post('{id}/assign', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'assign'])->name('assign');
+        });
+        
+        // Vendor Approval
+        Route::prefix('approval')->name('approval.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\VendorApprovalController::class, 'index'])->name('index');
+            Route::get('{id}', [App\Http\Controllers\Admin\VendorApprovalController::class, 'show'])->name('show');
+            Route::post('{id}/approve', [App\Http\Controllers\Admin\VendorApprovalController::class, 'approveWeb'])->name('approve');
+            Route::post('{id}/reject', [App\Http\Controllers\Admin\VendorApprovalController::class, 'rejectWeb'])->name('reject');
+        });
+    });
+    
+    // Salesmen Management Routes
+    Route::prefix('salesmen')->name('salesmen.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\SalesmanController::class, 'index'])->name('index');
+        Route::get('create', [App\Http\Controllers\Admin\SalesmanController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\SalesmanController::class, 'store'])->name('store');
+        Route::get('{id}/edit', [App\Http\Controllers\Admin\SalesmanController::class, 'edit'])->name('edit');
+        Route::put('{id}', [App\Http\Controllers\Admin\SalesmanController::class, 'update'])->name('update');
+        Route::post('{id}/toggle-status', [App\Http\Controllers\Admin\SalesmanController::class, 'toggleStatus'])->name('toggle-status');
+    });
 });
