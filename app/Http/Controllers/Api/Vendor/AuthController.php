@@ -254,7 +254,154 @@ class AuthController extends Controller
     }
 
     /**
-     * Vendor Login (OTP)
+     * Send OTP to vendor mobile number
+     */
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'mobile_number' => 'required|string|regex:/^[0-9]{10}$/',
+        ]);
+
+        $mobile = $request->input('mobile_number');
+        $key = 'vendor-send-otp:' . $mobile;
+
+        // Rate limiting: max 5 requests per minute
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return $this->error('api.otp_rate_limit', 429);
+        }
+
+        RateLimiter::hit($key, 60);
+
+        // Check if vendor exists
+        $user = User::where('mobile', $mobile)
+            ->where('user_type', 'vendor')
+            ->first();
+
+        if (!$user) {
+            return $this->error('vendor.not_found', 404);
+        }
+
+        // Check if vendor is approved
+        $vendor = $user->vendor;
+        if (!$vendor) {
+            return $this->error('vendor.login.not_approved', 403);
+        }
+
+        // Check approval status
+        if ($user->vendor_status !== 'approved' || 
+            $vendor->status !== 'approved' || 
+            !$user->is_active) {
+            return $this->error('vendor.login.not_approved', 403);
+        }
+
+        // TEST MODE: Use fixed OTP = 1234
+        $otp = '1234';
+        $expiresAt = Carbon::now()->addMinutes(5);
+
+        // Hash OTP before storing (still store for future SMS integration)
+        $hashedOtp = Hash::make($otp);
+
+        // Store OTP
+        OtpVerification::create([
+            'mobile' => $mobile,
+            'otp' => $hashedOtp,
+            'expires_at' => $expiresAt,
+            'is_used' => false,
+        ]);
+
+        // In production, send OTP via SMS gateway
+        // TEST MODE: Fixed OTP = 1234
+        return $this->success([
+            'message' => 'OTP sent. Use 1234 for verification (TEST MODE)',
+            'expires_at' => $expiresAt->toDateTimeString(),
+        ], 'vendor.otp_sent');
+    }
+
+    /**
+     * Verify OTP and login vendor
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'mobile_number' => 'required|string|regex:/^[0-9]{10}$/',
+            'otp' => 'required|string',
+        ]);
+
+        $mobile = $request->input('mobile_number');
+        $otp = $request->input('otp');
+
+        // TEST MODE: Fixed OTP = 1234
+        if ($otp !== "1234") {
+            return $this->error('api.otp_invalid', 400);
+        }
+
+        // Find user
+        $user = User::where('mobile', $mobile)
+            ->where('user_type', 'vendor')
+            ->first();
+
+        if (!$user) {
+            return $this->error('vendor.not_found', 404);
+        }
+
+        // Check if vendor is approved
+        $vendor = $user->vendor;
+        if (!$vendor) {
+            return $this->error('vendor.login.not_approved', 403);
+        }
+
+        // Check approval status
+        if ($user->vendor_status !== 'approved' || 
+            $vendor->status !== 'approved' || 
+            !$user->is_active) {
+            return $this->error('vendor.login.not_approved', 403);
+        }
+
+        // Verify OTP
+        $otpVerification = OtpVerification::where('mobile', $mobile)
+            ->where('is_used', false)
+            ->where('expires_at', '>', Carbon::now())
+            ->latest()
+            ->first();
+
+        // In TEST MODE: If OTP is 1234 and no record exists, create one
+        if (!$otpVerification && $otp === "1234") {
+            // Create OTP record for consistency in TEST MODE
+            $otpVerification = OtpVerification::create([
+                'mobile' => $mobile,
+                'otp' => Hash::make('1234'),
+                'expires_at' => Carbon::now()->addMinutes(5),
+                'is_used' => false,
+            ]);
+        }
+
+        if ($otpVerification) {
+            $otpVerification->update(['is_used' => true]);
+        }
+
+        // Generate Sanctum token
+        $token = $user->createToken('vendor-app')->plainTextToken;
+
+        return $this->success([
+            'user' => [
+                'id' => $user->id,
+                'mobile' => $user->mobile,
+                'name' => $user->name,
+                'email' => $user->email,
+                'user_type' => $user->user_type,
+            ],
+            'vendor' => [
+                'id' => $vendor->id,
+                'vendor_name' => $vendor->vendor_name,
+                'shop_name' => $vendor->shop_name,
+            ],
+            'token' => $token,
+        ], 'vendor.login.success');
+    }
+
+    /**
+     * Vendor Login (OTP) - Legacy method, kept for backward compatibility
+     * @deprecated Use verifyOtp instead
      */
     public function login(LoginRequest $request)
     {
