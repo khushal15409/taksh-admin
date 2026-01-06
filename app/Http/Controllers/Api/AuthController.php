@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -104,19 +105,42 @@ class AuthController extends Controller
             ['mobile' => $mobile],
             [
                 'name' => null,
+                'user_type' => 'customer',
                 'is_verified' => true,
                 'status' => 'active',
             ]
         );
 
+        // Set user_type to 'customer' if it's null AND user doesn't have other roles
+        // Don't override existing user_type for admin, vendor, or salesman
+        // This endpoint is for customer authentication only
+        if (is_null($user->user_type) && !$user->hasAnyRole(['super-admin', 'admin', 'vendor', 'salesman'])) {
+            $user->user_type = 'customer';
+        }
+
         // Update user verification status (in case user existed but wasn't verified)
         if (!$user->is_verified) {
-            $user->update(['is_verified' => true]);
+            $user->is_verified = true;
         }
 
         // Ensure user status is active
         if ($user->status !== 'active') {
-            $user->update(['status' => 'active']);
+            $user->status = 'active';
+        }
+
+        // Save user changes
+        $user->save();
+
+        // Ensure customer role exists and assign it if user doesn't have any role
+        // Only assign customer role if user doesn't already have admin/vendor/salesman roles
+        if (!$user->hasAnyRole(['super-admin', 'admin', 'vendor', 'salesman'])) {
+            $customerRole = Role::firstOrCreate(
+                ['name' => 'customer'],
+                ['guard_name' => 'web']
+            );
+            if (!$user->hasRole('customer')) {
+                $user->assignRole($customerRole);
+            }
         }
 
         // Generate Sanctum token

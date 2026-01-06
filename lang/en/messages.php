@@ -162,5 +162,11 @@ return [
     // Dashboard
     'total_orders' => 'Total Orders',
     'newly_added' => 'Newly added',
+    'total_customers' => 'Total Customers',
+    
+    // Customer Management
+    'customers' => 'Customers',
+    'customer_details' => 'Customer Details',
+    'verification_status' => 'Verification Status',
 ];
 
