@@ -36,7 +36,7 @@ Route::prefix('express-30')->group(function () {
     Route::get('products', [Express30Controller::class, 'products']);
 });
 
-// Protected routes (require authentication)
+// Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
