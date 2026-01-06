@@ -51,11 +51,15 @@ class VendorController extends Controller
                 ->whereNotNull('vendors.shop_longitude')
                 ->havingRaw('distance <= 15')
                 ->orderBy('distance', 'asc')
-                ->with(['state', 'city', 'category'])
+                ->with(['state', 'city'])
                 ->get();
 
             // Format response
             $formattedVendors = $vendors->map(function ($vendor) {
+                // Get all categories for this vendor
+                $categories = $vendor->category_models;
+                $categoryNames = $categories->pluck('name')->toArray();
+                
                 return [
                     'id' => $vendor->id,
                     'shop_name' => $vendor->shop_name,
@@ -64,7 +68,8 @@ class VendorController extends Controller
                     'email' => $vendor->email,
                     'shop_address' => $vendor->shop_address ?? $vendor->address,
                     'shop_pincode' => $vendor->shop_pincode ?? $vendor->pincode,
-                    'category' => $vendor->category ? $vendor->category->name : null,
+                    'category' => !empty($categoryNames) ? implode(', ', $categoryNames) : null,
+                    'categories' => $categoryNames, // Also include as array
                     'location' => [
                         'city' => $vendor->city ? $vendor->city->name : null,
                         'state' => $vendor->state ? $vendor->state->name : null,

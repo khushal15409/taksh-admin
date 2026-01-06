@@ -93,9 +93,40 @@ class Vendor extends Model
         return $this->hasMany(VendorVerification::class);
     }
 
+    /**
+     * Get categories as array from comma-separated string
+     */
+    public function getCategoriesAttribute()
+    {
+        if (empty($this->category_id)) {
+            return [];
+        }
+        return array_filter(array_map('trim', explode(',', $this->category_id)));
+    }
+
+    /**
+     * Get category models from comma-separated IDs
+     */
+    public function getCategoryModelsAttribute()
+    {
+        $categoryIds = $this->categories;
+        if (empty($categoryIds)) {
+            return collect([]);
+        }
+        return Category::whereIn('id', $categoryIds)->get();
+    }
+
+    /**
+     * Legacy method - returns first category if multiple exist
+     * @deprecated Use getCategoryModelsAttribute() instead for multiple categories
+     */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        $categoryIds = $this->categories;
+        if (empty($categoryIds)) {
+            return null;
+        }
+        return Category::find($categoryIds[0]);
     }
 
     public function documents()

@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Api\Vendor;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
+use App\Models\Category;
 
 class RegisterRequest extends FormRequest
 {
@@ -28,7 +30,7 @@ class RegisterRequest extends FormRequest
             'shop_pincode' => 'required|string|max:10',
             'shop_latitude' => 'nullable|numeric|between:-90,90',
             'shop_longitude' => 'nullable|numeric|between:-180,180',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'nullable|string', // Accept comma-separated category IDs as string
             'shop_images' => 'nullable|array',
             'shop_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:15360', // 15MB max
             
@@ -74,5 +76,31 @@ class RegisterRequest extends FormRequest
             'pan_number' => 'nullable|string|max:10',
             'account_number' => 'nullable|string|max:50',
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function ($validator) {
+            // Validate comma-separated category IDs
+            if ($this->has('category_id') && !empty($this->category_id)) {
+                $categoryIds = array_filter(array_map('trim', explode(',', $this->category_id)));
+                
+                if (!empty($categoryIds)) {
+                    // Check if all category IDs exist
+                    $existingCategories = Category::whereIn('id', $categoryIds)->pluck('id')->toArray();
+                    $invalidIds = array_diff($categoryIds, $existingCategories);
+                    
+                    if (!empty($invalidIds)) {
+                        $validator->errors()->add(
+                            'category_id',
+                            'The following category IDs do not exist: ' . implode(', ', $invalidIds)
+                        );
+                    }
+                }
+            }
+        });
     }
 }

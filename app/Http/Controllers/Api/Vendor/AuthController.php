@@ -65,6 +65,20 @@ class AuthController extends Controller
                 $ownerImagePath = $request->file('owner_image')->store('vendors/owner_images', 'public');
             }
 
+            // Process category_id - accept comma-separated values
+            $categoryId = null;
+            if ($request->has('category_id') && !empty($request->category_id)) {
+                // If it's already a string with commas, use it as is
+                // If it's a single ID, convert to string
+                $categoryId = is_string($request->category_id) 
+                    ? $request->category_id 
+                    : (string) $request->category_id;
+                
+                // Clean up: remove spaces and ensure proper comma separation
+                $categoryId = preg_replace('/\s+/', '', $categoryId); // Remove spaces
+                $categoryId = trim($categoryId, ','); // Remove leading/trailing commas
+            }
+
             // Prepare vendor data
             $vendorData = [
                 'user_id' => $user->id,
@@ -75,7 +89,7 @@ class AuthController extends Controller
                 'shop_pincode' => $request->shop_pincode,
                 'shop_latitude' => $request->shop_latitude,
                 'shop_longitude' => $request->shop_longitude,
-                'category_id' => $request->category_id,
+                'category_id' => $categoryId,
                 'shop_images' => !empty($shopImages) ? $shopImages : null,
                 'owner_address' => $request->owner_address,
                 'owner_pincode' => $request->owner_pincode,
