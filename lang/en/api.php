@@ -114,6 +114,13 @@ return [
         'approval' => [
             'not_verified' => 'Vendor must be verified by salesman before approval.',
         ],
+        'categories_fetched' => 'Categories fetched successfully.',
+        'auto_assigned' => 'Vendor auto-assigned to salesman successfully.',
+        'already_assigned' => 'Vendor is already assigned to a salesman.',
+        'auto_assign' => [
+            'no_salesman_found' => 'No active salesman found with matching pincode. Please contact admin.',
+        ],
+        'not_found' => 'Vendor not found.',
     ],
     
     // Salesman
