@@ -36,7 +36,7 @@ Route::prefix('express-30')->group(function () {
     Route::get('products', [Express30Controller::class, 'products']);
 });
 
-// Protected routes (require authentication)
+// Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
@@ -75,15 +75,19 @@ Route::prefix('cart')->group(function () {
     Route::delete('item/{id}', [CartController::class, 'destroy']);
 });
 
-// Vendor Registration (Public)
+// Vendor Registration and Auth (Public)
 Route::prefix('vendor')->group(function () {
     Route::post('register', [VendorAuthController::class, 'register']);
-    Route::post('login', [VendorAuthController::class, 'login']);
+    Route::post('send-otp', [VendorAuthController::class, 'sendOtp']);
+    Route::post('verify-otp', [VendorAuthController::class, 'verifyOtp']);
+    Route::post('login', [VendorAuthController::class, 'login']); // Legacy, kept for backward compatibility
 });
 
-// Salesman Login (Public)
+// Salesman Auth (Public)
 Route::prefix('salesman')->group(function () {
-    Route::post('login', [SalesmanAuthController::class, 'login']);
+    Route::post('send-otp', [SalesmanAuthController::class, 'sendOtp']);
+    Route::post('verify-otp', [SalesmanAuthController::class, 'verifyOtp']);
+    Route::post('login', [SalesmanAuthController::class, 'login']); // Legacy, kept for backward compatibility
 });
 
 // Salesman routes (require authentication and salesman role)
@@ -97,6 +101,9 @@ Route::middleware(['auth:sanctum', 'role:salesman'])->prefix('salesman')->group(
     // Vendor verification
     Route::post('vendor/{vendor_id}/verify', [VendorVerificationController::class, 'verify']);
 });
+
+// Nearby vendors route (alternative path: /api/vendors/nearby)
+Route::middleware(['auth:sanctum', 'role:salesman'])->get('vendors/nearby', [SalesmanVendorController::class, 'nearby']);
 
 // Admin API routes (require authentication and super-admin role)
 Route::middleware(['auth:sanctum', 'role:super-admin'])->prefix('admin')->group(function () {

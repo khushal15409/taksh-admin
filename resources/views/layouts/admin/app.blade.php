@@ -584,8 +584,15 @@
             vendorOnlyToggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // Hide all non-vendor menu items
+                // Hide all non-vendor menu items (including customer menus)
                 document.querySelectorAll('#navbar-vertical-content .non-vendor-menu').forEach(function(el) {
+                    if (!el.classList.contains('vendor-menu')) {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // Hide customer menu items
+                document.querySelectorAll('#navbar-vertical-content .customer-menu').forEach(function(el) {
                     el.style.display = 'none';
                 });
                 
@@ -611,7 +618,63 @@
                 // Add active state to Vendor Users button
                 vendorOnlyToggle.classList.add('active');
                 
-                // Remove active state from All Menus button
+                // Remove active state from All Menus button and Customer toggle
+                const showAllToggle = document.getElementById('show-all-menus-toggle');
+                if (showAllToggle) {
+                    showAllToggle.classList.remove('active');
+                }
+                const customerOnlyToggle = document.getElementById('customer-only-toggle');
+                if (customerOnlyToggle) {
+                    customerOnlyToggle.classList.remove('active');
+                }
+            });
+        }
+
+        // Ecommerce Users button - Show only customer menus
+        const customerOnlyToggle = document.getElementById('customer-only-toggle');
+        if (customerOnlyToggle) {
+            customerOnlyToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Hide all non-customer menu items
+                document.querySelectorAll('#navbar-vertical-content .non-vendor-menu').forEach(function(el) {
+                    if (!el.classList.contains('customer-menu')) {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // Hide vendor menu items
+                document.querySelectorAll('#navbar-vertical-content .vendor-menu').forEach(function(el) {
+                    el.style.display = 'none';
+                });
+                
+                // Also hide menu items that don't have customer-menu class (fallback)
+                document.querySelectorAll('#navbar-vertical-content .navbar-vertical-aside-has-menu').forEach(function(el) {
+                    if (!el.classList.contains('customer-menu')) {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // Hide nav-item subtitles that are not customer-related
+                document.querySelectorAll('#navbar-vertical-content .nav-item').forEach(function(el) {
+                    if (!el.classList.contains('customer-menu')) {
+                        el.style.display = 'none';
+                    }
+                });
+                
+                // Show all customer menu items
+                document.querySelectorAll('#navbar-vertical-content .customer-menu').forEach(function(el) {
+                    el.style.display = '';
+                });
+                
+                // Add active state to Ecommerce Users button
+                customerOnlyToggle.classList.add('active');
+                
+                // Remove active state from other toggle buttons
+                const vendorOnlyToggle = document.getElementById('vendor-only-toggle');
+                if (vendorOnlyToggle) {
+                    vendorOnlyToggle.classList.remove('active');
+                }
                 const showAllToggle = document.getElementById('show-all-menus-toggle');
                 if (showAllToggle) {
                     showAllToggle.classList.remove('active');
@@ -625,8 +688,8 @@
             showAllMenusToggle.addEventListener('click', function(e) {
                 e.preventDefault();
                 
-                // Show all menu items (both vendor and non-vendor)
-                document.querySelectorAll('#navbar-vertical-content .non-vendor-menu, #navbar-vertical-content .vendor-menu').forEach(function(el) {
+                // Show all menu items (both vendor, customer, and non-vendor)
+                document.querySelectorAll('#navbar-vertical-content .non-vendor-menu, #navbar-vertical-content .vendor-menu, #navbar-vertical-content .customer-menu').forEach(function(el) {
                     el.style.display = '';
                 });
                 
@@ -640,9 +703,14 @@
                     el.style.display = '';
                 });
                 
-                // Remove active state from Vendor Users button
+                // Remove active state from all toggle buttons
+                const vendorOnlyToggle = document.getElementById('vendor-only-toggle');
                 if (vendorOnlyToggle) {
                     vendorOnlyToggle.classList.remove('active');
+                }
+                const customerOnlyToggle = document.getElementById('customer-only-toggle');
+                if (customerOnlyToggle) {
+                    customerOnlyToggle.classList.remove('active');
                 }
                 
                 // Add active state to All Menus button

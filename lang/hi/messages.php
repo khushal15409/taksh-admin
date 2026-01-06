@@ -55,5 +55,6 @@ return [
     // Dashboard
     'total_orders' => 'कुल ऑर्डर',
     'newly_added' => 'नए जोड़े गए',
+    'total_customers' => 'कुल ग्राहक',
 ];
 

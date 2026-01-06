@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -24,6 +25,8 @@ class DashboardController extends Controller
         $todayOrders = Order::whereDate('created_at', today())->count();
         $totalDelivered = Order::where('order_status', 'delivered')->count();
         $totalCanceled = Order::where('order_status', 'cancelled')->count();
+        $totalCustomers = User::where('user_type', 'customer')->count();
+        $todayCustomers = User::where('user_type', 'customer')->whereDate('created_at', today())->count();
 
         // Ecommerce dashboard data
         $data = [
@@ -33,8 +36,8 @@ class DashboardController extends Controller
             'delivered' => $totalDelivered,
             'total_canceled' => $totalCanceled,
             'canceled' => $totalCanceled,
-            'total_customers' => 11,
-            'new_customers' => 9,
+            'total_customers' => $totalCustomers,
+            'new_customers' => $todayCustomers,
             'total_sellers' => 1,
             'total_stores' => 1,
             'new_stores' => 0,
@@ -113,6 +116,8 @@ class DashboardController extends Controller
         $todayOrders = Order::whereDate('created_at', today())->count();
         $totalDelivered = Order::where('order_status', 'delivered')->count();
         $totalCanceled = Order::where('order_status', 'cancelled')->count();
+        $totalCustomers = User::where('user_type', 'customer')->count();
+        $todayCustomers = User::where('user_type', 'customer')->whereDate('created_at', today())->count();
 
         // Ecommerce dashboard order stats
         $data = [
@@ -122,8 +127,8 @@ class DashboardController extends Controller
             'delivered' => $totalDelivered,
             'total_canceled' => $totalCanceled,
             'canceled' => $totalCanceled,
-            'total_customers' => 11,
-            'new_customers' => 9,
+            'total_customers' => $totalCustomers,
+            'new_customers' => $todayCustomers,
             'total_sellers' => 1,
             'total_stores' => 1,
             'new_stores' => 0,
@@ -243,6 +248,8 @@ class DashboardController extends Controller
         $todayOrders = Order::whereDate('created_at', today())->count();
         $totalDelivered = Order::where('order_status', 'delivered')->count();
         $totalCanceled = Order::where('order_status', 'cancelled')->count();
+        $totalCustomers = User::where('user_type', 'customer')->count();
+        $todayCustomers = User::where('user_type', 'customer')->whereDate('created_at', today())->count();
 
         // Ecommerce dashboard data
         $data = [
@@ -252,15 +259,15 @@ class DashboardController extends Controller
             'delivered' => $totalDelivered,
             'total_canceled' => $totalCanceled,
             'canceled' => $totalCanceled,
-            'total_customers' => 11,
-            'new_customers' => 9,
+            'total_customers' => $totalCustomers,
+            'new_customers' => $todayCustomers,
             'total_sellers' => 1,
             'total_stores' => 1,
             'new_stores' => 0,
             'total_services' => 19,
             'total_items' => 19,
             'new_items' => 19,
-            'customer' => 11,
+            'customer' => $totalCustomers,
             'stores' => 1,
             'delivery_man' => 0,
             'order_received' => 2,

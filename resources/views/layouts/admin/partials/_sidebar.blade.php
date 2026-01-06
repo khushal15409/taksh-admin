@@ -686,6 +686,13 @@
                     </li>
                     <!-- End Product Management -->
 
+                    <!-- Vendor & Salesman Management Section -->
+                    <li class="nav-item vendor-menu">
+                        <small class="nav-subtitle"
+                            title="Vendor & Salesman Management">Vendor & Salesman Management</small>
+                        <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                    </li>
+
                     <!-- Vendor Management -->
                     <li class="navbar-vertical-aside-has-menu vendor-menu {{ Request::is('admin/vendor*') ? 'active' : '' }}">
                         <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:void(0)"
@@ -865,7 +872,7 @@
 
                     <!-- Customer Section -->
                     @if (\App\CentralLogics\Helpers::module_permission_check('customer_management'))
-                        <li class="nav-item non-vendor-menu">
+                        <li class="nav-item customer-menu">
                             <small class="nav-subtitle"
                                 title="{{ translate('messages.customer_section') }}">{{ translate('messages.customer_management') }}</small>
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
@@ -873,9 +880,9 @@
                         <!-- Custommer -->
 
                         <li
-                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/customer/list') || Request::is('admin/customer/view*') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/customer/list') || Request::is('admin/customer/view*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
-                                href="{{ route('admin.dashboard') }}"
+                                href="{{ route('admin.customer.list') }}"
                                 title="{{ translate('messages.customers') }}">
                                 <i class="tio-poi-user nav-icon"></i>
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
@@ -885,7 +892,7 @@
                         </li>
 
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/customer/wallet*') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/customer/wallet*') ? 'active' : '' }}">
 
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.customer_wallet') }}">
@@ -896,10 +903,10 @@
                                 </span>
                             </a>
 
-                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub customer-menu"
                                 style="display:{{ Request::is('admin/customer/wallet*') ? 'block' : 'none' }}">
                                 <li
-                                    class="nav-item {{ Request::is('admin/customer/wallet/add-fund') ? 'active' : '' }}">
+                                    class="nav-item customer-menu {{ Request::is('admin/customer/wallet/add-fund') ? 'active' : '' }}">
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
                                         title="{{ translate('messages.add_fund') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
@@ -909,7 +916,7 @@
                                 </li>
 
                                 <li
-                                    class="nav-item {{ Request::is('admin/customer/wallet/report*') ? 'active' : '' }}">
+                                    class="nav-item customer-menu {{ Request::is('admin/customer/wallet/report*') ? 'active' : '' }}">
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
                                         title="{{ translate('messages.report') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
@@ -921,7 +928,7 @@
                         </li>
 
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/customer/loyalty-point*') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/customer/loyalty-point*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link  nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.customer_loyalty_point') }}">
                                 <i class="tio-medal nav-icon"></i>
@@ -931,10 +938,10 @@
                                 </span>
                             </a>
 
-                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
+                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub customer-menu"
                                 style="display:{{ Request::is('admin/customer/loyalty-point*') ? 'block' : 'none' }}">
                                 <li
-                                    class="nav-item {{ Request::is('admin/customer/loyalty-point/report*') ? 'active' : '' }}">
+                                    class="nav-item customer-menu {{ Request::is('admin/customer/loyalty-point/report*') ? 'active' : '' }}">
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
                                         title="{{ translate('messages.report') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
@@ -947,7 +954,7 @@
 
                         <!-- End Custommer -->
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/customer/subscribed') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/customer/subscribed') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.dashboard') }}"
                                 title="{{ translate('subscribed_emails') }}">
@@ -958,7 +965,7 @@
                             </a>
                         </li>
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/contact/contact-list') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/contact/contact-list') ? 'active' : '' }}">
                             <a class="nav-link " href="{{ route('admin.dashboard') }}"
                                 title="{{ translate('messages.contact_messages') }}">
                                 <span class="tio-message nav-icon"></span>
@@ -966,7 +973,7 @@
                             </a>
                         </li>
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/customer/settings') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/customer/settings') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.dashboard') }}"
                                 title="{{ translate('messages.Customer_settings') }}">
@@ -977,7 +984,7 @@
                             </a>
                         </li>
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/message/list') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu customer-menu {{ Request::is('admin/message/list') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.dashboard') }}"
                                 title="{{ translate('messages.customer_chat') }}">

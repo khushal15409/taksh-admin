@@ -29,12 +29,14 @@
     </a>
 </div>
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-    <div class="__dashboard-card-2">
-        <img src="{{asset('assets/admin/img/dashboard/stats/customers.svg')}}" alt="dashboard/stats">
-        <h6 class="name">Total Customer</h6>
-        <h3 class="count">{{ $data['total_customers'] ?? 0 }}</h3>
-        <div class="subtxt">{{ $data['new_customers'] ?? 0 }} {{ translate('newly added') }}</div>
-    </div>
+    <a href="{{ route('admin.customer.list') }}" class="text-decoration-none">
+        <div class="__dashboard-card-2" style="cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow=''">
+            <img src="{{asset('assets/admin/img/dashboard/stats/customers.svg')}}" alt="dashboard/stats">
+            <h6 class="name">{{ translate('messages.total_customers') }}</h6>
+            <h3 class="count">{{ $data['total_customers'] ?? 0 }}</h3>
+            <div class="subtxt">{{ $data['new_customers'] ?? 0 }} {{ translate('messages.newly_added') }}</div>
+        </div>
+    </a>
 </div>
 <div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="__dashboard-card-2">

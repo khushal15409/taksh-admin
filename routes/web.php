@@ -105,6 +105,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::get('{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
     });
     
+    // Customer Routes
+    Route::prefix('customer')->name('customer.')->group(function () {
+        Route::get('list', [App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('list');
+        Route::get('view/{id}', [App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('view');
+    });
+    
     // Vendor Management Routes
     Route::prefix('vendor')->name('vendor.')->group(function () {
         // Vendor Assignment

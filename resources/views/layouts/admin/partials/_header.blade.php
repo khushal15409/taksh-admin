@@ -29,18 +29,10 @@
                     </li>
 
                     <li class="nav-item __nav-item">
-                        <a href="{{ route('admin.dashboard') }}" id="tourb-6"
-                            class="__nav-link navbar-round-btn {{ Request::is('admin/users*') ? 'active' : '' }}">
+                        <a href="javascript:void(0)" id="customer-only-toggle"
+                            class="__nav-link navbar-round-btn">
                             <img src="{{ asset('assets/admin/img/new-img/user.svg') }}" alt="public/img">
                             <span>{{ translate('Ecommerce Users') }}</span>
-                        </a>
-                    </li>
-
-                    <li class="nav-item __nav-item">
-                        <a href="{{ route('admin.dashboard') }}" id="tourb-8"
-                            class="__nav-link navbar-round-btn {{ Request::is('admin/salesman-near-by-user*') ? 'active' : '' }}">
-                            <img src="{{ asset('assets/admin/img/new-img/user.svg') }}" alt="public/img">
-                            <span>{{ translate('Salesman Users') }}</span>
                         </a>
                     </li>
 
@@ -48,13 +40,13 @@
                         <a href="javascript:void(0)" id="vendor-only-toggle" class="__nav-link navbar-round-btn">
                             <img src="{{ asset('assets/admin/img/new-img/transaction-and-report.svg') }}"
                                 alt="public/img">
-                            <span>{{ translate('Vendor Users') }}</span>
+                            <span>{{ translate('Vendor & Salesman') }}</span>
                         </a>
                     </li>
 
                     <li class="nav-item __nav-item">
                         <a href="javascript:void(0)" id="show-all-menus-toggle" class="__nav-link navbar-round-btn">
-                            <img src="{{ asset('assets/admin/img/new-img/dashboard.svg') }}" alt="public/img">
+                            <img src="{{ asset('assets/admin/img/new-img/users.svg') }}" alt="public/img">
                             <span>{{ translate('All Menus') }}</span>
                         </a>
                     </li>

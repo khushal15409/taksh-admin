@@ -25,6 +25,7 @@ class VendorSystemSeeder extends Seeder
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $salesmanRole = Role::firstOrCreate(['name' => 'salesman']);
         $vendorRole = Role::firstOrCreate(['name' => 'vendor']);
+        $customerRole = Role::firstOrCreate(['name' => 'customer']);
 
         // Get or create a state and city for vendors
         $state = State::firstOrCreate(['name' => 'Maharashtra']);
