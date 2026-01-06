@@ -103,23 +103,21 @@ class AuthController extends Controller
             ];
 
             // Backward compatibility: Use old fields if provided, otherwise use new fields
-            $vendorData['address'] = $request->address ?? $request->shop_address;
-            $vendorData['state_id'] = $request->state_id;
-            $vendorData['city_id'] = $request->city_id;
-            $vendorData['pincode'] = $request->pincode ?? $request->shop_pincode;
+            $vendorData['address'] = $request->address ?? $request->shop_address ?? '';
+            $vendorData['state_id'] = $request->state_id ?? null;
+            $vendorData['city_id'] = $request->city_id ?? null;
+            $vendorData['pincode'] = $request->pincode ?? $request->shop_pincode ?? '';
             
-            // Bank details (backward compatibility)
-            if ($request->bank_name) {
-                $vendorData['bank_name'] = $request->bank_name;
-            }
+            // Bank details (backward compatibility) - ensure required fields are set
+            $vendorData['bank_name'] = $request->bank_name ?? '';
             if ($request->account_number) {
                 $vendorData['account_number'] = $request->account_number;
             } elseif ($request->bank_account_number) {
                 $vendorData['account_number'] = $request->bank_account_number;
+            } else {
+                $vendorData['account_number'] = '';
             }
-            if ($request->ifsc_code) {
-                $vendorData['ifsc_code'] = $request->ifsc_code;
-            }
+            $vendorData['ifsc_code'] = $request->ifsc_code ?? '';
             
             // GST and PAN (backward compatibility)
             if ($request->gst_number) {
