@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder
     {
         // Seed in order to respect foreign key constraints
         $this->call([
-            LocationSeeder::class,        // States, Cities, Areas
+            StateSeeder::class,           // Import states from SQL file
+            CitySeeder::class,            // Import cities from SQL file
+            // LocationSeeder::class,     // Commented out - using SQL file imports instead
             DeliveryTypeSeeder::class,     // Delivery Types
             BrandSeeder::class,            // Brands
             CategorySeeder::class,        // Categories
