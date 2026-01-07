@@ -159,6 +159,59 @@
         padding-top: 20px;
     }
     
+    /* Delivery Type Filter Tabs Styling - Button Design */
+    #deliveryTypeTabs {
+        margin-top: 0;
+        margin-bottom: 20px;
+        border-bottom: none;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    #deliveryTypeTabs .nav-item {
+        margin-bottom: 0;
+    }
+    
+    #deliveryTypeTabs .nav-link {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 2px solid #e4e6ef;
+        border-radius: 0.5rem;
+        background-color: #ffffff;
+        color: #5e6278;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: inline-block;
+        margin: 0;
+        text-decoration: none;
+    }
+    
+    #deliveryTypeTabs .nav-link:hover {
+        border-color: #009ef7;
+        color: #009ef7;
+        background-color: #f1faff;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 158, 247, 0.1);
+    }
+    
+    #deliveryTypeTabs .nav-link.active {
+        background-color: #009ef7;
+        border-color: #009ef7;
+        color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 158, 247, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    #deliveryTypeTabs .nav-link.active:hover {
+        background-color: #0085d1;
+        border-color: #0085d1;
+        color: #ffffff;
+    }
+    
     @media (max-width: 767px) {
         .dataTables_wrapper .dataTables_length,
         .dataTables_wrapper .dataTables_filter {
@@ -516,23 +569,75 @@
                             
                             <!-- Active Pincode Tab -->
                             <div class="tab-pane fade {{ $tab == 'active-pincode' ? 'show active' : '' }}" id="active-pincode" role="tabpanel">
-                                <div class="table-responsive datatable-custom">
-                                    <table id="activePincodeTable"
-                                           class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
-                                        <thead class="thead-light">
-                                        <tr>
-                                            <th class="border-0">{{translate('messages.sl')}}</th>
-                                            <th class="border-0">Pincode</th>
-                                            <th class="border-0">Office Name</th>
-                                            <th class="border-0">District</th>
-                                            <th class="border-0">State</th>
-                                            <th class="border-0">Mapped LM Center</th>
-                                            <th class="border-0">Mapped Date</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
+                                <!-- Delivery Type Filter Tabs -->
+                                <ul class="nav nav-tabs mb-3" id="deliveryTypeTabs" role="tablist" style="border-bottom: 1px solid #e4e6ef;">
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link active" 
+                                           id="delivery-lm-fm-rt-tab" 
+                                           data-toggle="tab" 
+                                           href="#delivery-lm-fm-rt" 
+                                           role="tab"
+                                           data-delivery-type="lm_fm_rt"
+                                           onclick="switchDeliveryType('lm_fm_rt'); return false;">
+                                            LM & FM RT
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" 
+                                           id="delivery-both-tab" 
+                                           data-toggle="tab" 
+                                           href="#delivery-both" 
+                                           role="tab"
+                                           data-delivery-type="both"
+                                           onclick="switchDeliveryType('both'); return false;">
+                                            30 Min & Normal Delivery
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" 
+                                           id="delivery-thirty-min-tab" 
+                                           data-toggle="tab" 
+                                           href="#delivery-thirty-min" 
+                                           role="tab"
+                                           data-delivery-type="thirty_min"
+                                           onclick="switchDeliveryType('thirty_min'); return false;">
+                                            30 Min Delivery
+                                        </a>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link" 
+                                           id="delivery-normal-tab" 
+                                           data-toggle="tab" 
+                                           href="#delivery-normal" 
+                                           role="tab"
+                                           data-delivery-type="normal"
+                                           onclick="switchDeliveryType('normal'); return false;">
+                                            Normal Delivery
+                                        </a>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content" id="deliveryTypeTabContent">
+                                    <div class="tab-pane fade show active" id="delivery-both" role="tabpanel">
+                                        <div class="table-responsive datatable-custom">
+                                            <table id="activePincodeTable"
+                                                   class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+                                                <thead class="thead-light">
+                                                <tr>
+                                                    <th class="border-0">{{translate('messages.sl')}}</th>
+                                                    <th class="border-0">Pincode</th>
+                                                    <th class="border-0">Office Name</th>
+                                                    <th class="border-0">District</th>
+                                                    <th class="border-0">State</th>
+                                                    <th class="border-0">Mapped LM Center</th>
+                                                    <th class="border-0">Mapped Date</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -545,6 +650,42 @@
 
 @push('script_2')
 <script>
+    // Global variable to store current delivery type filter - DEFAULT: lm_fm_rt
+    var currentDeliveryType = 'lm_fm_rt';
+    
+    // Function to switch delivery type filter - COMPLETE STATE RESET (GLOBAL SCOPE)
+    function switchDeliveryType(deliveryType) {
+        // CRITICAL: Update filter state FIRST before any AJAX call
+        currentDeliveryType = deliveryType;
+        
+        // Reset all tab active states - only one active at a time
+        $('#deliveryTypeTabs .nav-link').removeClass('active');
+        // Set only the clicked filter as active
+        $('#deliveryTypeTabs .nav-link[data-delivery-type="' + deliveryType + '"]').addClass('active');
+        
+        // MANDATORY: Reload DataTable with new filter - ALWAYS execute backend query
+        if ($.fn.DataTable && $.fn.DataTable.isDataTable('#activePincodeTable')) {
+            var table = $('#activePincodeTable').DataTable();
+            
+            // Clear any existing search to prevent state leak
+            table.search('').draw();
+            
+            // Reset to first page
+            table.page('first').draw('page');
+            
+            // CRITICAL: Force complete AJAX reload
+            // The data() function in ajax config will be called with updated currentDeliveryType
+            // This ensures backend receives the correct filter parameter
+            table.ajax.reload(function(json) {
+                // Verify data changed after reload
+                console.log('Filter changed to:', deliveryType);
+                console.log('Records returned:', json.recordsFiltered);
+            }, false); // false = don't reset paging (already reset above)
+        } else {
+            console.error('DataTable not initialized yet');
+        }
+    }
+    
     // Function to navigate to tab without showing loader
     function navigateToTab(tabName) {
         // Prevent loader from showing
@@ -574,7 +715,7 @@
                 orderCellsTop: true,
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 language: {
-                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('public/assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
+                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
                     lengthMenu: "Show _MENU_ entries",
                     search: "Search:",
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
@@ -695,7 +836,7 @@
                 orderCellsTop: true,
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 language: {
-                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('public/assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
+                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
                     lengthMenu: "Show _MENU_ entries",
                     search: "Search:",
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
@@ -719,7 +860,31 @@
                 serverSide: true,
                 ajax: {
                     url: '{{ route("admin.logistics.pending-mapping.active-pincodes") }}',
-                    type: 'GET'
+                    type: 'GET',
+                    data: function(d) {
+                        // MANDATORY: Always send current delivery type filter
+                        // This ensures backend receives correct filter on every request
+                        d.delivery_type = currentDeliveryType;
+                        
+                        // Cache busting to ensure fresh request
+                        d._t = new Date().getTime();
+                        
+                        // Debug log
+                        console.log('DataTable AJAX Request - Filter:', currentDeliveryType, 'Timestamp:', d._t);
+                        
+                        return d;
+                    },
+                    error: function(xhr, error, thrown) {
+                        console.error('DataTable AJAX Error:', error, xhr);
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error('Error loading pincode data. Please try again.');
+                        }
+                    },
+                    dataSrc: function(json) {
+                        // Log response for debugging
+                        console.log('DataTable Response - Records:', json.recordsFiltered, 'Filter:', currentDeliveryType);
+                        return json.data;
+                    }
                 },
                 columns: [
                     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
@@ -739,7 +904,7 @@
                 orderCellsTop: true,
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 language: {
-                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('public/assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
+                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
                     lengthMenu: "Show _MENU_ entries",
                     search: "Search:",
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
