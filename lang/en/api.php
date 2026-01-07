@@ -91,6 +91,7 @@ return [
     
     // Vendor
     'vendor' => [
+        'categories_fetched' => 'Categories fetched successfully for vendor registration',
         'register' => [
             'pending' => 'Vendor registration successful. Waiting for admin approval.',
             'success' => 'Vendor registration completed successfully.',

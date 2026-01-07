@@ -342,25 +342,19 @@
                                 <h6 class="mb-3">Mapping</h6>
                                 <div class="form-group">
                                     <label class="input-label" for="pincode_ids">Map Pincode</label>
-                                    <select name="pincode_ids[]" id="pincode_ids" class="form-control js-select2-custom" multiple="multiple">
-                                        @foreach($pincodes as $pincode)
+                                    <select name="pincode_ids[]" id="pincode_ids" class="form-control" multiple="multiple">
+                                        @foreach(old('pincode_ids', []) as $selectedId)
                                             @php
-                                                $isMapped = in_array($pincode->id, $mappedPincodeIds);
-                                                $isSelected = in_array($pincode->id, old('pincode_ids', []));
+                                                $selectedPincode = \App\Models\Pincode::find($selectedId);
                                             @endphp
-                                            <option value="{{$pincode->id}}" 
-                                                {{$isSelected ? 'selected' : ''}} 
-                                                {{$isMapped ? 'disabled' : ''}}
-                                                data-pincode="{{$pincode->pincode}}"
-                                                data-area="{{$pincode->area_name}}"
-                                                data-city="{{$pincode->city}}"
-                                                data-state="{{$pincode->state}}">
-                                                {{$pincode->pincode}} - {{$pincode->area_name}} ({{$pincode->city}}, {{$pincode->state}})
-                                                @if($isMapped) [Already Mapped] @endif
-                                            </option>
+                                            @if($selectedPincode)
+                                                <option value="{{$selectedPincode->id}}" selected>
+                                                    {{$selectedPincode->pincode}} - {{$selectedPincode->officename ?? 'N/A'}} ({{$selectedPincode->district ?? 'N/A'}}, {{$selectedPincode->statename ?? 'N/A'}})
+                                                </option>
+                                            @endif
                                         @endforeach
                                     </select>
-                                    <small class="text-muted d-block mt-1">Pincodes already mapped to other FM/RT Centers are disabled</small>
+                                    <small class="text-muted d-block mt-1">Search and select pincodes. Pincodes already mapped to other FM/RT Centers are disabled.</small>
                                 </div>
                             </div>
                         </div>
@@ -379,24 +373,72 @@
             PageLoader.hide();
         }
         
-        // Initialize Select2 for multiple select dropdowns
-        $('.js-select2-custom').select2({
-            placeholder: "Select options",
+        // Initialize Select2 for pincode dropdown with AJAX search
+        $('#pincode_ids').select2({
+            placeholder: "Search and select pincodes...",
             allowClear: true,
-            width: '100%'
+            width: '100%',
+            minimumInputLength: 0,
+            ajax: {
+                url: '{{ route("admin.logistics.fm-rt-center.search-pincodes") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        search: params.term || '',
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+                    return {
+                        results: data.results,
+                        pagination: {
+                            more: data.pagination.more
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            },
+            templateResult: function(data) {
+                if (data.loading) {
+                    return data.text;
+                }
+                var $result = $('<span>' + data.text + '</span>');
+                if (data.disabled) {
+                    $result.addClass('text-muted');
+                }
+                return $result;
+            },
+            templateSelection: function(data) {
+                return data.pincode || data.text;
+            }
         });
 
         // Prevent selecting disabled options in pincode dropdown
         $('#pincode_ids').on('select2:select', function (e) {
             var data = e.params.data;
-            if (data.element && data.element.disabled) {
+            if (data.disabled) {
                 e.preventDefault();
+                $(this).val($(this).val().filter(function(id) {
+                    return id != data.id;
+                })).trigger('change');
                 if (typeof toastr !== 'undefined') {
                     toastr.warning('This pincode is already mapped to another FM/RT Center and cannot be selected.');
                 } else {
                     alert('This pincode is already mapped to another FM/RT Center and cannot be selected.');
                 }
             }
+        });
+
+        // Initialize Select2 for other multiple select dropdowns (if any)
+        $('.js-select2-custom').select2({
+            placeholder: "Select options",
+            allowClear: true,
+            width: '100%'
         });
 
         // Initialize input masks
@@ -657,6 +699,7 @@
         // Reset form
         $('#reset_btn').click(function(){
             $('form')[0].reset();
+            $('#pincode_ids').val(null).trigger('change');
             $('.js-select2-custom').val(null).trigger('change');
             dropzone.find('.dz-preview').remove();
             dropzone.find('.dz-message').show();

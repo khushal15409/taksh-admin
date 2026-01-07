@@ -651,4 +651,31 @@ class AuthController extends Controller
             return $this->error('api.server_error', 500);
         }
     }
+
+    /**
+     * Get categories list for vendor registration
+     * GET /api/vendor/categories
+     */
+    public function categories()
+    {
+        try {
+            // Get all active categories (parent categories only for vendor selection)
+            $categories = Category::where('status', 'active')
+                ->whereNull('parent_id')
+                ->select('id', 'name', 'slug', 'status')
+                ->orderBy('name', 'asc')
+                ->get();
+
+            return $this->success([
+                'categories' => $categories,
+                'count' => $categories->count(),
+            ], 'vendor.categories_fetched');
+        } catch (\Exception $e) {
+            Log::error('Vendor categories fetch error: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->error('api.server_error', 500);
+        }
+    }
 }

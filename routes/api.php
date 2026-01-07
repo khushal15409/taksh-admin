@@ -77,6 +77,7 @@ Route::prefix('cart')->group(function () {
 
 // Vendor Registration and Auth (Public)
 Route::prefix('vendor')->group(function () {
+    Route::get('categories', [VendorAuthController::class, 'categories']); // Get categories for vendor registration
     Route::post('register', [VendorAuthController::class, 'register']);
     Route::post('send-otp', [VendorAuthController::class, 'sendOtp']);
     Route::post('verify-otp', [VendorAuthController::class, 'verifyOtp']);
