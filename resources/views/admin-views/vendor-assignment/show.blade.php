@@ -250,9 +250,20 @@
                     <div class="mb-3">
                         <strong>Currently Assigned:</strong><br>
                         <p class="mb-0">{{ $vendor->assignedSalesman->name }}</p>
-                        <small class="text-muted">{{ $vendor->assignedSalesman->mobile }}</small>
+                        <small class="text-muted">{{ $vendor->assignedSalesman->mobile }}</small><br>
+                        @if(isset($pendingCount))
+                        <small class="text-info">Pending Verifications: {{ $pendingCount }}</small>
+                        @endif
+                    </div>
+                    @else
+                    <div class="mb-3">
+                        <span class="text-muted">Not Assigned</span>
                     </div>
                     @endif
+                    <div class="mb-3">
+                        <strong>Vendor Pincode:</strong><br>
+                        <span class="badge badge-primary">{{ $vendor->shop_pincode ?? $vendor->pincode ?? 'N/A' }}</span>
+                    </div>
                     <div class="mb-3">
                         <strong>Registration Date:</strong><br>
                         <small class="text-muted">{{ $vendor->created_at->format('d M Y H:i') }}</small>
@@ -267,19 +278,25 @@
                 </div>
                 <div class="card-body">
                     <div class="alert alert-info">
-                        <strong>Auto-Match System:</strong><br>
-                        Salesmen will automatically see this vendor if they are within 15 KM radius.
-                        No manual assignment needed.
+                        <strong>Pincode-Based Assignment:</strong><br>
+                        Vendors are automatically assigned to salesmen based on pincode matching.
+                        Salesman with least pending verifications gets assigned.
                     </div>
+                    <div class="mb-3">
+                        <strong>Vendor Pincode:</strong><br>
+                        <span class="badge badge-primary">{{ $vendor->shop_pincode ?? $vendor->pincode ?? 'N/A' }}</span>
+                    </div>
+                    <form action="{{ route('admin.vendor.assignment.auto-assign', $vendor->id) }}" method="POST" class="mb-3">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="tio-refresh"></i> Re-Assign Salesman
+                        </button>
+                    </form>
                     @if($vendor->shop_latitude && $vendor->shop_longitude)
                     <p><strong>Shop Location:</strong><br>
                     <small>{{ $vendor->shop_latitude }}, {{ $vendor->shop_longitude }}</small></p>
                     <a href="https://www.google.com/maps?q={{ $vendor->shop_latitude }},{{ $vendor->shop_longitude }}" 
                        target="_blank" class="btn btn-sm btn-link">View on Map</a>
-                    @else
-                    <div class="alert alert-warning">
-                        <small>Shop location coordinates are missing. Vendor will not appear to salesmen.</small>
-                    </div>
                     @endif
                 </div>
             </div>

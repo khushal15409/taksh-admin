@@ -81,6 +81,8 @@ Route::prefix('vendor')->group(function () {
     Route::post('send-otp', [VendorAuthController::class, 'sendOtp']);
     Route::post('verify-otp', [VendorAuthController::class, 'verifyOtp']);
     Route::post('login', [VendorAuthController::class, 'login']); // Legacy, kept for backward compatibility
+    Route::post('auto-assign-salesman', [VendorAuthController::class, 'autoAssignSalesman']); // Mobile app API for auto-assignment
+    Route::get('categories', [VendorAuthController::class, 'categories']); // Get categories list for vendor registration
 });
 
 // Salesman Auth (Public)
@@ -108,6 +110,7 @@ Route::middleware(['auth:sanctum', 'role:salesman'])->get('vendors/nearby', [Sal
 // Admin API routes (require authentication and super-admin role)
 Route::middleware(['auth:sanctum', 'role:super-admin'])->prefix('admin')->group(function () {
     Route::post('vendor/{vendor_id}/assign-salesman', [VendorAssignmentController::class, 'assignSalesman']);
+    Route::post('vendor/{vendor_id}/auto-assign-salesman', [VendorAssignmentController::class, 'autoAssignSalesman']);
     Route::post('vendor/{vendor_id}/approve', [VendorApprovalController::class, 'approve']);
     Route::post('vendor/{vendor_id}/reject', [VendorApprovalController::class, 'reject']);
 });

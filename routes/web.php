@@ -118,6 +118,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
             Route::get('/', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'index'])->name('index');
             Route::get('{id}', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'show'])->name('show');
             Route::post('{id}/assign', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'assign'])->name('assign');
+            Route::post('{id}/auto-assign', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'autoAssignSalesman'])->name('auto-assign');
         });
         
         // Vendor Approval

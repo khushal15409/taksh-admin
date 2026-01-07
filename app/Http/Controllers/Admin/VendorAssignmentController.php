@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AssignSalesmanRequest;
 use App\Models\Vendor;
 use App\Models\User;
+use App\Services\VendorAssignmentService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,18 +56,25 @@ class VendorAssignmentController extends Controller
 
     /**
      * List Vendors for Assignment (Web View)
-     * NOTE: Manual assignment is deprecated. This view now shows pending vendors.
-     * Salesmen will see nearby vendors automatically based on location.
+     * NOTE: Vendors are now auto-assigned based on pincode matching.
+     * This view shows pending and assigned vendors.
      */
     public function index(Request $request)
     {
-        $vendors = Vendor::with(['user', 'state', 'city'])
-            ->where('verification_status', 'pending')
+        $vendors = Vendor::with(['user', 'state', 'city', 'assignedSalesman'])
+            ->whereIn('verification_status', ['pending', 'assigned'])
             ->where('status', 'pending')
-            ->whereNotNull('shop_latitude')
-            ->whereNotNull('shop_longitude')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+
+        // Load pending counts for assigned salesmen
+        $assignmentService = new VendorAssignmentService();
+        $vendors->getCollection()->transform(function ($vendor) use ($assignmentService) {
+            if ($vendor->assignedSalesman) {
+                $vendor->assignedSalesman->pending_count = $assignmentService->getPendingVerificationCount($vendor->assignedSalesman);
+            }
+            return $vendor;
+        });
 
         return view('admin-views.vendor-assignment.index', compact('vendors'));
     }
@@ -76,22 +84,46 @@ class VendorAssignmentController extends Controller
      */
     public function show($id)
     {
-        $vendor = Vendor::with([
-            'user',
-            'state',
-            'city',
-            'category',
-            'assignedSalesman',
-            'verifications',
-            'documents'
-        ])->findOrFail($id);
+        try {
+            $vendor = Vendor::with([
+                'user',
+                'state',
+                'city',
+                'assignedSalesman',
+                'verifications',
+                'documents'
+            ])->findOrFail($id);
+            
+            // Note: category is not a relationship, it's a method that returns first category
+            // So we don't eager load it
 
-        // Get all salesmen
-        $salesmen = User::where('user_type', 'salesman')
-            ->where('is_active', true)
-            ->get();
+            // Get all salesmen
+            $salesmen = User::where('user_type', 'salesman')
+                ->where('is_active', true)
+                ->get();
 
-        return view('admin-views.vendor-assignment.show', compact('vendor', 'salesmen'));
+            // Get pending verification count for assigned salesman
+            $assignmentService = new VendorAssignmentService();
+            $pendingCount = null;
+            
+            if ($vendor->assignedSalesman) {
+                try {
+                    $pendingCount = $assignmentService->getPendingVerificationCount($vendor->assignedSalesman);
+                } catch (\Exception $e) {
+                    Log::warning('Error getting pending count: ' . $e->getMessage());
+                    $pendingCount = 0;
+                }
+            }
+
+            return view('admin-views.vendor-assignment.show', compact('vendor', 'salesmen', 'pendingCount'));
+        } catch (\Exception $e) {
+            Log::error('Vendor assignment show error: ' . $e->getMessage(), [
+                'vendor_id' => $id,
+                'exception' => $e,
+            ]);
+            return redirect()->route('admin.vendor.assignment.index')
+                ->with('error', 'Vendor not found or error loading vendor details.');
+        }
     }
 
     /**
@@ -129,6 +161,63 @@ class VendorAssignmentController extends Controller
             DB::rollBack();
             Log::error('Vendor assignment error: ' . $e->getMessage(), ['exception' => $e]);
             return redirect()->back()->with('error', 'Failed to assign salesman. Please try again.');
+        }
+    }
+
+    /**
+     * Auto-assign salesman to vendor using pincode-based assignment
+     * Works for both API and Web requests
+     */
+    public function autoAssignSalesman(Request $request, $vendorId)
+    {
+        try {
+            $vendor = Vendor::findOrFail($vendorId);
+
+            $assignmentService = new VendorAssignmentService();
+            $assignedSalesman = $assignmentService->autoAssignByPincode($vendor);
+
+            if (!$assignedSalesman) {
+                // Handle web request
+                if (!$request->expectsJson()) {
+                    return redirect()->back()
+                        ->with('error', 'No active salesman found with matching pincode.');
+                }
+                // Handle API request
+                return $this->error('vendor.auto_assign.no_salesman_found', 404);
+            }
+
+            // Handle web request
+            if (!$request->expectsJson()) {
+                return redirect()->route('admin.vendor.assignment.show', $vendor->id)
+                    ->with('success', 'Vendor re-assigned to salesman successfully.');
+            }
+
+            // Handle API request
+            return $this->success([
+                'vendor_id' => $vendor->id,
+                'salesman' => [
+                    'id' => $assignedSalesman->id,
+                    'name' => $assignedSalesman->name,
+                    'mobile' => $assignedSalesman->mobile,
+                    'pincode' => $assignedSalesman->pincode,
+                    'pending_verifications' => $assignmentService->getPendingVerificationCount($assignedSalesman),
+                ],
+                'message' => 'Vendor auto-assigned to salesman successfully.',
+            ], 'vendor.auto_assigned');
+        } catch (\Exception $e) {
+            Log::error('Auto-assign salesman error: ' . $e->getMessage(), [
+                'vendor_id' => $vendorId,
+                'exception' => $e,
+            ]);
+            
+            // Handle web request
+            if (!$request->expectsJson()) {
+                return redirect()->back()
+                    ->with('error', 'Failed to re-assign salesman. Please try again.');
+            }
+            
+            // Handle API request
+            return $this->error('api.server_error', 500);
         }
     }
 }

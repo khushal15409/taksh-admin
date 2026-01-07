@@ -81,7 +81,7 @@
                         </span>
                         <span>
                             {{ translate('messages.express_30_order_details') }} - {{ $order->order_number }}
-                            <span class="badge badge-express ml-2">Express-30</span>
+                            <span class="badge badge-express ml-2">30 mins Delivery</span>
                         </span>
                     </h1>
                 </div>
@@ -232,7 +232,7 @@
                         <div class="info-row">
                             <div class="info-label">{{ translate('messages.order_type') }}</div>
                             <div class="info-value">
-                                <span class="badge badge-express">Express-30</span>
+                                <span class="badge badge-express">30 mins Delivery</span>
                             </div>
                         </div>
                         <div class="info-row">
