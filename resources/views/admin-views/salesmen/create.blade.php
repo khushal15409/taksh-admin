@@ -76,6 +76,34 @@
                         </div>
 
                         <div class="form-group">
+                            <label>Address <span class="text-danger">*</span></label>
+                            <textarea name="address" 
+                                      class="form-control" 
+                                      rows="3" 
+                                      placeholder="Enter complete address"
+                                      required>{{ old('address') }}</textarea>
+                            @error('address')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pincode <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   name="pincode" 
+                                   class="form-control" 
+                                   value="{{ old('pincode') }}" 
+                                   pattern="[0-9]{6}" 
+                                   maxlength="6"
+                                   placeholder="Enter 6-digit pincode"
+                                   required>
+                            <small class="form-text text-muted">6 digits only (e.g., 380001)</small>
+                            @error('pincode')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
                             <label>State</label>
                             <select name="state_id" class="form-control" id="state_id">
                                 <option value="">-- Select State --</option>

@@ -23,6 +23,8 @@ class User extends Authenticatable
         'user_type',
         'vendor_status',
         'is_active',
+        'address',
+        'pincode',
     ];
 
     protected $hidden = [];

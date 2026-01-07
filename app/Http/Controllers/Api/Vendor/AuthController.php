@@ -10,6 +10,7 @@ use App\Models\Vendor;
 use App\Models\VendorDocument;
 use App\Models\OtpVerification;
 use App\Models\Category;
+use App\Services\VendorAssignmentService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -248,13 +249,29 @@ class AuthController extends Controller
                 VendorDocument::insert($documents);
             }
 
+            // Auto-assign salesman based on pincode
+            $assignmentService = new VendorAssignmentService();
+            $assignedSalesman = $assignmentService->autoAssignByPincode($vendor);
+            
+            $assignmentInfo = null;
+            if ($assignedSalesman) {
+                $assignmentInfo = [
+                    'salesman_id' => $assignedSalesman->id,
+                    'salesman_name' => $assignedSalesman->name,
+                    'pincode' => $assignedSalesman->pincode,
+                ];
+            }
+
             DB::commit();
 
             return $this->success([
                 'vendor_id' => $vendor->id,
                 'user_id' => $user->id,
                 'documents_uploaded' => count($documents),
-                'message' => 'Vendor registration successful. Waiting for admin approval.',
+                'assigned_salesman' => $assignmentInfo,
+                'message' => $assignedSalesman 
+                    ? 'Vendor registration successful. Auto-assigned to salesman based on pincode.' 
+                    : 'Vendor registration successful. Waiting for admin approval.',
             ], 'vendor.register.pending');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -472,21 +489,160 @@ class AuthController extends Controller
         // Generate Sanctum token
         $token = $user->createToken('vendor-app')->plainTextToken;
 
-        return $this->success([
-            'user' => [
-                'id' => $user->id,
-                'mobile' => $user->mobile,
-                'name' => $user->name,
-                'email' => $user->email,
-                'user_type' => $user->user_type,
-            ],
-            'vendor' => [
-                'id' => $vendor->id,
-                'vendor_name' => $vendor->vendor_name,
-                'shop_name' => $vendor->shop_name,
-            ],
-            'token' => $token,
-        ], 'vendor.login.success');
+            return $this->success([
+                'user' => [
+                    'id' => $user->id,
+                    'mobile' => $user->mobile,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'user_type' => $user->user_type,
+                ],
+                'vendor' => [
+                    'id' => $vendor->id,
+                    'vendor_name' => $vendor->vendor_name,
+                    'shop_name' => $vendor->shop_name,
+                ],
+                'token' => $token,
+            ], 'vendor.login.success');
+    }
+
+    /**
+     * Auto-assign salesman to vendor (Mobile App API)
+     * POST /api/vendor/auto-assign-salesman
+     * 
+     * This API can be called after vendor registration to auto-assign a salesman
+     * based on pincode matching. Accepts vendor_id in form data.
+     */
+    public function autoAssignSalesman(Request $request)
+    {
+        $request->validate([
+            'vendor_id' => 'required|exists:vendors,id',
+        ]);
+
+        try {
+            $vendor = Vendor::findOrFail($request->vendor_id);
+
+            // Check if vendor is already assigned
+            if ($vendor->assigned_salesman_id && $vendor->verification_status === 'assigned') {
+                return $this->success([
+                    'vendor_id' => $vendor->id,
+                    'salesman' => [
+                        'id' => $vendor->assignedSalesman->id,
+                        'name' => $vendor->assignedSalesman->name,
+                        'mobile' => $vendor->assignedSalesman->mobile,
+                        'pincode' => $vendor->assignedSalesman->pincode,
+                    ],
+                    'message' => 'Vendor is already assigned to a salesman.',
+                    'already_assigned' => true,
+                ], 'vendor.already_assigned');
+            }
+
+            $assignmentService = new VendorAssignmentService();
+            $assignedSalesman = $assignmentService->autoAssignByPincode($vendor);
+
+            if (!$assignedSalesman) {
+                return $this->success([
+                    'vendor_id' => $vendor->id,
+                    'salesman' => null,
+                    'message' => 'No active salesman found with matching pincode. Please contact admin.',
+                    'assigned' => false,
+                ], 'vendor.auto_assign.no_salesman_found');
+            }
+
+            return $this->success([
+                'vendor_id' => $vendor->id,
+                'salesman' => [
+                    'id' => $assignedSalesman->id,
+                    'name' => $assignedSalesman->name,
+                    'mobile' => $assignedSalesman->mobile,
+                    'pincode' => $assignedSalesman->pincode,
+                    'pending_verifications' => $assignmentService->getPendingVerificationCount($assignedSalesman),
+                ],
+                'message' => 'Vendor auto-assigned to salesman successfully.',
+                'assigned' => true,
+            ], 'vendor.auto_assigned');
+        } catch (\Exception $e) {
+            Log::error('Vendor auto-assign salesman error: ' . $e->getMessage(), [
+                'vendor_id' => $request->vendor_id,
+                'exception' => $e,
+            ]);
+            return $this->error('api.server_error', 500);
+        }
+    }
+
+    /**
+     * Get Categories List (Vendor API)
+     * GET /api/vendor/categories
+     * 
+     * Returns all active categories for vendor registration/selection
+     */
+    public function categories(Request $request)
+    {
+        try {
+            // Get all active categories
+            $categories = Category::where('status', 'active')
+                ->orderBy('name', 'asc')
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                        'slug' => $category->slug,
+                        'parent_id' => $category->parent_id,
+                        'image_url' => $category->image_url,
+                        'icon_url' => $category->icon_url,
+                    ];
+                });
+
+            // Optionally return with hierarchy (parent-child structure)
+            if ($request->has('hierarchy') && $request->hierarchy == 'true') {
+                $parentCategories = Category::where('status', 'active')
+                    ->whereNull('parent_id')
+                    ->with(['children' => function ($query) {
+                        $query->where('status', 'active')->orderBy('name', 'asc');
+                    }])
+                    ->orderBy('name', 'asc')
+                    ->get()
+                    ->map(function ($category) {
+                        return [
+                            'id' => $category->id,
+                            'name' => $category->name,
+                            'slug' => $category->slug,
+                            'parent_id' => $category->parent_id,
+                            'image_url' => $category->image_url,
+                            'icon_url' => $category->icon_url,
+                            'children' => $category->children->map(function ($child) {
+                                return [
+                                    'id' => $child->id,
+                                    'name' => $child->name,
+                                    'slug' => $child->slug,
+                                    'parent_id' => $child->parent_id,
+                                    'image_url' => $child->image_url,
+                                    'icon_url' => $child->icon_url,
+                                ];
+                            }),
+                        ];
+                    });
+
+                return $this->success([
+                    'categories' => $parentCategories,
+                    'count' => $parentCategories->count(),
+                    'format' => 'hierarchy',
+                ], 'api.categories_fetched');
+            }
+
+            // Return flat list
+            return $this->success([
+                'categories' => $categories,
+                'count' => $categories->count(),
+                'format' => 'flat',
+            ], 'api.categories_fetched');
+        } catch (\Exception $e) {
+            Log::error('Vendor categories fetch error: ' . $e->getMessage(), [
+                'exception' => $e,
+            ]);
+            return $this->error('api.server_error', 500);
+        }
     }
 
     /**

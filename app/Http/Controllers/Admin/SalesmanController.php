@@ -49,6 +49,8 @@ class SalesmanController extends Controller
             'name' => 'required|string|max:255',
             'mobile_number' => 'required|string|regex:/^[0-9]{10}$/|unique:users,mobile|unique:salesmen_profiles,mobile_number',
             'email' => 'nullable|email|max:255',
+            'address' => 'required|string|max:500',
+            'pincode' => 'required|string|regex:/^[0-9]{6}$/|max:10',
             'state_id' => 'nullable|exists:states,id',
             'city_id' => 'nullable|exists:cities,id',
             'is_active' => 'boolean',
@@ -63,6 +65,8 @@ class SalesmanController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'user_type' => 'salesman',
+                'address' => $request->address,
+                'pincode' => $request->pincode,
                 'is_active' => $request->is_active ?? true,
                 'is_verified' => true,
                 'status' => 'active',
@@ -122,6 +126,8 @@ class SalesmanController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
+            'address' => 'required|string|max:500',
+            'pincode' => 'required|string|regex:/^[0-9]{6}$/|max:10',
             'state_id' => 'nullable|exists:states,id',
             'city_id' => 'nullable|exists:cities,id',
             'is_active' => 'boolean',
@@ -133,6 +139,8 @@ class SalesmanController extends Controller
             // Update user
             $salesman->update([
                 'name' => $request->name,
+                'address' => $request->address,
+                'pincode' => $request->pincode,
                 'is_active' => $request->is_active ?? $salesman->is_active,
             ]);
 

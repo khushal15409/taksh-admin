@@ -136,13 +136,15 @@ class VendorApprovalController extends Controller
             'user',
             'state',
             'city',
-            'category',
             'assignedSalesman',
             'verifiedBy',
             'approvedBy',
             'verifications.salesman',
             'documents'
         ])->findOrFail($id);
+
+        // Note: category is not a relationship, it's a method that returns first category
+        // Access it via $vendor->category or $vendor->category_models for multiple categories
 
         return view('admin-views.vendor-approval.show', compact('vendor'));
     }

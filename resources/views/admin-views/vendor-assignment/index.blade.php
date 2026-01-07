@@ -17,7 +17,7 @@
                 <div class="row align-items-center">
                     <div class="col-sm mb-2 mb-sm-0">
                         <h1 class="page-header-title">Pending Vendors</h1>
-                        <p class="page-header-text">Vendors waiting for salesman verification (auto-matched by location within 15 KM)</p>
+                        <p class="page-header-text">Vendors waiting for salesman verification (auto-matched by pincode)</p>
                     </div>
                 </div>
             </div>
@@ -43,8 +43,9 @@
                             <th>Shop Name</th>
                             <th>Mobile</th>
                             <th>Email</th>
+                            <th>Pincode</th>
                             <th>Location</th>
-                            <th>Shop Coordinates</th>
+                            <th>Assigned Salesman</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -57,12 +58,19 @@
                             <td>{{ $vendor->shop_name }}</td>
                             <td>{{ $vendor->mobile_number }}</td>
                             <td>{{ $vendor->email }}</td>
+                            <td>
+                                <strong>{{ $vendor->shop_pincode ?? $vendor->pincode ?? 'N/A' }}</strong>
+                            </td>
                             <td>{{ $vendor->city->name ?? '' }}, {{ $vendor->state->name ?? '' }}</td>
                             <td>
-                                @if($vendor->shop_latitude && $vendor->shop_longitude)
-                                <small>{{ $vendor->shop_latitude }}, {{ $vendor->shop_longitude }}</small>
+                                @if($vendor->assignedSalesman)
+                                    <strong>{{ $vendor->assignedSalesman->name }}</strong><br>
+                                    <small class="text-muted">{{ $vendor->assignedSalesman->mobile }}</small><br>
+                                    @if(isset($vendor->assignedSalesman->pending_count))
+                                    <small class="text-info">Pending: {{ $vendor->assignedSalesman->pending_count }}</small>
+                                    @endif
                                 @else
-                                <span class="text-muted">N/A</span>
+                                    <span class="text-muted">Not Assigned</span>
                                 @endif
                             </td>
                             <td>

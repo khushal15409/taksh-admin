@@ -233,7 +233,7 @@
                         <th class="border-0">Price</th>
                         <th class="border-0 text-center">Trending</th>
                         <th class="border-0 text-center">Latest</th>
-                        <th class="border-0 text-center">Express-30</th>
+                        <th class="border-0 text-center">30 mins Delivery</th>
                         <th class="border-0 text-center">{{ translate('messages.status') }}</th>
                         <th class="border-0 text-center">{{ translate('messages.action') }}</th>
                     </tr>

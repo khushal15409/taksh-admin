@@ -231,7 +231,7 @@
                                 @elseif($order->delivery_type == '1_day')
                                     <span class="badge badge-soft-info">1 Day</span>
                                 @elseif($order->delivery_type == 'express_30')
-                                    <span class="badge badge-express">Express-30</span>
+                                    <span class="badge badge-express">30 mins Delivery</span>
                                 @else
                                     <span class="badge badge-soft-secondary">Normal</span>
                                 @endif

@@ -9,6 +9,12 @@ class Vendor extends Model
 {
     use HasFactory;
 
+    /**
+     * Prevent Laravel from treating 'category' as a relationship
+     * by explicitly excluding it from relationship detection
+     */
+    protected $with = [];
+
     protected $fillable = [
         'user_id',
         'vendor_name',
@@ -117,16 +123,26 @@ class Vendor extends Model
     }
 
     /**
-     * Legacy method - returns first category if multiple exist
-     * @deprecated Use getCategoryModelsAttribute() instead for multiple categories
+     * Get first category as accessor (not a relationship)
+     * Use $vendor->category or $vendor->category_models for multiple categories
+     * This is an accessor, not a relationship method, to avoid Laravel's relationship detection
      */
-    public function category()
+    public function getCategoryAttribute()
     {
+        // Check if already loaded to avoid infinite recursion
+        if (isset($this->attributes['_category_cache'])) {
+            return $this->attributes['_category_cache'];
+        }
+
         $categoryIds = $this->categories;
         if (empty($categoryIds)) {
+            $this->attributes['_category_cache'] = null;
             return null;
         }
-        return Category::find($categoryIds[0]);
+        
+        $category = Category::find($categoryIds[0]);
+        $this->attributes['_category_cache'] = $category;
+        return $category;
     }
 
     public function documents()

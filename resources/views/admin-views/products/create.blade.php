@@ -356,7 +356,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="input-label">Express-30</label>
+                                        <label class="input-label">30 mins Delivery</label>
                                         <div class="custom--switch">
                                             <input type="checkbox" name="is_express_30" id="is_express_30" value="1" {{ old('is_express_30') ? 'checked' : '' }} switch="bool">
                                             <label for="is_express_30" data-on-label="On" data-off-label="Off"></label>
