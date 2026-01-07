@@ -213,7 +213,7 @@
                                             <td>
                                                 <span class="font-weight-bold">{{ $order->order_number }}</span>
                                                 <br>
-                                                <span class="badge badge-express">Express-30</span>
+                                                <span class="badge badge-express">30 mins Delivery</span>
                                             </td>
                                             <td>
                                                 <div>
