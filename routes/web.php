@@ -59,6 +59,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::delete('lm-center/{id}', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'destroy'])->name('lm-center.destroy');
         Route::post('lm-center/status', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'status'])->name('lm-center.status');
         Route::post('lm-center/verify-document', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'verifyDocument'])->name('lm-center.verify-document');
+        Route::get('lm-center/search-pincodes', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'searchPincodes'])->name('lm-center.search-pincodes');
         
         Route::get('fm-rt-center', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'index'])->name('fm-rt-center.index');
         Route::get('fm-rt-center/create', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'create'])->name('fm-rt-center.create');
@@ -67,8 +68,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::put('fm-rt-center/{id}', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'update'])->name('fm-rt-center.update');
         Route::delete('fm-rt-center/{id}', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'destroy'])->name('fm-rt-center.destroy');
         Route::post('fm-rt-center/status', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'status'])->name('fm-rt-center.status');
+        Route::get('fm-rt-center/search-pincodes', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'searchPincodes'])->name('fm-rt-center.search-pincodes');
         
         Route::get('pending-mapping', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'index'])->name('pending-mapping.index');
+        Route::get('pending-mapping/pending-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getPendingPincodes'])->name('pending-mapping.pending-pincodes');
+        Route::get('pending-mapping/active-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getActivePincodes'])->name('pending-mapping.active-pincodes');
     });
     
     // Banner Routes

@@ -30,13 +30,11 @@ class FmRtCenterController extends Controller
      */
     public function create()
     {
-        // Get all pincodes
-        $pincodes = Pincode::orderBy('pincode')->get();
-        
+        // Don't load all pincodes - will be loaded via AJAX search
         // Get all already mapped pincode IDs (pincodes that are mapped to any FM/RT Center)
         $mappedPincodeIds = \DB::table('fm_rt_center_pincode')->pluck('pincode_id')->unique()->toArray();
         
-        return view('admin-views.logistics.fm-rt-center.create', compact('pincodes', 'mappedPincodeIds'));
+        return view('admin-views.logistics.fm-rt-center.create', compact('mappedPincodeIds'));
     }
 
     /**
@@ -258,9 +256,7 @@ class FmRtCenterController extends Controller
     {
         $fmRtCenter = FmRtCenter::with('pincodes')->findOrFail($id);
         
-        // Get all pincodes
-        $pincodes = Pincode::orderBy('pincode')->get();
-        
+        // Don't load all pincodes - will be loaded via AJAX search
         // Get all already mapped pincode IDs (pincodes that are mapped to other FM/RT Centers, excluding current one)
         $mappedPincodeIds = \DB::table('fm_rt_center_pincode')
             ->where('fm_rt_center_id', '!=', $id)
@@ -268,7 +264,7 @@ class FmRtCenterController extends Controller
             ->unique()
             ->toArray();
         
-        return view('admin-views.logistics.fm-rt-center.edit', compact('fmRtCenter', 'pincodes', 'mappedPincodeIds'));
+        return view('admin-views.logistics.fm-rt-center.edit', compact('fmRtCenter', 'mappedPincodeIds'));
     }
 
     /**
@@ -515,6 +511,68 @@ class FmRtCenterController extends Controller
         $fmRtCenter->save();
         Toastr::success(translate('messages.fm_rt_center_status_updated'));
         return back();
+    }
+
+    /**
+     * Search pincodes via AJAX for Select2 dropdown
+     */
+    public function searchPincodes(Request $request)
+    {
+        $search = $request->get('search', '');
+        $page = $request->get('page', 1);
+        $perPage = 20;
+        
+        // Get already mapped pincode IDs (pincodes that are mapped to other FM/RT Centers)
+        $excludeFmRtCenterId = $request->get('exclude_fm_rt_center_id', null);
+        $mappedPincodeIds = \DB::table('fm_rt_center_pincode');
+        
+        if ($excludeFmRtCenterId) {
+            $mappedPincodeIds = $mappedPincodeIds->where('fm_rt_center_id', '!=', $excludeFmRtCenterId);
+        }
+        
+        $mappedPincodeIds = $mappedPincodeIds->pluck('pincode_id')->unique()->toArray();
+        
+        // Build query
+        $query = Pincode::query();
+        
+        // Search by pincode, officename, district, or statename
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('pincode', 'like', "%{$search}%")
+                  ->orWhere('officename', 'like', "%{$search}%")
+                  ->orWhere('district', 'like', "%{$search}%")
+                  ->orWhere('statename', 'like', "%{$search}%");
+            });
+        }
+        
+        // Order by pincode
+        $query->orderBy('pincode');
+        
+        // Get paginated results
+        $pincodes = $query->paginate($perPage, ['*'], 'page', $page);
+        
+        // Format results for Select2
+        $results = [];
+        foreach ($pincodes->items() as $pincode) {
+            $isMapped = in_array($pincode->id, $mappedPincodeIds);
+            
+            $results[] = [
+                'id' => $pincode->id,
+                'text' => $pincode->pincode . ' - ' . ($pincode->officename ?? 'N/A') . ' (' . ($pincode->district ?? 'N/A') . ', ' . ($pincode->statename ?? 'N/A') . ')' . ($isMapped ? ' [Already Mapped]' : ''),
+                'disabled' => $isMapped,
+                'pincode' => $pincode->pincode,
+                'officename' => $pincode->officename,
+                'district' => $pincode->district,
+                'statename' => $pincode->statename,
+            ];
+        }
+        
+        return response()->json([
+            'results' => $results,
+            'pagination' => [
+                'more' => $pincodes->hasMorePages()
+            ]
+        ]);
     }
 }
 

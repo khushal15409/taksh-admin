@@ -137,7 +137,45 @@ class PendingMappingController extends Controller
             ->latest()
             ->get();
         
-        // Get pending pincodes (not mapped to any LM center or FM/RT center)
+        // Don't load all pincodes - will be loaded via AJAX/server-side DataTables
+        // Just get counts for badge display
+        $mappedPincodeIds = collect();
+        if (DB::getSchemaBuilder()->hasTable('lm_center_pincode')) {
+            $mappedPincodeIds = $mappedPincodeIds->merge(DB::table('lm_center_pincode')->pluck('pincode_id'));
+        }
+        if (DB::getSchemaBuilder()->hasTable('fm_rt_center_pincode')) {
+            $mappedPincodeIds = $mappedPincodeIds->merge(DB::table('fm_rt_center_pincode')->pluck('pincode_id'));
+        }
+        $mappedPincodeIds = $mappedPincodeIds->unique()->toArray();
+        
+        $pendingPincodesCount = Pincode::whereNotIn('id', $mappedPincodeIds)->count();
+        $activePincodesCount = DB::getSchemaBuilder()->hasTable('lm_center_pincode') 
+            ? DB::table('lm_center_pincode')->count() 
+            : 0;
+        
+        // Pass empty collections for table data (will be loaded via AJAX)
+        $pendingPincodes = collect();
+        $activePincodes = collect();
+        
+        return view('admin-views.logistics.pending-mapping.index', compact(
+            'tab',
+            'pendingWarehouses',
+            'pendingMiniwarehouses',
+            'pendingLmCenters',
+            'pendingFmRtCenters',
+            'pendingPincodes',
+            'activePincodes',
+            'pendingPincodesCount',
+            'activePincodesCount'
+        ));
+    }
+
+    /**
+     * Get pending pincodes via AJAX for DataTables server-side processing
+     */
+    public function getPendingPincodes(Request $request)
+    {
+        // Get mapped pincode IDs
         $mappedPincodeIds = collect();
         
         if (DB::getSchemaBuilder()->hasTable('lm_center_pincode')) {
@@ -150,42 +188,128 @@ class PendingMappingController extends Controller
         
         $mappedPincodeIds = $mappedPincodeIds->unique()->toArray();
         
-        $pendingPincodes = Pincode::whereNotIn('id', $mappedPincodeIds)
-            ->orderBy('pincode')
-            ->get();
+        // Build query
+        $query = Pincode::whereNotIn('id', $mappedPincodeIds);
         
-        // Get active pincodes (mapped to LM centers)
-        $activePincodes = collect();
+        // DataTables server-side processing parameters
+        $draw = $request->get('draw');
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 25);
+        $search = $request->get('search', []);
+        $searchValue = $search['value'] ?? '';
         
-        if (DB::getSchemaBuilder()->hasTable('lm_center_pincode')) {
-            $activePincodeMappings = DB::table('lm_center_pincode')
-                ->join('pincodes', 'lm_center_pincode.pincode_id', '=', 'pincodes.id')
-                ->join('lm_centers', 'lm_center_pincode.lm_center_id', '=', 'lm_centers.id')
-                ->select(
-                    'pincodes.id as pincode_id',
-                    'pincodes.pincode',
-                    'pincodes.officename',
-                    'pincodes.district',
-                    'pincodes.statename',
-                    'lm_centers.id as lm_center_id',
-                    'lm_centers.center_name',
-                    'lm_center_pincode.created_at as mapped_at'
-                )
-                ->orderBy('pincodes.pincode')
-                ->get();
-            
-            $activePincodes = $activePincodeMappings;
+        // Apply search filter
+        if (!empty($searchValue)) {
+            $query->where(function($q) use ($searchValue) {
+                $q->where('pincode', 'like', "%{$searchValue}%")
+                  ->orWhere('officename', 'like', "%{$searchValue}%")
+                  ->orWhere('district', 'like', "%{$searchValue}%")
+                  ->orWhere('statename', 'like', "%{$searchValue}%");
+            });
         }
         
-        return view('admin-views.logistics.pending-mapping.index', compact(
-            'tab',
-            'pendingWarehouses',
-            'pendingMiniwarehouses',
-            'pendingLmCenters',
-            'pendingFmRtCenters',
-            'pendingPincodes',
-            'activePincodes'
-        ));
+        // Get total count before pagination
+        $totalRecords = $query->count();
+        
+        // Apply ordering
+        $query->orderBy('pincode');
+        
+        // Apply pagination
+        $pincodes = $query->skip($start)->take($length)->get();
+        
+        // Format data for DataTables
+        $data = [];
+        foreach ($pincodes as $index => $pincode) {
+            $data[] = [
+                'DT_RowIndex' => $start + $index + 1,
+                'pincode' => $pincode->pincode,
+                'officename' => $pincode->officename ?? 'N/A',
+                'district' => $pincode->district ?? 'N/A',
+                'statename' => $pincode->statename ?? 'N/A',
+            ];
+        }
+        
+        return response()->json([
+            'draw' => intval($draw),
+            'recordsTotal' => Pincode::whereNotIn('id', $mappedPincodeIds)->count(),
+            'recordsFiltered' => $totalRecords,
+            'data' => $data
+        ]);
+    }
+
+    /**
+     * Get active pincodes via AJAX for DataTables server-side processing
+     */
+    public function getActivePincodes(Request $request)
+    {
+        // DataTables server-side processing parameters
+        $draw = $request->get('draw');
+        $start = $request->get('start', 0);
+        $length = $request->get('length', 25);
+        $search = $request->get('search', []);
+        $searchValue = $search['value'] ?? '';
+        
+        // Build query for active pincodes (mapped to LM centers)
+        $query = DB::table('lm_center_pincode')
+            ->join('pincodes', 'lm_center_pincode.pincode_id', '=', 'pincodes.id')
+            ->join('lm_centers', 'lm_center_pincode.lm_center_id', '=', 'lm_centers.id')
+            ->select(
+                'pincodes.id as pincode_id',
+                'pincodes.pincode',
+                'pincodes.officename',
+                'pincodes.district',
+                'pincodes.statename',
+                'lm_centers.id as lm_center_id',
+                'lm_centers.center_name',
+                'lm_center_pincode.created_at as mapped_at'
+            );
+        
+        // Apply search filter
+        if (!empty($searchValue)) {
+            $query->where(function($q) use ($searchValue) {
+                $q->where('pincodes.pincode', 'like', "%{$searchValue}%")
+                  ->orWhere('pincodes.officename', 'like', "%{$searchValue}%")
+                  ->orWhere('pincodes.district', 'like', "%{$searchValue}%")
+                  ->orWhere('pincodes.statename', 'like', "%{$searchValue}%")
+                  ->orWhere('lm_centers.center_name', 'like', "%{$searchValue}%");
+            });
+        }
+        
+        // Get total count before pagination
+        $totalRecords = $query->count();
+        
+        // Apply ordering
+        $query->orderBy('pincodes.pincode');
+        
+        // Apply pagination
+        $activePincodes = $query->skip($start)->take($length)->get();
+        
+        // Format data for DataTables
+        $data = [];
+        foreach ($activePincodes as $index => $activePincode) {
+            $mappedAt = $activePincode->mapped_at ? \Carbon\Carbon::parse($activePincode->mapped_at)->format('d M Y') : 'N/A';
+            $centerLink = '<a href="' . route('admin.logistics.lm-center.edit', [$activePincode->lm_center_id]) . '" class="text-primary">' . e($activePincode->center_name) . '</a>';
+            
+            $data[] = [
+                'DT_RowIndex' => $start + $index + 1,
+                'pincode' => $activePincode->pincode,
+                'officename' => $activePincode->officename ?? 'N/A',
+                'district' => $activePincode->district ?? 'N/A',
+                'statename' => $activePincode->statename ?? 'N/A',
+                'center_name' => $centerLink,
+                'mapped_at' => $mappedAt,
+            ];
+        }
+        
+        // Get total count without filters for recordsTotal
+        $totalCount = DB::table('lm_center_pincode')->count();
+        
+        return response()->json([
+            'draw' => intval($draw),
+            'recordsTotal' => $totalCount,
+            'recordsFiltered' => $totalRecords,
+            'data' => $data
+        ]);
     }
 }
 

@@ -267,7 +267,7 @@
                                    data-tab="pincode"
                                    onclick="navigateToTab('pincode'); return false;">
                                     Pending Pincode
-                                    <span class="badge badge-soft-dark ml-2">{{ count($pendingPincodes) }}</span>
+                                    <span class="badge badge-soft-dark ml-2">{{ $pendingPincodesCount ?? 0 }}</span>
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -279,7 +279,7 @@
                                    data-tab="active-pincode"
                                    onclick="navigateToTab('active-pincode'); return false;">
                                     Active Pincode
-                                    <span class="badge badge-soft-dark ml-2">{{ count($activePincodes) }}</span>
+                                    <span class="badge badge-soft-dark ml-2">{{ $activePincodesCount ?? 0 }}</span>
                                 </a>
                             </li>
                         </ul>
@@ -509,15 +509,6 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($pendingPincodes as $key=>$pincode)
-                                            <tr>
-                                                <td>{{$key+1}}</td>
-                                                <td>{{$pincode->pincode}}</td>
-                                                <td>{{$pincode->officename ?? 'N/A'}}</td>
-                                                <td>{{$pincode->district ?? 'N/A'}}</td>
-                                                <td>{{$pincode->statename ?? 'N/A'}}</td>
-                                            </tr>
-                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -540,21 +531,6 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach($activePincodes as $key=>$activePincode)
-                                            <tr>
-                                                <td>{{$key+1}}</td>
-                                                <td>{{$activePincode->pincode}}</td>
-                                                <td>{{$activePincode->officename ?? 'N/A'}}</td>
-                                                <td>{{$activePincode->district ?? 'N/A'}}</td>
-                                                <td>{{$activePincode->statename ?? 'N/A'}}</td>
-                                                <td>
-                                                    <a href="{{route('admin.logistics.lm-center.edit',[$activePincode->lm_center_id])}}" class="text-primary">
-                                                        {{$activePincode->center_name}}
-                                                    </a>
-                                                </td>
-                                                <td>{{$activePincode->mapped_at ? \Carbon\Carbon::parse($activePincode->mapped_at)->format('d M Y') : 'N/A'}}</td>
-                                            </tr>
-                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -697,40 +673,25 @@
         
         if ($('#pincodeTable').length && !$.fn.DataTable.isDataTable('#pincodeTable')) {
             var pincodeTable = $('#pincodeTable').DataTable({
-            paging: true,
-            pageLength: 25,
-            lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
-            searching: true,
-            info: true,
-            order: [],
-            orderCellsTop: true,
-            dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-            language: {
-                zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('public/assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
-                lengthMenu: "Show _MENU_ entries",
-                search: "Search:",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries",
-                infoEmpty: "Showing 0 to 0 of 0 entries",
-                infoFiltered: "(filtered from _MAX_ total entries)",
-                paginate: {
-                    first: "First",
-                    last: "Last",
-                    next: "Next",
-                    previous: "Previous"
-                }
-            }
-            });
-        }
-        
-        // Initialize activePincodeTable only if it exists and hasn't been initialized
-        if ($('#activePincodeTable').length && !$.fn.DataTable.isDataTable('#activePincodeTable')) {
-            var activePincodeTable = $('#activePincodeTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route("admin.logistics.pending-mapping.pending-pincodes") }}',
+                    type: 'GET'
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'pincode', name: 'pincode' },
+                    { data: 'officename', name: 'officename' },
+                    { data: 'district', name: 'district' },
+                    { data: 'statename', name: 'statename' }
+                ],
                 paging: true,
                 pageLength: 25,
                 lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                 searching: true,
                 info: true,
-                order: [],
+                order: [[1, 'asc']],
                 orderCellsTop: true,
                 dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
                 language: {
@@ -740,6 +701,51 @@
                     info: "Showing _START_ to _END_ of _TOTAL_ entries",
                     infoEmpty: "Showing 0 to 0 of 0 entries",
                     infoFiltered: "(filtered from _MAX_ total entries)",
+                    processing: "Loading pincodes...",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+        
+        // Initialize activePincodeTable only if it exists and hasn't been initialized
+        if ($('#activePincodeTable').length && !$.fn.DataTable.isDataTable('#activePincodeTable')) {
+            var activePincodeTable = $('#activePincodeTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route("admin.logistics.pending-mapping.active-pincodes") }}',
+                    type: 'GET'
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'pincode', name: 'pincode' },
+                    { data: 'officename', name: 'officename' },
+                    { data: 'district', name: 'district' },
+                    { data: 'statename', name: 'statename' },
+                    { data: 'center_name', name: 'center_name', orderable: false },
+                    { data: 'mapped_at', name: 'mapped_at', orderable: false }
+                ],
+                paging: true,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                searching: true,
+                info: true,
+                order: [[1, 'asc']],
+                orderCellsTop: true,
+                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                language: {
+                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('public/assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
+                    lengthMenu: "Show _MENU_ entries",
+                    search: "Search:",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "Showing 0 to 0 of 0 entries",
+                    infoFiltered: "(filtered from _MAX_ total entries)",
+                    processing: "Loading pincodes...",
                     paginate: {
                         first: "First",
                         last: "Last",

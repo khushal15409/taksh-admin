@@ -30,13 +30,11 @@ class LmCenterController extends Controller
      */
     public function create()
     {
-        // Get all pincodes
-        $pincodes = Pincode::orderBy('pincode')->get();
-        
+        // Don't load all pincodes - will be loaded via AJAX search
         // Get all already mapped pincode IDs (pincodes that are mapped to any LM Center)
         $mappedPincodeIds = \DB::table('lm_center_pincode')->pluck('pincode_id')->unique()->toArray();
         
-        return view('admin-views.logistics.lm-center.create', compact('pincodes', 'mappedPincodeIds'));
+        return view('admin-views.logistics.lm-center.create', compact('mappedPincodeIds'));
     }
 
     /**
@@ -161,9 +159,7 @@ class LmCenterController extends Controller
     {
         $lmCenter = LmCenter::with(['pincodes'])->findOrFail($id);
         
-        // Get all pincodes
-        $pincodes = Pincode::orderBy('pincode')->get();
-        
+        // Don't load all pincodes - will be loaded via AJAX search
         // Get all already mapped pincode IDs (pincodes that are mapped to other LM Centers, excluding current one)
         $mappedPincodeIds = \DB::table('lm_center_pincode')
             ->where('lm_center_id', '!=', $id)
@@ -171,7 +167,7 @@ class LmCenterController extends Controller
             ->unique()
             ->toArray();
         
-        return view('admin-views.logistics.lm-center.edit', compact('lmCenter', 'pincodes', 'mappedPincodeIds'));
+        return view('admin-views.logistics.lm-center.edit', compact('lmCenter', 'mappedPincodeIds'));
     }
 
     /**
@@ -322,6 +318,68 @@ class LmCenterController extends Controller
         $lmCenter->save();
         Toastr::success(translate('messages.lm_center_status_updated'));
         return back();
+    }
+
+    /**
+     * Search pincodes via AJAX for Select2 dropdown
+     */
+    public function searchPincodes(Request $request)
+    {
+        $search = $request->get('search', '');
+        $page = $request->get('page', 1);
+        $perPage = 20;
+        
+        // Get already mapped pincode IDs (pincodes that are mapped to other LM Centers)
+        $excludeLmCenterId = $request->get('exclude_lm_center_id', null);
+        $mappedPincodeIds = \DB::table('lm_center_pincode');
+        
+        if ($excludeLmCenterId) {
+            $mappedPincodeIds = $mappedPincodeIds->where('lm_center_id', '!=', $excludeLmCenterId);
+        }
+        
+        $mappedPincodeIds = $mappedPincodeIds->pluck('pincode_id')->unique()->toArray();
+        
+        // Build query
+        $query = Pincode::query();
+        
+        // Search by pincode, officename, district, or statename
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('pincode', 'like', "%{$search}%")
+                  ->orWhere('officename', 'like', "%{$search}%")
+                  ->orWhere('district', 'like', "%{$search}%")
+                  ->orWhere('statename', 'like', "%{$search}%");
+            });
+        }
+        
+        // Order by pincode
+        $query->orderBy('pincode');
+        
+        // Get paginated results
+        $pincodes = $query->paginate($perPage, ['*'], 'page', $page);
+        
+        // Format results for Select2
+        $results = [];
+        foreach ($pincodes->items() as $pincode) {
+            $isMapped = in_array($pincode->id, $mappedPincodeIds);
+            
+            $results[] = [
+                'id' => $pincode->id,
+                'text' => $pincode->pincode . ' - ' . ($pincode->officename ?? 'N/A') . ' (' . ($pincode->district ?? 'N/A') . ', ' . ($pincode->statename ?? 'N/A') . ')' . ($isMapped ? ' [Already Mapped]' : ''),
+                'disabled' => $isMapped,
+                'pincode' => $pincode->pincode,
+                'officename' => $pincode->officename,
+                'district' => $pincode->district,
+                'statename' => $pincode->statename,
+            ];
+        }
+        
+        return response()->json([
+            'results' => $results,
+            'pagination' => [
+                'more' => $pincodes->hasMorePages()
+            ]
+        ]);
     }
 
     /**
