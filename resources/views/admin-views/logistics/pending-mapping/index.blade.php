@@ -118,31 +118,49 @@
     #pendingMappingTabs {
         border-bottom: none;
         margin-bottom: 25px;
-        padding: 15px;
+        padding: 10px;
         background: #f8f9fa;
         border-radius: 12px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
+        flex-wrap: nowrap;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #pendingMappingTabs::-webkit-scrollbar {
+        height: 4px;
+    }
+    
+    #pendingMappingTabs::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 2px;
+    }
+    
+    #pendingMappingTabs::-webkit-scrollbar-thumb {
+        background: #009ef7;
+        border-radius: 2px;
     }
     
     #pendingMappingTabs .nav-item {
         margin-bottom: 0;
+        flex-shrink: 0;
     }
     
     #pendingMappingTabs .nav-link {
         border: 2px solid #e4e6ef;
-        border-radius: 10px;
+        border-radius: 8px;
         color: #5e6278;
-        padding: 12px 20px;
+        padding: 8px 12px;
         font-weight: 600;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         transition: all 0.3s ease;
         cursor: pointer;
         background: #ffffff;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         text-decoration: none;
         white-space: nowrap;
@@ -173,11 +191,12 @@
     
     /* Badge Styling for Pending Mapping Tabs */
     #pendingMappingTabs .nav-link .badge {
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.8rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.7rem;
         font-weight: 700;
         transition: all 0.3s ease;
+        line-height: 1.2;
     }
     
     #pendingMappingTabs .nav-link:not(.active) .badge {
@@ -315,21 +334,21 @@
         }
         
         #pendingMappingTabs {
-            padding: 10px;
-            gap: 8px;
+            padding: 8px;
+            gap: 6px;
+            overflow-x: auto;
         }
         
         #pendingMappingTabs .nav-link {
-            padding: 10px 16px;
-            font-size: 0.85rem;
-            flex: 1;
-            min-width: 140px;
-            justify-content: center;
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+            min-width: auto;
         }
         
         #pendingMappingTabs .nav-link .badge {
-            font-size: 0.75rem;
-            padding: 3px 8px;
+            font-size: 0.65rem;
+            padding: 2px 5px;
         }
         
         .nav-tabs:not(#pendingMappingTabs) .nav-link {

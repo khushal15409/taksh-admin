@@ -299,7 +299,7 @@
                                     <select name="pincode_ids[]" id="pincode_ids" class="form-control" multiple="multiple">
                                         @foreach(old('pincode_ids', []) as $selectedId)
                                             @php
-                                                $selectedPincode = \App\Models\Pincode::find($selectedId);
+                                                $selectedPincode = \App\Models\Pincode::where('id', $selectedId)->where('status', 1)->first();
                                             @endphp
                                             @if($selectedPincode)
                                                 <option value="{{$selectedPincode->id}}" selected>

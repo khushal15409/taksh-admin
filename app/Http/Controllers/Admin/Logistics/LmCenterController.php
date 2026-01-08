@@ -345,8 +345,9 @@ class LmCenterController extends Controller
         
         $mappedPincodeIds = $mappedPincodeIds->pluck('pincode_id')->unique()->toArray();
         
-        // Build query
-        $query = Pincode::query();
+        // Build query - Only show active pincodes (status = 1)
+        // Filter for active pincodes only
+        $query = Pincode::where('status', 1);
         
         // Search by pincode, officename, district, or statename
         if (!empty($search)) {

@@ -376,10 +376,58 @@
             $('.dataTables_paginate').css({'display': 'block', 'visibility': 'visible'});
         }, 200);
         
-        // Handle loader for form submissions (delete, status change)
-        $('.form-alert').on('click', function() {
-            if (typeof PageLoader !== 'undefined') {
-                PageLoader.show();
+        // Handle delete confirmation with form-alert using project modal
+        $(document).on('click', '.form-alert', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var $btn = $(this);
+            var formId = $btn.data('id');
+            var message = $btn.data('message') || 'Want to delete this?';
+            var title = $btn.data('title') || 'Delete Confirmation';
+            var imageOn = $btn.data('image-on') || '{{ asset("assets/admin/img/modal/zone-status-off.png") }}';
+            
+            if (!formId) {
+                console.error('Form ID not found');
+                return false;
+            }
+            
+            // Set modal content
+            $('#toggle-status-title').empty().html(title);
+            $('#toggle-status-message').empty().html(message);
+            $('#toggle-status-image').attr('src', imageOn);
+            $('#toggle-status-ok-button').attr('data-form-id', formId);
+            
+            // Show modal
+            $('#toggle-status-modal').modal('show');
+        });
+        
+        // Handle form submission after confirmation (custom handler for delete)
+        $(document).on('click', '#toggle-status-ok-button[data-form-id]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var formId = $(this).attr('data-form-id');
+            var form = document.getElementById(formId);
+            
+            if (form) {
+                // Hide modal
+                $('#toggle-status-modal').modal('hide');
+                
+                // Show loader
+                if (typeof PageLoader !== 'undefined') {
+                    PageLoader.show();
+                }
+                
+                // Submit the form
+                form.submit();
+            } else {
+                console.error('Form not found with ID:', formId);
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Form not found', 'Error');
+                } else {
+                    alert('Error: Form not found');
+                }
             }
         });
         
