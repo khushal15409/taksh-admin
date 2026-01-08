@@ -114,17 +114,114 @@
         background-color: #f5f8fa;
     }
     
-    /* Tab Styling */
-    .nav-tabs {
+    /* Tab Styling - Scoped to Pending Mapping Module Only */
+    #pendingMappingTabs {
+        border-bottom: none;
+        margin-bottom: 25px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    #pendingMappingTabs .nav-item {
+        margin-bottom: 0;
+    }
+    
+    #pendingMappingTabs .nav-link {
+        border: 2px solid #e4e6ef;
+        border-radius: 10px;
+        color: #5e6278;
+        padding: 12px 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        text-decoration: none;
+        white-space: nowrap;
+        position: relative;
+    }
+    
+    #pendingMappingTabs .nav-link:hover {
+        border-color: #009ef7;
+        color: #009ef7;
+        background: #f1faff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 158, 247, 0.15);
+    }
+    
+    #pendingMappingTabs .nav-link.active {
+        color: #ffffff !important;
+        background-color: #009ef7;
+        border-color: #009ef7;
+        box-shadow: 0 4px 8px rgba(0, 158, 247, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    #pendingMappingTabs .nav-link.active:hover {
+        background-color: #0085d1;
+        border-color: #0085d1;
+        color: #ffffff !important;
+    }
+    
+    /* Badge Styling for Pending Mapping Tabs */
+    #pendingMappingTabs .nav-link .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+    
+    #pendingMappingTabs .nav-link:not(.active) .badge {
+        background: #e4e6ef;
+        color: #5e6278;
+    }
+    
+    #pendingMappingTabs .nav-link.active .badge {
+        background: rgba(255, 255, 255, 0.3);
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    #pendingMappingTabs .nav-link.active span:not(.badge) {
+        color: #ffffff !important;
+    }
+    
+    #pendingMappingTabs .nav-link:hover:not(.active) .badge {
+        background: #009ef7;
+        color: #ffffff;
+    }
+    
+    /* Prevent content flash on tab navigation */
+    .tab-content {
+        min-height: 400px;
+        padding-top: 20px;
+    }
+    
+    .tab-pane {
+        opacity: 1;
+        transition: opacity 0.2s ease-in-out;
+    }
+    
+    /* Regular nav-tabs styling for other modules (if needed elsewhere) */
+    .nav-tabs:not(#pendingMappingTabs) {
         border-bottom: 2px solid #e4e6ef;
         margin-bottom: 20px;
     }
     
-    .nav-tabs .nav-item {
+    .nav-tabs:not(#pendingMappingTabs) .nav-item {
         margin-bottom: -2px;
     }
     
-    .nav-tabs .nav-link {
+    .nav-tabs:not(#pendingMappingTabs) .nav-link {
         border: none;
         border-bottom: 2px solid transparent;
         color: #5e6278;
@@ -134,29 +231,15 @@
         cursor: pointer;
     }
     
-    /* Prevent content flash on tab navigation */
-    .tab-content {
-        min-height: 400px;
-    }
-    
-    .tab-pane {
-        opacity: 1;
-        transition: opacity 0.2s ease-in-out;
-    }
-    
-    .nav-tabs .nav-link:hover {
+    .nav-tabs:not(#pendingMappingTabs) .nav-link:hover {
         border-bottom-color: #009ef7;
         color: #009ef7;
     }
     
-    .nav-tabs .nav-link.active {
+    .nav-tabs:not(#pendingMappingTabs) .nav-link.active {
         color: #009ef7;
         border-bottom-color: #009ef7;
         background-color: transparent;
-    }
-    
-    .tab-content {
-        padding-top: 20px;
     }
     
     /* Delivery Type Filter Tabs Styling - Button Design */
@@ -231,10 +314,40 @@
             justify-content: center;
         }
         
-        .nav-tabs .nav-link {
+        #pendingMappingTabs {
+            padding: 10px;
+            gap: 8px;
+        }
+        
+        #pendingMappingTabs .nav-link {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            flex: 1;
+            min-width: 140px;
+            justify-content: center;
+        }
+        
+        #pendingMappingTabs .nav-link .badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+        }
+        
+        .nav-tabs:not(#pendingMappingTabs) .nav-link {
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
         }
+    }
+    
+    /* Pincode Status Switch Styling - Inactive (Red) */
+    .toggle-switch-input:not(:checked) + .toggle-switch-label {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+    
+    /* Ensure active state remains green */
+    .toggle-switch-input:checked + .toggle-switch-label {
+        background-color: #14b19e !important;
+        border-color: #14b19e !important;
     }
 </style>
 @endpush
@@ -262,7 +375,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Tabs -->
-                        <ul class="nav nav-tabs" id="pendingMappingTabs" role="tablist">
+                        <ul class="nav nav-tabs mb-3" id="pendingMappingTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link {{ $tab == 'warehouse' ? 'active' : '' }}" 
                                    id="warehouse-tab" 
@@ -319,8 +432,32 @@
                                    role="tab"
                                    data-tab="pincode"
                                    onclick="navigateToTab('pincode'); return false;">
-                                    Pending Pincode
+                                    Pending Pincode Pen India
                                     <span class="badge badge-soft-dark ml-2">{{ $pendingPincodesCount ?? 0 }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link {{ $tab == 'live-ecommerce-pincode' ? 'active' : '' }}" 
+                                   id="live-ecommerce-pincode-tab" 
+                                   data-toggle="tab" 
+                                   href="#live-ecommerce-pincode" 
+                                   role="tab"
+                                   data-tab="live-ecommerce-pincode"
+                                   onclick="navigateToTab('live-ecommerce-pincode'); return false;">
+                                    Live pincode Ecommerce
+                                    <span class="badge badge-soft-dark ml-2">{{ $liveEcommercePincodesCount ?? 0 }}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link {{ $tab == 'pending-logistic-pincode' ? 'active' : '' }}" 
+                                   id="pending-logistic-pincode-tab" 
+                                   data-toggle="tab" 
+                                   href="#pending-logistic-pincode" 
+                                   role="tab"
+                                   data-tab="pending-logistic-pincode"
+                                   onclick="navigateToTab('pending-logistic-pincode'); return false;">
+                                    Pending logistic Pincode
+                                    <span class="badge badge-soft-dark ml-2">{{ $pendingLogisticPincodesCount ?? 0 }}</span>
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
@@ -331,7 +468,7 @@
                                    role="tab"
                                    data-tab="active-pincode"
                                    onclick="navigateToTab('active-pincode'); return false;">
-                                    Active Pincode
+                                    Logistic Live pincode
                                     <span class="badge badge-soft-dark ml-2">{{ $activePincodesCount ?? 0 }}</span>
                                 </a>
                             </li>
@@ -547,7 +684,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Pending Pincode Tab -->
+                            <!-- Pending Pincode Pen India Tab -->
                             <div class="tab-pane fade {{ $tab == 'pincode' ? 'show active' : '' }}" id="pincode" role="tabpanel">
                                 <div class="table-responsive datatable-custom">
                                     <table id="pincodeTable"
@@ -559,6 +696,7 @@
                                             <th class="border-0">Office Name</th>
                                             <th class="border-0">District</th>
                                             <th class="border-0">State</th>
+                                            <th class="border-0 text-center">Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -567,30 +705,61 @@
                                 </div>
                             </div>
                             
-                            <!-- Active Pincode Tab -->
+                            <!-- Live pincode Ecommerce Tab -->
+                            <div class="tab-pane fade {{ $tab == 'live-ecommerce-pincode' ? 'show active' : '' }}" id="live-ecommerce-pincode" role="tabpanel">
+                                <div class="table-responsive datatable-custom">
+                                    <table id="liveEcommercePincodeTable"
+                                           class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th class="border-0">{{translate('messages.sl')}}</th>
+                                            <th class="border-0">Pincode</th>
+                                            <th class="border-0">Office Name</th>
+                                            <th class="border-0">District</th>
+                                            <th class="border-0">State</th>
+                                            <th class="border-0 text-center">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Pending logistic Pincode Tab -->
+                            <div class="tab-pane fade {{ $tab == 'pending-logistic-pincode' ? 'show active' : '' }}" id="pending-logistic-pincode" role="tabpanel">
+                                <div class="table-responsive datatable-custom">
+                                    <table id="pendingLogisticPincodeTable"
+                                           class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th class="border-0">{{translate('messages.sl')}}</th>
+                                            <th class="border-0">Pincode</th>
+                                            <th class="border-0">Office Name</th>
+                                            <th class="border-0">District</th>
+                                            <th class="border-0">State</th>
+                                            <th class="border-0 text-center">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <!-- Logistic Live pincode Tab -->
                             <div class="tab-pane fade {{ $tab == 'active-pincode' ? 'show active' : '' }}" id="active-pincode" role="tabpanel">
                                 <!-- Delivery Type Filter Tabs -->
                                 <ul class="nav nav-tabs mb-3" id="deliveryTypeTabs" role="tablist" style="border-bottom: 1px solid #e4e6ef;">
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link active" 
-                                           id="delivery-lm-fm-rt-tab" 
-                                           data-toggle="tab" 
-                                           href="#delivery-lm-fm-rt" 
-                                           role="tab"
-                                           data-delivery-type="lm_fm_rt"
-                                           onclick="switchDeliveryType('lm_fm_rt'); return false;">
-                                            LM & FM RT
-                                        </a>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <a class="nav-link" 
                                            id="delivery-both-tab" 
                                            data-toggle="tab" 
                                            href="#delivery-both" 
                                            role="tab"
                                            data-delivery-type="both"
                                            onclick="switchDeliveryType('both'); return false;">
-                                            30 Min & Normal Delivery
+                                            Taksh Logistic LM Live pincode
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
@@ -650,8 +819,8 @@
 
 @push('script_2')
 <script>
-    // Global variable to store current delivery type filter - DEFAULT: lm_fm_rt
-    var currentDeliveryType = 'lm_fm_rt';
+    // Global variable to store current delivery type filter - DEFAULT: both (Taksh Logistic LM Live pincode)
+    var currentDeliveryType = 'both';
     
     // Function to switch delivery type filter - COMPLETE STATE RESET (GLOBAL SCOPE)
     function switchDeliveryType(deliveryType) {
@@ -825,7 +994,293 @@
                     { data: 'pincode', name: 'pincode' },
                     { data: 'officename', name: 'officename' },
                     { data: 'district', name: 'district' },
-                    { data: 'statename', name: 'statename' }
+                    { data: 'statename', name: 'statename' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false }
+                ],
+                paging: true,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                searching: true,
+                info: true,
+                order: [[1, 'asc']],
+                orderCellsTop: true,
+                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                language: {
+                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
+                    lengthMenu: "Show _MENU_ entries",
+                    search: "Search:",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "Showing 0 to 0 of 0 entries",
+                    infoFiltered: "(filtered from _MAX_ total entries)",
+                    processing: "Loading pincodes...",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+        
+        // Intercept the confirm button click BEFORE common.js submits the form
+        // This handler must run BEFORE common.js's handler to prevent form submission
+        $(document).on('click', '.confirm-Status-Toggle', function(e) {
+            var button = $(this);
+            var checkboxId = button.attr('toggle-ok-button');
+            
+            // Only handle pincode status forms
+            if (!checkboxId || (!checkboxId.startsWith('pincode-status-') && 
+                                !checkboxId.startsWith('live-pincode-status-') && 
+                                !checkboxId.startsWith('pending-logistic-pincode-status-'))) {
+                // Let common.js handle other status toggles
+                return true;
+            }
+            
+            // Prevent default form submission
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            // Find the form
+            var formId = checkboxId + '_form';
+            var form = $('#' + formId);
+            
+            if (form.length === 0) {
+                console.error('Form not found with ID:', formId);
+                return false;
+            }
+            
+            // Wait for common.js to finish toggling the checkbox
+            setTimeout(function() {
+                // Find checkbox to read its current state
+                var checkbox = $('#' + checkboxId);
+                var isChecked = false;
+                
+                if (checkbox.length > 0) {
+                    isChecked = checkbox.is(':checked');
+                } else {
+                    // Fallback: try DOM directly
+                    var domCheckbox = document.getElementById(checkboxId);
+                    if (domCheckbox) {
+                        isChecked = domCheckbox.checked;
+                        checkbox = $(domCheckbox);
+                    }
+                }
+                
+                var pincodeId = form.find('input[name="id"]').val();
+                var csrfToken = $('meta[name="csrf-token"]').attr('content') || form.find('input[name="_token"]').val();
+                var newStatus = isChecked ? 1 : 0;
+                
+                // Debug log
+                console.log('=== Pincode Status Update (AJAX Call) ===');
+                console.log('Checkbox ID:', checkboxId);
+                console.log('Form ID:', formId);
+                console.log('Pincode ID:', pincodeId);
+                console.log('Checkbox checked:', isChecked);
+                console.log('Status to send:', newStatus);
+                console.log('Form action:', form.attr('action'));
+                
+                // Verify required data
+                if (!pincodeId) {
+                    console.error('Pincode ID is missing!');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Pincode ID is missing', 'Error');
+                    }
+                    return false;
+                }
+                
+                if (!csrfToken) {
+                    console.error('CSRF token is missing!');
+                    if (typeof toastr !== 'undefined') {
+                        toastr.error('Security token is missing', 'Error');
+                    }
+                    return false;
+                }
+                
+                // Prepare AJAX request
+                var requestData = {
+                    id: pincodeId,
+                    status: newStatus,
+                    _token: csrfToken
+                };
+                
+                var url = form.attr('action');
+                
+                console.log('Making AJAX call to:', url);
+                console.log('Request data:', requestData);
+                
+                // Show loading state on button
+                button.prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i> Processing...');
+                
+                // Make AJAX call
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: requestData,
+                    dataType: 'json',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    success: function(response) {
+                        console.log('=== AJAX Response ===');
+                        console.log('Response:', response);
+                        
+                        // Restore button
+                        button.prop('disabled', false).html('Ok');
+                        
+                        if (response && response.status === 'success') {
+                            // Show success toast
+                            if (typeof toastr !== 'undefined') {
+                                toastr.success(response.message || 'Status updated successfully', 'Success', {
+                                    closeButton: true,
+                                    progressBar: true,
+                                    timeOut: 3000,
+                                    positionClass: 'toast-top-right'
+                                });
+                            }
+                            
+                            // Close modal
+                            $('#toggle-status-modal').modal('hide');
+                            
+                            // Reload DataTables to show updated status
+                            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#pincodeTable')) {
+                                $('#pincodeTable').DataTable().ajax.reload(null, false);
+                            }
+                            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#liveEcommercePincodeTable')) {
+                                $('#liveEcommercePincodeTable').DataTable().ajax.reload(null, false);
+                            }
+                            if ($.fn.DataTable && $.fn.DataTable.isDataTable('#pendingLogisticPincodeTable')) {
+                                $('#pendingLogisticPincodeTable').DataTable().ajax.reload(null, false);
+                            }
+                        } else {
+                            // Revert checkbox on error
+                            if (checkbox.length > 0) {
+                                checkbox.prop('checked', !isChecked);
+                            }
+                            
+                            var errorMsg = response && response.message ? response.message : 'Failed to update status';
+                            console.error('Status update failed:', errorMsg);
+                            
+                            if (typeof toastr !== 'undefined') {
+                                toastr.error(errorMsg, 'Error', {
+                                    closeButton: true,
+                                    progressBar: true,
+                                    timeOut: 3000,
+                                    positionClass: 'toast-top-right'
+                                });
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('=== AJAX Error ===');
+                        console.error('Status:', xhr.status);
+                        console.error('Error:', error);
+                        console.error('Response:', xhr.responseJSON);
+                        
+                        // Restore button
+                        button.prop('disabled', false).html('Ok');
+                        
+                        // Revert checkbox on error
+                        if (checkbox.length > 0) {
+                            checkbox.prop('checked', !isChecked);
+                        }
+                        
+                        // Show error message
+                        var errorMsg = 'Failed to update pincode status';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        } else if (xhr.status === 422) {
+                            errorMsg = 'Validation error';
+                        } else if (xhr.status === 404) {
+                            errorMsg = 'Pincode not found';
+                        } else if (xhr.status === 500) {
+                            errorMsg = 'Server error';
+                        }
+                        
+                        if (typeof toastr !== 'undefined') {
+                            toastr.error(errorMsg, 'Error', {
+                                closeButton: true,
+                                progressBar: true,
+                                timeOut: 3000,
+                                positionClass: 'toast-top-right'
+                            });
+                        }
+                    }
+                });
+            }, 100); // Small delay to ensure common.js toggle is complete
+            
+            return false;
+        });
+        
+        // Also handle form submission as fallback (in case click handler doesn't catch it)
+        $(document).on('submit', 'form[id^="pincode-status-"], form[id^="live-pincode-status-"], form[id^="pending-logistic-pincode-status-"]', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        });
+        
+        // Initialize liveEcommercePincodeTable only if it exists and hasn't been initialized
+        if ($('#liveEcommercePincodeTable').length && !$.fn.DataTable.isDataTable('#liveEcommercePincodeTable')) {
+            var liveEcommercePincodeTable = $('#liveEcommercePincodeTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route("admin.logistics.pending-mapping.live-ecommerce-pincodes") }}',
+                    type: 'GET'
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'pincode', name: 'pincode' },
+                    { data: 'officename', name: 'officename' },
+                    { data: 'district', name: 'district' },
+                    { data: 'statename', name: 'statename' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false }
+                ],
+                paging: true,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                searching: true,
+                info: true,
+                order: [[1, 'asc']],
+                orderCellsTop: true,
+                dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+                language: {
+                    zeroRecords: '<div class="text-center p-4"><img class="w-7rem mb-3" src="{{asset('assets/admin/svg/illustrations/sorry.svg')}}" alt="Image Description"><h5>{{translate('no_data_found')}}</h5></div>',
+                    lengthMenu: "Show _MENU_ entries",
+                    search: "Search:",
+                    info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                    infoEmpty: "Showing 0 to 0 of 0 entries",
+                    infoFiltered: "(filtered from _MAX_ total entries)",
+                    processing: "Loading pincodes...",
+                    paginate: {
+                        first: "First",
+                        last: "Last",
+                        next: "Next",
+                        previous: "Previous"
+                    }
+                }
+            });
+        }
+        
+        // Initialize pendingLogisticPincodeTable only if it exists and hasn't been initialized
+        if ($('#pendingLogisticPincodeTable').length && !$.fn.DataTable.isDataTable('#pendingLogisticPincodeTable')) {
+            var pendingLogisticPincodeTable = $('#pendingLogisticPincodeTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ route("admin.logistics.pending-mapping.pending-logistic-pincodes") }}',
+                    type: 'GET'
+                },
+                columns: [
+                    { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'pincode', name: 'pincode' },
+                    { data: 'officename', name: 'officename' },
+                    { data: 'district', name: 'district' },
+                    { data: 'statename', name: 'statename' },
+                    { data: 'action', name: 'action', orderable: false, searchable: false }
                 ],
                 paging: true,
                 pageLength: 25,
