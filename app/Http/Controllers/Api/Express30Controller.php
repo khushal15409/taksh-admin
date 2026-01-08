@@ -77,17 +77,22 @@ class Express30Controller extends Controller
 
     /**
      * Get express 30 products
-     * GET /api/express-30/products
+     * POST /api/express-30/products
      */
     public function products(Request $request)
     {
         $request->validate([
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
+            'category_id' => 'required|exists:categories,id',
+            'page_number' => 'nullable|integer|min:1',
         ]);
 
         $latitude = $request->input('latitude');
         $longitude = $request->input('longitude');
+        $categoryId = $request->input('category_id');
+        $pageNumber = $request->input('page_number', 1);
+        $perPage = 30; // Default 30 products per page
 
         // Find nearest fulfillment center
         $fulfillmentCenter = $this->findNearestFulfillmentCenter($latitude, $longitude);
@@ -96,9 +101,10 @@ class Express30Controller extends Controller
             return $this->error('express.not_available', 404);
         }
 
-        // Get express-eligible products with available stock
-        $products = Product::where('is_express_30', true)
+        // Get express-eligible products with available stock and category filter
+        $productsQuery = Product::where('is_express_30', true)
             ->where('status', 'active')
+            ->where('category_id', $categoryId)
             ->with(['variants' => function ($query) use ($fulfillmentCenter) {
                 $query->where('status', 'active')
                     ->whereHas('warehouseProducts', function ($q) use ($fulfillmentCenter) {
@@ -113,11 +119,13 @@ class Express30Controller extends Controller
                             ->whereRaw('(stock_qty - reserved_qty) > 0');
                     });
             })
-            ->with(['images', 'category', 'brand'])
-            ->get();
+            ->with(['images', 'category', 'brand']);
+
+        // Paginate the products
+        $paginatedProducts = $productsQuery->paginate($perPage, ['*'], 'page', $pageNumber);
 
         // Format products with stock information
-        $formattedProducts = $products->map(function ($product) use ($fulfillmentCenter) {
+        $formattedProducts = $paginatedProducts->map(function ($product) use ($fulfillmentCenter) {
             $variants = $product->variants->map(function ($variant) use ($fulfillmentCenter) {
                 $warehouseProduct = WarehouseProduct::where('warehouse_id', $fulfillmentCenter->id)
                     ->where('product_variant_id', $variant->id)
@@ -163,6 +171,14 @@ class Express30Controller extends Controller
                 'name' => $fulfillmentCenter->name,
             ],
             'products' => $formattedProducts,
+            'pagination' => [
+                'current_page' => $paginatedProducts->currentPage(),
+                'per_page' => $paginatedProducts->perPage(),
+                'total' => $paginatedProducts->total(),
+                'last_page' => $paginatedProducts->lastPage(),
+                'from' => $paginatedProducts->firstItem(),
+                'to' => $paginatedProducts->lastItem(),
+            ],
         ], 'express.products_loaded');
     }
 

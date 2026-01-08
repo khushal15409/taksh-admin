@@ -33,7 +33,7 @@ Route::get('banners', [BannerController::class, 'index']);
 
 // Express 30 Delivery routes
 Route::prefix('express-30')->group(function () {
-    Route::get('products', [Express30Controller::class, 'products']);
+    Route::post('products', [Express30Controller::class, 'products']);
 });
 
 // Protected routes
