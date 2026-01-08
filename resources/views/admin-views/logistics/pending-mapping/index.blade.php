@@ -738,7 +738,6 @@
                                             <th class="border-0">Office Name</th>
                                             <th class="border-0">District</th>
                                             <th class="border-0">State</th>
-                                            <th class="border-0 text-center">Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -821,6 +820,9 @@
 <script>
     // Global variable to store current delivery type filter - DEFAULT: both (Taksh Logistic LM Live pincode)
     var currentDeliveryType = 'both';
+    
+    // Pincode status update URL
+    var pincodeStatusUpdateUrl = '{{ url("admin/logistics/pending-mapping/pincode-status") }}';
     
     // Function to switch delivery type filter - COMPLETE STATE RESET (GLOBAL SCOPE)
     function switchDeliveryType(deliveryType) {
@@ -1023,6 +1025,74 @@
             });
         }
         
+        // Initialize dynamic checkboxes for modal (works with DataTables dynamically loaded content)
+        // This ensures checkboxes loaded via AJAX trigger the modal
+        // Use event delegation to handle dynamically loaded checkboxes
+        // Note: common.js uses DOMContentLoaded which only attaches to elements at page load
+        // So this delegated handler is needed for DataTables dynamically loaded content
+        $(document).on('click', '.dynamic-checkbox', function(event) {
+            var checkbox = $(this);
+            var checkboxId = checkbox.attr('data-id') || checkbox.attr('id');
+            
+            console.log('Dynamic checkbox clicked:', checkboxId);
+            
+            // Only handle if it's a pincode status checkbox
+            if (!checkboxId || (!checkboxId.startsWith('pincode-status-') && 
+                                !checkboxId.startsWith('live-pincode-status-') && 
+                                !checkboxId.startsWith('pending-logistic-pincode-status-'))) {
+                // Let common.js handle other checkboxes - don't prevent default
+                console.log('Not a pincode checkbox, letting common.js handle it');
+                return true;
+            }
+            
+            // Prevent default and stop propagation for pincode checkboxes
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            
+            var imageOn = checkbox.attr('data-image-on');
+            var imageOff = checkbox.attr('data-image-off');
+            var titleOn = checkbox.attr('data-title-on');
+            var titleOff = checkbox.attr('data-title-off');
+            var textOn = checkbox.attr('data-text-on') || '';
+            var textOff = checkbox.attr('data-text-off') || '';
+            
+            // Get current state BEFORE toggling
+            var isCurrentlyChecked = checkbox.is(':checked');
+            
+            // Toggle checkbox state (since we prevented default)
+            checkbox.prop('checked', !isCurrentlyChecked);
+            var newCheckedState = checkbox.is(':checked');
+            
+            console.log('Pincode checkbox - Was checked:', isCurrentlyChecked, 'Now checked:', newCheckedState);
+            
+            // Set modal content based on NEW state (what it will be after confirmation)
+            if (newCheckedState) {
+                $('#toggle-status-title').empty().html(titleOn || 'Activate');
+                $('#toggle-status-message').empty().html(textOn || 'Are you sure you want to activate this pincode?');
+                if (imageOn) {
+                    $('#toggle-status-image').attr('src', imageOn);
+                }
+            } else {
+                $('#toggle-status-title').empty().html(titleOff || 'Deactivate');
+                $('#toggle-status-message').empty().html(textOff || 'Are you sure you want to deactivate this pincode?');
+                if (imageOff) {
+                    $('#toggle-status-image').attr('src', imageOff);
+                }
+            }
+            
+            $('#toggle-status-ok-button').attr('toggle-ok-button', checkboxId);
+            $('#toggle-ok-button').attr('toggle-ok-button', checkboxId);
+            
+            console.log('Showing toggle-status-modal for checkbox:', checkboxId);
+            console.log('Modal element exists:', $('#toggle-status-modal').length > 0);
+            
+            // Show modal using Bootstrap
+            $('#toggle-status-modal').modal('show');
+            
+            return false;
+        });
+        
         // Intercept the confirm button click BEFORE common.js submits the form
         // This handler must run BEFORE common.js's handler to prevent form submission
         $(document).on('click', '.confirm-Status-Toggle', function(e) {
@@ -1107,8 +1177,23 @@
                 
                 var url = form.attr('action');
                 
+                // Ensure URL is absolute
+                if (url && !url.startsWith('http') && !url.startsWith('/')) {
+                    url = '/' + url;
+                }
+                if (url && url.startsWith('/') && !url.startsWith('//')) {
+                    // Already relative, ensure it starts with /
+                    url = url;
+                }
+                
+                // Fallback: use direct URL if form action is empty or invalid
+                if (!url || url === '#' || url === '') {
+                    url = pincodeStatusUpdateUrl;
+                }
+                
                 console.log('Making AJAX call to:', url);
                 console.log('Request data:', requestData);
+                console.log('Form action attribute:', form.attr('action'));
                 
                 // Show loading state on button
                 button.prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i> Processing...');
@@ -1279,8 +1364,7 @@
                     { data: 'pincode', name: 'pincode' },
                     { data: 'officename', name: 'officename' },
                     { data: 'district', name: 'district' },
-                    { data: 'statename', name: 'statename' },
-                    { data: 'action', name: 'action', orderable: false, searchable: false }
+                    { data: 'statename', name: 'statename' }
                 ],
                 paging: true,
                 pageLength: 25,

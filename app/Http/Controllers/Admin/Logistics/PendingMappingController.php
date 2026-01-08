@@ -205,8 +205,13 @@ class PendingMappingController extends Controller
         
         $mappedPincodeIds = $mappedPincodeIds->unique()->toArray();
         
-        // Build query
-        $query = Pincode::whereNotIn('id', $mappedPincodeIds);
+        // Build query - Only show inactive pincodes (status = 0 or NULL) that are not mapped
+        // When a pincode is activated (status = 1), it will move to "Live pincode Ecommerce" tab
+        $query = Pincode::whereNotIn('id', $mappedPincodeIds)
+                        ->where(function($q) {
+                            $q->where('status', 0)
+                              ->orWhereNull('status');
+                        });
         
         // DataTables server-side processing parameters
         $draw = $request->get('draw');
@@ -248,14 +253,14 @@ class PendingMappingController extends Controller
                            data-type="status"
                            data-image-on="' . asset('assets/admin/img/modal/zone-status-on.png') . '"
                            data-image-off="' . asset('assets/admin/img/modal/zone-status-off.png') . '"
-                           data-title-on="Want to activate this pincode?"
-                           data-title-off="Want to deactivate this pincode?"
+                           data-title-on="Want to deactivate this pincode?"
+                           data-title-off="Want to activate this pincode?"
                            ' . ($status == 1 ? 'checked' : '') . '>
                     <span class="toggle-switch-label">
                         <span class="toggle-switch-indicator"></span>
                     </span>
                 </label>
-                <form action="' . route('admin.logistics.pending-mapping.pincode-status') . '" method="post" id="pincode-status-' . $pincode->id . '_form">
+                <form action="' . url('admin/logistics/pending-mapping/pincode-status') . '" method="post" id="pincode-status-' . $pincode->id . '_form">
                     ' . csrf_field() . '
                     <input type="hidden" name="id" value="' . $pincode->id . '">
                     <input type="hidden" name="status" value="' . ($status == 1 ? 0 : 1) . '">
@@ -274,7 +279,12 @@ class PendingMappingController extends Controller
         
         return response()->json([
             'draw' => intval($draw),
-            'recordsTotal' => Pincode::whereNotIn('id', $mappedPincodeIds)->count(),
+            'recordsTotal' => Pincode::whereNotIn('id', $mappedPincodeIds)
+                                    ->where(function($q) {
+                                        $q->where('status', 0)
+                                          ->orWhereNull('status');
+                                    })
+                                    ->count(),
             'recordsFiltered' => $totalRecords,
             'data' => $data
         ]);
@@ -662,7 +672,8 @@ class PendingMappingController extends Controller
      */
     public function getLiveEcommercePincodes(Request $request)
     {
-        // Build query - only get pincodes with status = 1 (active)
+        // Build query - ONLY get pincodes with status = 1 (active)
+        // This tab shows only active pincodes (status = 1)
         $query = Pincode::where('status', 1);
         
         // DataTables server-side processing parameters
@@ -705,14 +716,14 @@ class PendingMappingController extends Controller
                            data-type="status"
                            data-image-on="' . asset('assets/admin/img/modal/zone-status-on.png') . '"
                            data-image-off="' . asset('assets/admin/img/modal/zone-status-off.png') . '"
-                           data-title-on="Want to activate this pincode?"
-                           data-title-off="Want to deactivate this pincode?"
+                           data-title-on="Want to deactivate this pincode?"
+                           data-title-off="Want to activate this pincode?"
                            ' . ($status == 1 ? 'checked' : '') . '>
                     <span class="toggle-switch-label">
                         <span class="toggle-switch-indicator"></span>
                     </span>
                 </label>
-                <form action="' . route('admin.logistics.pending-mapping.pincode-status') . '" method="post" id="live-pincode-status-' . $pincode->id . '_form">
+                <form action="' . url('admin/logistics/pending-mapping/pincode-status') . '" method="post" id="live-pincode-status-' . $pincode->id . '_form">
                     ' . csrf_field() . '
                     <input type="hidden" name="id" value="' . $pincode->id . '">
                     <input type="hidden" name="status" value="' . ($status == 1 ? 0 : 1) . '">
@@ -781,41 +792,15 @@ class PendingMappingController extends Controller
         // Apply pagination
         $pincodes = $query->skip($start)->take($length)->get();
         
-        // Format data for DataTables
+        // Format data for DataTables (no action field for this tab)
         $data = [];
         foreach ($pincodes as $index => $pincode) {
-            // Status switch button HTML
-            $status = $pincode->status ?? 0;
-            $statusSwitch = '<div class="text-center">
-                <label class="toggle-switch toggle-switch-sm" for="pending-logistic-pincode-status-' . $pincode->id . '">
-                    <input type="checkbox" 
-                           class="toggle-switch-input dynamic-checkbox" 
-                           id="pending-logistic-pincode-status-' . $pincode->id . '"
-                           data-id="pending-logistic-pincode-status-' . $pincode->id . '"
-                           data-type="status"
-                           data-image-on="' . asset('assets/admin/img/modal/zone-status-on.png') . '"
-                           data-image-off="' . asset('assets/admin/img/modal/zone-status-off.png') . '"
-                           data-title-on="Want to activate this pincode?"
-                           data-title-off="Want to deactivate this pincode?"
-                           ' . ($status == 1 ? 'checked' : '') . '>
-                    <span class="toggle-switch-label">
-                        <span class="toggle-switch-indicator"></span>
-                    </span>
-                </label>
-                <form action="' . route('admin.logistics.pending-mapping.pincode-status') . '" method="post" id="pending-logistic-pincode-status-' . $pincode->id . '_form">
-                    ' . csrf_field() . '
-                    <input type="hidden" name="id" value="' . $pincode->id . '">
-                    <input type="hidden" name="status" value="' . ($status == 1 ? 0 : 1) . '">
-                </form>
-            </div>';
-            
             $data[] = [
                 'DT_RowIndex' => $start + $index + 1,
                 'pincode' => $pincode->pincode,
                 'officename' => $pincode->officename ?? 'N/A',
                 'district' => $pincode->district ?? 'N/A',
                 'statename' => $pincode->statename ?? 'N/A',
-                'action' => $statusSwitch,
             ];
         }
         
