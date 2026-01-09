@@ -22,11 +22,13 @@ class Pincode extends Model
         'statename',
         'latitude',
         'longitude',
+        'status',
     ];
 
     protected $casts = [
         'latitude' => 'decimal:8',
         'longitude' => 'decimal:8',
+        'status' => 'boolean',
     ];
 
     public function lmCenters(): BelongsToMany

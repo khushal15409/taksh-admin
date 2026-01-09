@@ -45,11 +45,15 @@ class LmCenter extends Model
         'city',
         'zone_id',
         'status',
+        'thirty_min_delivery',
+        'normal_delivery',
     ];
 
     protected $casts = [
         'status' => 'boolean',
         'zone_id' => 'integer',
+        'thirty_min_delivery' => 'boolean',
+        'normal_delivery' => 'boolean',
     ];
 
     public function zone(): BelongsTo

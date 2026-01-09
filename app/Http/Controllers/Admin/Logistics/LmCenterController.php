@@ -120,6 +120,9 @@ class LmCenterController extends Controller
         $lmCenter->city = $request->city;
         $lmCenter->zone_id = null;
         $lmCenter->status = 1;
+        $lmCenter->thirty_min_delivery = $request->has('thirty_min_delivery') ? 1 : 0;
+        // Normal delivery defaults to 1 (checked) on create
+        $lmCenter->normal_delivery = $request->has('normal_delivery') ? 1 : 1;
         
         // Handle document uploads
         if ($request->hasFile('aadhaar_card')) {
@@ -252,6 +255,9 @@ class LmCenterController extends Controller
         $lmCenter->mobile_number = $request->mobile_number ?? null;
         $lmCenter->state = $request->state;
         $lmCenter->city = $request->city;
+        $lmCenter->thirty_min_delivery = $request->has('thirty_min_delivery') ? 1 : 0;
+        // Normal delivery: if checked in request, set to 1; if unchecked (not in request), set to 0
+        $lmCenter->normal_delivery = $request->has('normal_delivery') ? 1 : 0;
         
         // Handle document uploads
         if ($request->hasFile('aadhaar_card')) {
@@ -339,8 +345,9 @@ class LmCenterController extends Controller
         
         $mappedPincodeIds = $mappedPincodeIds->pluck('pincode_id')->unique()->toArray();
         
-        // Build query
-        $query = Pincode::query();
+        // Build query - Only show active pincodes (status = 1)
+        // Filter for active pincodes only
+        $query = Pincode::where('status', 1);
         
         // Search by pincode, officename, district, or statename
         if (!empty($search)) {

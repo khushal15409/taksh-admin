@@ -73,6 +73,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::get('pending-mapping', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'index'])->name('pending-mapping.index');
         Route::get('pending-mapping/pending-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getPendingPincodes'])->name('pending-mapping.pending-pincodes');
         Route::get('pending-mapping/active-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getActivePincodes'])->name('pending-mapping.active-pincodes');
+        Route::get('pending-mapping/live-ecommerce-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getLiveEcommercePincodes'])->name('pending-mapping.live-ecommerce-pincodes');
+        Route::get('pending-mapping/pending-logistic-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getPendingLogisticPincodes'])->name('pending-mapping.pending-logistic-pincodes');
+        Route::post('pending-mapping/pincode-status', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'updatePincodeStatus'])->name('pending-mapping.pincode-status');
     });
     
     // Banner Routes

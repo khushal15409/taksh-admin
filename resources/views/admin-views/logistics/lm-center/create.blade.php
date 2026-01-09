@@ -34,6 +34,25 @@
         font-size: 0.875rem;
         color: #dc3545;
     }
+    .card-header .form-check {
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+    .card-header .form-check-label {
+        margin-left: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 0;
+    }
+    .card-header .form-check-input {
+        margin-top: 0.25rem;
+    }
+    .card-header .d-flex.justify-content-between {
+        width: 100%;
+    }
+    .card-header .d-flex.align-items-center.gap-3 {
+        margin-left: auto;
+    }
 </style>
 @endpush
 
@@ -58,7 +77,23 @@
                 <div class="col-md-8">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">LM Center Information</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">LM Center Information</h5>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="thirty_min_delivery" id="thirty_min_delivery" value="1" {{old('thirty_min_delivery') ? 'checked' : ''}}>
+                                        <label class="form-check-label" for="thirty_min_delivery">
+                                            30 Min Delivery
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="normal_delivery" id="normal_delivery" value="1" {{old('normal_delivery', true) ? 'checked' : ''}}>
+                                        <label class="form-check-label" for="normal_delivery">
+                                            Normal Delivery
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
@@ -264,7 +299,7 @@
                                     <select name="pincode_ids[]" id="pincode_ids" class="form-control" multiple="multiple">
                                         @foreach(old('pincode_ids', []) as $selectedId)
                                             @php
-                                                $selectedPincode = \App\Models\Pincode::find($selectedId);
+                                                $selectedPincode = \App\Models\Pincode::where('id', $selectedId)->where('status', 1)->first();
                                             @endphp
                                             @if($selectedPincode)
                                                 <option value="{{$selectedPincode->id}}" selected>
