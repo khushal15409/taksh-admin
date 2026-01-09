@@ -517,10 +517,24 @@ class MiniwarehouseController extends Controller
      */
     public function status(Request $request)
     {
-        $miniwarehouse = Miniwarehouse::findOrFail($request->id);
-        $miniwarehouse->status = $request->status;
-        $miniwarehouse->save();
-        Toastr::success(translate('messages.miniwarehouse_status_updated'));
-        return back();
+        try {
+            $request->validate([
+                'id' => 'required|exists:miniwarehouses,id',
+                'status' => 'required|in:0,1',
+            ]);
+
+            $miniwarehouse = Miniwarehouse::findOrFail($request->id);
+            $miniwarehouse->status = (int)$request->status;
+            $miniwarehouse->save();
+
+            $statusText = $miniwarehouse->status ? 'activated' : 'deactivated';
+            Toastr::success(translate('messages.miniwarehouse_status_updated') . ' - Miniwarehouse ' . $statusText . ' successfully!');
+            
+            return back();
+        } catch (\Exception $e) {
+            Toastr::error(translate('messages.failed_to_update_miniwarehouse_status') . ': ' . $e->getMessage());
+            \Log::error('Miniwarehouse status update error: ' . $e->getMessage());
+            return back();
+        }
     }
 }

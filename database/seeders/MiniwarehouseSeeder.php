@@ -3,14 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Warehouse;
 use App\Models\Miniwarehouse;
 use App\Models\LmCenter;
 use App\Models\FmRtCenter;
 use Illuminate\Support\Facades\Log;
 use Faker\Factory as Faker;
 
-class WarehouseSeeder extends Seeder
+class MiniwarehouseSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,25 +18,23 @@ class WarehouseSeeder extends Seeder
     {
         $faker = Faker::create('en_IN'); // Use Indian locale for realistic Indian data
         
-        $this->command->info('Creating 10 dummy Warehouse records...');
+        $this->command->info('Creating 10 dummy Miniwarehouse records...');
 
         // Get existing records for mapping (if available)
-        $availableMiniwarehouses = Miniwarehouse::where('status', 1)->limit(20)->get();
         $availableLmCenters = LmCenter::where('status', 1)->limit(20)->get();
         $availableFmRtCenters = FmRtCenter::where('status', 1)->limit(20)->get();
-        $availableWarehouses = Warehouse::where('status', 1)->limit(20)->get();
         
         // Indian cities and states for realistic data
         $cities = ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Surat'];
         $states = ['Maharashtra', 'Delhi', 'Karnataka', 'Telangana', 'Tamil Nadu', 'West Bengal', 'Gujarat', 'Rajasthan'];
         
-        // Warehouse types/names
-        $warehouseTypes = ['Central', 'Regional', 'Distribution', 'Storage', 'Logistics', 'Fulfillment', 'Hub', 'Depot'];
+        // Miniwarehouse types/names
+        $miniwarehouseTypes = ['Mini', 'Small', 'Local', 'Satellite', 'Sub', 'Branch', 'Outlet', 'Point'];
 
         for ($i = 1; $i <= 10; $i++) {
             // Generate unique email and mobile (exactly 10 digits)
-            $email = 'warehouse' . $i . '@taksh.com';
-            $mobileNumber = '7' . str_pad($i, 9, '0', STR_PAD_LEFT); // e.g., 7000000001
+            $email = 'miniwarehouse' . $i . '@taksh.com';
+            $mobileNumber = '6' . str_pad($i, 9, '0', STR_PAD_LEFT); // e.g., 6000000001
 
             // Generate pincode (6 digits)
             $pincode = $faker->numerify('######');
@@ -46,17 +43,17 @@ class WarehouseSeeder extends Seeder
             $latitude = $faker->latitude(8.0, 37.0); // India latitude range
             $longitude = $faker->longitude(68.0, 97.0); // India longitude range
 
-            // Generate warehouse name
-            $warehouseType = $faker->randomElement($warehouseTypes);
+            // Generate miniwarehouse name
+            $miniwarehouseType = $faker->randomElement($miniwarehouseTypes);
             $city = $faker->randomElement($cities);
-            $warehouseName = $city . ' ' . $warehouseType . ' Warehouse ' . $i;
+            $miniwarehouseName = $city . ' ' . $miniwarehouseType . ' Warehouse ' . $i;
 
             // Generate dummy images array
             $images = [];
             $imageCount = $faker->numberBetween(1, 4);
             for ($j = 0; $j < $imageCount; $j++) {
                 $images[] = [
-                    'img' => 'warehouse/warehouse_' . $i . '_image_' . ($j + 1) . '.jpg',
+                    'img' => 'miniwarehouse/miniwarehouse_' . $i . '_image_' . ($j + 1) . '.jpg',
                     'storage' => 'public'
                 ];
             }
@@ -76,7 +73,7 @@ class WarehouseSeeder extends Seeder
             foreach ($documentTypes as $key => $docName) {
                 if ($faker->boolean(60)) {
                     $documents[$key] = [
-                        'file' => 'warehouse/documents/warehouse_' . $i . '_' . $key . '.pdf',
+                        'file' => 'miniwarehouse/documents/miniwarehouse_' . $i . '_' . $key . '.pdf',
                         'storage' => 'public'
                     ];
                 }
@@ -89,15 +86,15 @@ class WarehouseSeeder extends Seeder
                 for ($k = 0; $k < $otherDocCount; $k++) {
                     $documents['other_documents'][] = [
                         'name' => 'Other Document ' . ($k + 1),
-                        'file' => 'warehouse/documents/warehouse_' . $i . '_other_' . ($k + 1) . '.pdf',
+                        'file' => 'miniwarehouse/documents/miniwarehouse_' . $i . '_other_' . ($k + 1) . '.pdf',
                         'storage' => 'public'
                     ];
                 }
             }
 
-            // Create Warehouse
-            $warehouse = Warehouse::create([
-                'name' => $warehouseName,
+            // Create Miniwarehouse
+            $miniwarehouse = Miniwarehouse::create([
+                'name' => $miniwarehouseName,
                 'owner_name' => $faker->randomElement(['taksh', $faker->company()]),
                 'full_address' => $faker->streetAddress() . ', ' . $faker->city() . ', ' . $faker->state() . ' - ' . $pincode,
                 'location' => $faker->city(),
@@ -114,21 +111,12 @@ class WarehouseSeeder extends Seeder
                 'status' => $faker->boolean(85), // 85% active
             ]);
 
-            // Link to random miniwarehouses if available
-            if ($availableMiniwarehouses->count() > 0) {
-                $randomCount = $faker->numberBetween(0, min(3, $availableMiniwarehouses->count()));
-                if ($randomCount > 0) {
-                    $selected = $availableMiniwarehouses->random($randomCount);
-                    $warehouse->miniwarehouses()->sync($selected->pluck('id')->toArray());
-                }
-            }
-
             // Link to random LM centers if available
             if ($availableLmCenters->count() > 0) {
                 $randomCount = $faker->numberBetween(0, min(5, $availableLmCenters->count()));
                 if ($randomCount > 0) {
                     $selected = $availableLmCenters->random($randomCount);
-                    $warehouse->lmCenters()->sync($selected->pluck('id')->toArray());
+                    $miniwarehouse->lmCenters()->sync($selected->pluck('id')->toArray());
                 }
             }
 
@@ -137,26 +125,16 @@ class WarehouseSeeder extends Seeder
                 $randomCount = $faker->numberBetween(0, min(5, $availableFmRtCenters->count()));
                 if ($randomCount > 0) {
                     $selected = $availableFmRtCenters->random($randomCount);
-                    $warehouse->fmRtCenters()->sync($selected->pluck('id')->toArray());
+                    $miniwarehouse->fmRtCenters()->sync($selected->pluck('id')->toArray());
                 }
             }
 
-            // Link to other warehouses if available (excluding self)
-            if ($availableWarehouses->count() > 0) {
-                $randomCount = $faker->numberBetween(0, min(2, $availableWarehouses->count()));
-                if ($randomCount > 0) {
-                    $selected = $availableWarehouses->where('id', '!=', $warehouse->id)->random($randomCount);
-                    if ($selected->count() > 0) {
-                        $warehouse->warehouses()->sync($selected->pluck('id')->toArray());
-                    }
-                }
-            }
-
-            $this->command->info("Created Warehouse {$i}: {$warehouse->name} (Email: {$email}, Mobile: {$mobileNumber})");
+            $this->command->info("Created Miniwarehouse {$i}: {$miniwarehouse->name} (Email: {$email}, Mobile: {$mobileNumber})");
         }
 
         $this->command->info('');
-        $this->command->info('Successfully created 10 Warehouse records!');
+        $this->command->info('Successfully created 10 Miniwarehouse records!');
         $this->command->info('Note: Image and document files are dummy paths. Actual files need to be uploaded separately.');
     }
 }
+

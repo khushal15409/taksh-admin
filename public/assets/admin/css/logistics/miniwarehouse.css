@@ -1,0 +1,171 @@
+/* Miniwarehouse Module - DataTable Controls Styling */
+.dataTables_wrapper {
+    padding: 15px 0;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-bottom: 15px;
+}
+
+.dataTables_wrapper .dataTables_length label {
+    font-weight: 500;
+    color: #5e6278;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dataTables_wrapper .dataTables_length select {
+    border: 1px solid #e4e6ef;
+    border-radius: 0.475rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.925rem;
+    color: #5e6278;
+    background-color: #fff;
+    min-width: 80px;
+}
+
+.dataTables_wrapper .dataTables_length select:focus {
+    border-color: #009ef7;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 158, 247, 0.25);
+}
+
+.dataTables_wrapper .dataTables_filter {
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_filter label {
+    font-weight: 500;
+    color: #5e6278;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border: 1px solid #e4e6ef;
+    border-radius: 0.475rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.925rem;
+    color: #5e6278;
+    background-color: #fff;
+    min-width: 200px;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: #009ef7;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 158, 247, 0.25);
+}
+
+.dataTables_wrapper .dataTables_info {
+    padding-top: 0.85em;
+    font-size: 0.925rem;
+    color: #5e6278;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 15px;
+}
+
+.dataTables_wrapper .dataTables_paginate .pagination {
+    margin: 0;
+    justify-content: flex-end;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.5rem 0.75rem;
+    margin-left: 0.25rem;
+    border: 1px solid #e4e6ef;
+    border-radius: 0.475rem;
+    color: #5e6278;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    color: #009ef7;
+    background-color: #f1faff;
+    border-color: #009ef7;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    color: #fff;
+    background-color: #009ef7;
+    border-color: #009ef7;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    color: #b5b5c3;
+    cursor: not-allowed;
+    background-color: #f5f8fa;
+}
+
+@media (max-width: 767px) {
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+        margin-bottom: 10px;
+    }
+    
+    .dataTables_wrapper .dataTables_filter label {
+        justify-content: flex-start;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate {
+        text-align: center;
+    }
+    
+    .dataTables_wrapper .dataTables_paginate .pagination {
+        justify-content: center;
+    }
+}
+
+/* Ensure DataTable controls are visible */
+.dataTables_length,
+.dataTables_filter,
+.dataTables_info,
+.dataTables_paginate {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: left;
+    padding-top: 0.755em;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+    padding-top: 0.755em;
+}
+
+.dataTables_wrapper .dataTables_info {
+    float: left;
+    padding-top: 0.755em;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    text-align: right;
+    padding-top: 0.25em;
+}
+
+/* Miniwarehouse Image Thumbnail Styles */
+.miniwarehouse-img-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.miniwarehouse-img-thumbnail.no-image {
+    opacity: 0.5;
+}
+

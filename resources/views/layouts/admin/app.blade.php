@@ -682,8 +682,58 @@
             // Configure Toastr to show notifications in top-right position
             if (typeof toastr !== 'undefined') {
                 toastr.options.positionClass = 'toast-top-right';
+                toastr.options.closeButton = true;
+                toastr.options.progressBar = true;
+                toastr.options.timeOut = 5000;
+                toastr.options.extendedTimeOut = 2000;
             }
         </script>
+
+        {{-- Display session flash messages as toastr notifications --}}
+        @if(session('success'))
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('{{ session('success') }}', 'Success!', {
+                        closeButton: true,
+                        progressBar: true,
+                        timeOut: 5000
+                    });
+                }
+            </script>
+        @endif
+        @if(session('error'))
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('{{ session('error') }}', 'Error!', {
+                        closeButton: true,
+                        progressBar: true,
+                        timeOut: 5000
+                    });
+                }
+            </script>
+        @endif
+        @if(session('info'))
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('{{ session('info') }}', 'Info!', {
+                        closeButton: true,
+                        progressBar: true,
+                        timeOut: 5000
+                    });
+                }
+            </script>
+        @endif
+        @if(session('warning'))
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning('{{ session('warning') }}', 'Warning!', {
+                        closeButton: true,
+                        progressBar: true,
+                        timeOut: 5000
+                    });
+                }
+            </script>
+        @endif
 
         @stack('script_2')
         <script src="{{ asset('assets/admin/js/view-pages/common.js') }}"></script>

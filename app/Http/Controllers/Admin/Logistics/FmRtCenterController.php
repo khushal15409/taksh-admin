@@ -506,11 +506,25 @@ class FmRtCenterController extends Controller
      */
     public function status(Request $request)
     {
-        $fmRtCenter = FmRtCenter::findOrFail($request->id);
-        $fmRtCenter->status = $request->status;
-        $fmRtCenter->save();
-        Toastr::success(translate('messages.fm_rt_center_status_updated'));
-        return back();
+        try {
+            $request->validate([
+                'id' => 'required|exists:fm_rt_centers,id',
+                'status' => 'required|in:0,1',
+            ]);
+
+            $fmRtCenter = FmRtCenter::findOrFail($request->id);
+            $fmRtCenter->status = (int)$request->status;
+            $fmRtCenter->save();
+
+            $statusText = $fmRtCenter->status ? 'activated' : 'deactivated';
+            Toastr::success(translate('messages.fm_rt_center_status_updated') . ' - FM/RT Center ' . $statusText . ' successfully!');
+            
+            return back();
+        } catch (\Exception $e) {
+            Toastr::error(translate('messages.failed_to_update_fm_rt_center_status') . ': ' . $e->getMessage());
+            \Log::error('FM/RT Center status update error: ' . $e->getMessage());
+            return back();
+        }
     }
 
     /**
