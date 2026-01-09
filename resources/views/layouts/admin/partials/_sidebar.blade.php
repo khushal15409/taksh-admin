@@ -172,6 +172,19 @@
                         </li>
                     @endif
                     <!-- End Banner -->
+                    <!-- App Dashboard Sections -->
+                    @if (true)
+                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/app-dashboard*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.app-dashboard.index') }}"
+                                title="App Dashboard Sections">
+                                <i class="tio-dashboard nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">App Dashboard Sections</span>
+                            </a>
+                        </li>
+                    @endif
+                    <!-- End App Dashboard Sections -->
                     <!-- Coupon -->
                     @if (true)
                         <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/coupon*') ? 'active' : '' }}">

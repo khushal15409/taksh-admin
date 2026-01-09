@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Fulfillment Center Radius
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the radius (in kilometers) for finding the nearest
+    | fulfillment center based on latitude and longitude.
+    |
+    */
+
+    'fulfillment_center_radius' => env('FULFILLMENT_CENTER_RADIUS', 15),
+
 ];

@@ -82,6 +82,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
     Route::resource('banner', App\Http\Controllers\Admin\BannerController::class);
     Route::post('banner/status', [App\Http\Controllers\Admin\BannerController::class, 'statusToggle'])->name('banner.status');
     
+    // App Dashboard Sections Routes
+    Route::prefix('app-dashboard')->name('app-dashboard.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'index'])->name('index');
+        Route::post('update-status', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'updateStatus'])->name('update-status');
+        Route::post('update-sort-orders', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'updateSortOrder'])->name('update-sort-orders');
+        Route::put('update-sort-order/{id}', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'updateSingleSortOrder'])->name('update-sort-order');
+    });
+    
     // Category Routes
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     Route::post('categories/status', [App\Http\Controllers\Admin\CategoryController::class, 'statusToggle'])->name('categories.status');

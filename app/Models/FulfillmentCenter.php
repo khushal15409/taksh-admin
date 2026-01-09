@@ -58,5 +58,33 @@ class FulfillmentCenter extends Model
     {
         return $this->hasMany(Order::class, 'warehouse_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    /**
+     * Scope to get nearest fulfillment center
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param float $latitude
+     * @param float $longitude
+     * @param float $radius Radius in kilometers (default: 15)
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeNearest($query, $latitude, $longitude, $radius = 15)
+    {
+        return $query->select('fulfillment_centers.*')
+            ->selectRaw(
+                '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
+                [$latitude, $longitude, $latitude]
+            )
+            ->where('status', 'active')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->havingRaw('distance <= ?', [$radius])
+            ->orderBy('distance', 'asc');
+    }
 }
 
