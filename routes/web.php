@@ -146,4 +146,28 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::put('{id}', [App\Http\Controllers\Admin\SalesmanController::class, 'update'])->name('update');
         Route::post('{id}/toggle-status', [App\Http\Controllers\Admin\SalesmanController::class, 'toggleStatus'])->name('toggle-status');
     });
+    
+    // Custom Role (Employee Role) Routes
+    Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
+        Route::group(['prefix' => 'custom-role', 'as' => 'custom-role.'], function () {
+            Route::get('create', [App\Http\Controllers\Admin\Employee\CustomRoleController::class, 'index'])->name('create');
+            Route::post('create', [App\Http\Controllers\Admin\Employee\CustomRoleController::class, 'add'])->name('create');
+            Route::get('edit/{id}', [App\Http\Controllers\Admin\Employee\CustomRoleController::class, 'getUpdateView'])->name('edit');
+            Route::post('update/{id}', [App\Http\Controllers\Admin\Employee\CustomRoleController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [App\Http\Controllers\Admin\Employee\CustomRoleController::class, 'delete'])->name('delete');
+            Route::post('search', [App\Http\Controllers\Admin\Employee\CustomRoleController::class, 'search'])->name('search');
+        });
+        
+        // Employee Routes
+        Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
+            Route::get('list', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'index'])->name('list');
+            Route::get('add-new', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'getAddView'])->name('add-new');
+            Route::post('add-new', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'add'])->name('add-new');
+            Route::get('edit/{id}', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'getUpdateView'])->name('edit');
+            Route::post('update/{id}', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'delete'])->name('delete');
+            Route::post('search', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'search'])->name('search');
+            Route::get('search-pincodes', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'searchPincodes'])->name('search-pincodes');
+        });
+    });
 });

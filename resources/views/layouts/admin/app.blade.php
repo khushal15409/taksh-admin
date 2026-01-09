@@ -734,6 +734,32 @@
                 }
             </script>
         @endif
+        @if(session('validation_error'))
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('{{ session('validation_error') }}', 'Validation Error!', {
+                        closeButton: true,
+                        progressBar: true,
+                        timeOut: 5000
+                    });
+                }
+            </script>
+        @endif
+        @if($errors->any())
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    // Show only the first error as Toastr (single Toastr)
+                    var firstError = '{{ $errors->first() }}';
+                    if (firstError) {
+                        toastr.error(firstError, 'Validation Error!', {
+                            closeButton: true,
+                            progressBar: true,
+                            timeOut: 5000
+                        });
+                    }
+                }
+            </script>
+        @endif
 
         @stack('script_2')
         <script src="{{ asset('assets/admin/js/view-pages/common.js') }}"></script>

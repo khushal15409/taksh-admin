@@ -25,6 +25,13 @@ class User extends Authenticatable
         'is_active',
         'address',
         'pincode',
+        // Employee fields
+        'f_name',
+        'l_name',
+        'phone',
+        'role_id',
+        'pincode_id',
+        'is_logged_in',
     ];
 
     protected $hidden = [];
@@ -34,9 +41,59 @@ class User extends Authenticatable
         return [
             'is_verified' => 'boolean',
             'is_active' => 'boolean',
+            'is_logged_in' => 'boolean',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    
+    /**
+     * Get the role that owns the user (for employees).
+     */
+    public function role()
+    {
+        return $this->belongsTo(\Spatie\Permission\Models\Role::class, 'role_id');
+    }
+
+    /**
+     * Get the pincode that owns the user (for employees).
+     */
+    public function pincode()
+    {
+        return $this->belongsTo(Pincode::class, 'pincode_id');
+    }
+
+    /**
+     * Scope to filter by pincode if user has pincode_id
+     */
+    public function scopePincode($query)
+    {
+        if (auth()->check() && auth()->user()->pincode_id) {
+            return $query->where('pincode_id', auth()->user()->pincode_id);
+        }
+        return $query;
+    }
+
+    /**
+     * Get full name attribute
+     */
+    public function getFullNameAttribute()
+    {
+        if ($this->f_name || $this->l_name) {
+            return trim(($this->f_name ?? '') . ' ' . ($this->l_name ?? ''));
+        }
+        return $this->name ?? '';
+    }
+
+    /**
+     * Get image full URL
+     */
+    public function getImageFullUrlAttribute()
+    {
+        if ($this->image) {
+            return asset('storage/admin/' . $this->image);
+        }
+        return asset('assets/admin/img/admin.png');
     }
 
     public function addresses()
