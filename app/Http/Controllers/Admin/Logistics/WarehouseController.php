@@ -544,10 +544,24 @@ class WarehouseController extends Controller
      */
     public function status(Request $request)
     {
-        $warehouse = Warehouse::findOrFail($request->id);
-        $warehouse->status = $request->status;
-        $warehouse->save();
-        Toastr::success(translate('messages.warehouse_status_updated'));
-        return back();
+        try {
+            $request->validate([
+                'id' => 'required|exists:warehouses,id',
+                'status' => 'required|in:0,1',
+            ]);
+
+            $warehouse = Warehouse::findOrFail($request->id);
+            $warehouse->status = (int)$request->status;
+            $warehouse->save();
+
+            $statusText = $warehouse->status ? 'activated' : 'deactivated';
+            Toastr::success(translate('messages.warehouse_status_updated') . ' - Warehouse ' . $statusText . ' successfully!');
+            
+            return back();
+        } catch (\Exception $e) {
+            Toastr::error(translate('messages.failed_to_update_warehouse_status') . ': ' . $e->getMessage());
+            \Log::error('Warehouse status update error: ' . $e->getMessage());
+            return back();
+        }
     }
 }

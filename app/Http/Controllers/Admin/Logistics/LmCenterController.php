@@ -402,11 +402,25 @@ class LmCenterController extends Controller
      */
     public function status(Request $request)
     {
-        $lmCenter = LmCenter::findOrFail($request->id);
-        $lmCenter->status = $request->status;
-        $lmCenter->save();
-        Toastr::success(translate('messages.lm_center_status_updated'));
-        return back();
+        try {
+            $request->validate([
+                'id' => 'required|exists:lm_centers,id',
+                'status' => 'required|in:0,1',
+            ]);
+
+            $lmCenter = LmCenter::findOrFail($request->id);
+            $lmCenter->status = (int)$request->status;
+            $lmCenter->save();
+
+            $statusText = $lmCenter->status ? 'activated' : 'deactivated';
+            Toastr::success(translate('messages.lm_center_status_updated') . ' - LM Center ' . $statusText . ' successfully!');
+            
+            return back();
+        } catch (\Exception $e) {
+            Toastr::error(translate('messages.failed_to_update_lm_center_status') . ': ' . $e->getMessage());
+            \Log::error('LM Center status update error: ' . $e->getMessage());
+            return back();
+        }
     }
 
     /**

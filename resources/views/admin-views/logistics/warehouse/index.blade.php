@@ -5,166 +5,7 @@
 @include('admin-views.partials._loader')
 
 @push('css_or_js')
-<style>
-    /* DataTable Controls Styling */
-    .dataTables_wrapper {
-        padding: 15px 0;
-    }
-    
-    .dataTables_wrapper .dataTables_length,
-    .dataTables_wrapper .dataTables_filter {
-        margin-bottom: 15px;
-    }
-    
-    .dataTables_wrapper .dataTables_length label {
-        font-weight: 500;
-        color: #5e6278;
-        margin-bottom: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    
-    .dataTables_wrapper .dataTables_length select {
-        border: 1px solid #e4e6ef;
-        border-radius: 0.475rem;
-        padding: 0.55rem 0.75rem;
-        font-size: 0.925rem;
-        color: #5e6278;
-        background-color: #fff;
-        min-width: 80px;
-    }
-    
-    .dataTables_wrapper .dataTables_length select:focus {
-        border-color: #009ef7;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(0, 158, 247, 0.25);
-    }
-    
-    .dataTables_wrapper .dataTables_filter {
-        text-align: right;
-    }
-    
-    .dataTables_wrapper .dataTables_filter label {
-        font-weight: 500;
-        color: #5e6278;
-        margin-bottom: 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        justify-content: flex-end;
-    }
-    
-    .dataTables_wrapper .dataTables_filter input {
-        border: 1px solid #e4e6ef;
-        border-radius: 0.475rem;
-        padding: 0.55rem 0.75rem;
-        font-size: 0.925rem;
-        color: #5e6278;
-        background-color: #fff;
-        min-width: 200px;
-    }
-    
-    .dataTables_wrapper .dataTables_filter input:focus {
-        border-color: #009ef7;
-        outline: 0;
-        box-shadow: 0 0 0 0.25rem rgba(0, 158, 247, 0.25);
-    }
-    
-    .dataTables_wrapper .dataTables_info {
-        padding-top: 0.85em;
-        font-size: 0.925rem;
-        color: #5e6278;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate {
-        margin-top: 15px;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .pagination {
-        margin: 0;
-        justify-content: flex-end;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-        padding: 0.5rem 0.75rem;
-        margin-left: 0.25rem;
-        border: 1px solid #e4e6ef;
-        border-radius: 0.475rem;
-        color: #5e6278;
-        background-color: #fff;
-        cursor: pointer;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        color: #009ef7;
-        background-color: #f1faff;
-        border-color: #009ef7;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        color: #fff;
-        background-color: #009ef7;
-        border-color: #009ef7;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-        color: #b5b5c3;
-        cursor: not-allowed;
-        background-color: #f5f8fa;
-    }
-    
-    @media (max-width: 767px) {
-        .dataTables_wrapper .dataTables_length,
-        .dataTables_wrapper .dataTables_filter {
-            text-align: left;
-            margin-bottom: 10px;
-        }
-        
-        .dataTables_wrapper .dataTables_filter label {
-            justify-content: flex-start;
-        }
-        
-        .dataTables_wrapper .dataTables_paginate {
-            text-align: center;
-        }
-        
-        .dataTables_wrapper .dataTables_paginate .pagination {
-            justify-content: center;
-        }
-    }
-    
-    /* Ensure DataTable controls are visible */
-    .dataTables_length,
-    .dataTables_filter,
-    .dataTables_info,
-    .dataTables_paginate {
-        display: block !important;
-        visibility: visible !important;
-    }
-    
-    .dataTables_wrapper .dataTables_length {
-        float: left;
-        padding-top: 0.755em;
-    }
-    
-    .dataTables_wrapper .dataTables_filter {
-        float: right;
-        text-align: right;
-        padding-top: 0.755em;
-    }
-    
-    .dataTables_wrapper .dataTables_info {
-        float: left;
-        padding-top: 0.755em;
-    }
-    
-    .dataTables_wrapper .dataTables_paginate {
-        float: right;
-        text-align: right;
-        padding-top: 0.25em;
-    }
-</style>
+<link rel="stylesheet" href="{{ asset('assets/admin/css/logistics/warehouse.css') }}">
 @endpush
 
 @section('content')
@@ -239,13 +80,11 @@
                                 @if($firstImage && isset($firstImage['img']))
                                     <img src="{{ \App\CentralLogics\Helpers::get_full_url('warehouse', $firstImage['img'], $firstImage['storage'] ?? 'public') }}" 
                                          alt="{{ $warehouse->name }}" 
-                                         class="img-thumbnail" 
-                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                         class="img-thumbnail warehouse-img-thumbnail">
                                 @else
                                     <img src="{{ asset('public/assets/admin/img/160x160/img2.jpg') }}" 
                                          alt="No Image" 
-                                         class="img-thumbnail" 
-                                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; opacity: 0.5;">
+                                         class="img-thumbnail warehouse-img-thumbnail no-image">
                                 @endif
                             </td>
                             <td>
@@ -292,10 +131,10 @@
                                         <span class="toggle-switch-indicator"></span>
                                     </span>
                                 </label>
-                                <form action="{{route('admin.logistics.warehouse.status')}}" method="post" id="status-{{$warehouse['id']}}">
+                                <form action="{{route('admin.logistics.warehouse.status')}}" method="post" id="status-{{$warehouse['id']}}_form">
                                     @csrf
                                     <input type="hidden" name="id" value="{{$warehouse['id']}}">
-                                    <input type="hidden" name="status" value="{{$warehouse->status?0:1}}">
+                                    <input type="hidden" name="status" value="{{$warehouse->status?0:1}}" id="status-value-{{$warehouse['id']}}">
                                 </form>
                             </td>
                             <td>
@@ -380,11 +219,37 @@
             $('.dataTables_paginate').css({'display': 'block', 'visibility': 'visible'});
         }, 200);
         
-        // Handle loader for form submissions (delete, status change)
-        $('.form-alert').on('click', function() {
-            if (typeof PageLoader !== 'undefined') {
-                PageLoader.show();
+        // Handle delete confirmation with SweetAlert
+        $(document).on('click', '.form-alert', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var $btn = $(this);
+            var formId = $btn.data('id');
+            var message = $btn.data('message') || 'Are you sure you want to delete this warehouse?';
+            
+            if (!formId) {
+                console.error('Form ID not found');
+                return false;
             }
+            
+            Swal.fire({
+                title: 'Are you sure?',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof PageLoader !== 'undefined') {
+                        PageLoader.show();
+                    }
+                    $('#' + formId).submit();
+                }
+            });
         });
         
         // Hide loader if page is fully loaded (fallback)
@@ -394,6 +259,33 @@
                     PageLoader.hide();
                 }
             }, 500);
+        });
+        
+        // Handle dynamic checkbox status update for warehouse
+        // Update status value when checkbox state changes (before modal confirmation)
+        $(document).on('change', '.dynamic-checkbox[data-id^="status-"]', function() {
+            var checkbox = $(this);
+            var checkboxId = checkbox.attr('data-id');
+            var warehouseId = checkboxId.replace('status-', '');
+            
+            // Update the status value in the form based on NEW checkbox state
+            // When checkbox is checked, status should be 1, when unchecked, status should be 0
+            var statusValue = checkbox.is(':checked') ? 1 : 0;
+            $('#status-value-' + warehouseId).val(statusValue);
+        });
+        
+        // Also handle the confirm button click to ensure status is updated correctly
+        $(document).on('click', '.confirm-Status-Toggle', function() {
+            // Wait a moment for common.js to toggle the checkbox
+            setTimeout(function() {
+                $('.dynamic-checkbox[data-id^="status-"]').each(function() {
+                    var checkbox = $(this);
+                    var checkboxId = checkbox.attr('data-id');
+                    var warehouseId = checkboxId.replace('status-', '');
+                    var statusValue = checkbox.is(':checked') ? 1 : 0;
+                    $('#status-value-' + warehouseId).val(statusValue);
+                });
+            }, 100);
         });
     });
 </script>
