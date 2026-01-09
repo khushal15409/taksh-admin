@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\CentralLogics\ToastrWrapper as Toastr;
 use App\CentralLogics\Helpers;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use App\Services\LogisticApiService;
 
 class LmCenterController extends Controller
 {
@@ -144,15 +146,96 @@ class LmCenterController extends Controller
         $lmCenter->aadhaar_number = $request->aadhaar_number;
         $lmCenter->pan_card_number = $request->pan_card_number;
         
-        $lmCenter->save();
+        // Get email and mobile_number for API call (use owner_email/owner_mobile as fallback)
+        $email = $request->email ?? $request->owner_email;
+        $mobileNumber = $request->mobile_number ?? $request->owner_mobile;
 
-        // Sync Pincode mappings
-        if ($request->has('pincode_ids')) {
-            $lmCenter->pincodes()->sync($request->pincode_ids);
+        // Validate that we have email and mobile_number for API call
+        if (empty($email) || empty($mobileNumber)) {
+            Toastr::error(translate('messages.Email and Mobile Number are required for LM Center creation!'));
+            return back()->withInput();
         }
 
-        Toastr::success(translate('messages.lm_center_added_successfully'));
-        return redirect()->route('admin.logistics.lm-center.index');
+        // Start database transaction
+        DB::beginTransaction();
+
+        try {
+            // Call external API to create user with role before saving LM Center
+            $logisticApiService = new LogisticApiService();
+            $apiResult = $logisticApiService->createUserWithRole($email, $mobileNumber, 'lm-center');
+
+            if (!$apiResult['success']) {
+                // Rollback transaction
+                DB::rollBack();
+                
+                // Clean up uploaded files if API call failed
+                try {
+                    if (!empty($lmCenter->aadhaar_card)) {
+                        Storage::disk(Helpers::getDisk())->delete('lm-center/documents/' . $lmCenter->aadhaar_card);
+                    }
+                    if (!empty($lmCenter->pan_card)) {
+                        Storage::disk(Helpers::getDisk())->delete('lm-center/documents/' . $lmCenter->pan_card);
+                    }
+                    if (!empty($lmCenter->bank_document)) {
+                        Storage::disk(Helpers::getDisk())->delete('lm-center/documents/' . $lmCenter->bank_document);
+                    }
+                } catch (\Exception $cleanupException) {
+                    \Log::warning('Failed to cleanup uploaded files after API error', [
+                        'error' => $cleanupException->getMessage(),
+                    ]);
+                }
+                
+                // Show error message to user
+                $errorMessage = $apiResult['message'] ?? 'Failed to create user in logistic system';
+                Toastr::error(translate('messages.Failed to create LM Center: ') . $errorMessage);
+                
+                return back()->withInput()->withErrors(['api_error' => $errorMessage]);
+            }
+
+            // API call successful, proceed with saving LM Center
+            $lmCenter->save();
+
+            // Sync Pincode mappings
+            if ($request->has('pincode_ids')) {
+                $lmCenter->pincodes()->sync($request->pincode_ids);
+            }
+
+            // Commit transaction
+            DB::commit();
+
+            Toastr::success(translate('messages.lm_center_added_successfully'));
+            return redirect()->route('admin.logistics.lm-center.index');
+
+        } catch (\Exception $e) {
+            // Rollback transaction on any exception
+            DB::rollBack();
+            
+            // Clean up uploaded files on exception
+            try {
+                if (!empty($lmCenter->aadhaar_card)) {
+                    Storage::disk(Helpers::getDisk())->delete('lm-center/documents/' . $lmCenter->aadhaar_card);
+                }
+                if (!empty($lmCenter->pan_card)) {
+                    Storage::disk(Helpers::getDisk())->delete('lm-center/documents/' . $lmCenter->pan_card);
+                }
+                if (!empty($lmCenter->bank_document)) {
+                    Storage::disk(Helpers::getDisk())->delete('lm-center/documents/' . $lmCenter->bank_document);
+                }
+            } catch (\Exception $cleanupException) {
+                \Log::warning('Failed to cleanup uploaded files after exception', [
+                    'error' => $cleanupException->getMessage(),
+                ]);
+            }
+            
+            // Log the error
+            \Log::error('Error creating LM Center', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            Toastr::error(translate('messages.An error occurred while creating LM Center. Please try again.'));
+            return back()->withInput();
+        }
     }
 
     /**
