@@ -130,7 +130,86 @@
                 </div>
             </div>
         </div>
+
+        <!-- Access Control Assignments Section -->
+        @if(isset($assignments))
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title m-0">
+                    <span class="card-header-icon">
+                        <i class="tio-lock-outlined"></i>
+                    </span>
+                    <span>{{translate('messages.access_control_assignments')}}</span>
+                </h5>
+                <a href="{{route('admin.access-control.user-assignment.create')}}?user_id={{$employee->id}}" class="btn btn-sm btn--primary">
+                    <i class="tio-add-circle"></i> {{translate('messages.add_assignment')}}
+                </a>
+            </div>
+            <div class="card-body">
+                @if($assignments->count() > 0)
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{{translate('messages.department')}}</th>
+                                    <th>{{translate('messages.unit')}}</th>
+                                    <th>{{translate('messages.geography')}}</th>
+                                    <th>{{translate('messages.role')}}</th>
+                                    <th>{{translate('messages.status')}}</th>
+                                    <th class="text-center">{{translate('messages.action')}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($assignments as $assignment)
+                                    <tr>
+                                        <td>
+                                            <span class="badge badge-soft-info">{{$assignment->department->code ?? '-'}}</span><br>
+                                            <small>{{$assignment->department->name ?? '-'}}</small>
+                                        </td>
+                                        <td>{!! $assignment->departmentUnit ? $assignment->departmentUnit->name : '<span class="text-muted">All Units</span>' !!}</td>
+                                        <td>
+                                            @if($assignment->geography)
+                                                {{$assignment->geography->name}}<br>
+                                                <small class="text-muted">({{ucfirst($assignment->geography->level)}})</small>
+                                            @else
+                                                <span class="text-muted">All Geographies</span>
+                                            @endif
+                                        </td>
+                                        <td><span class="badge badge-soft-primary">{{$assignment->role->name ?? '-'}}</span></td>
+                                        <td>
+                                            @if($assignment->isCurrentlyEffective())
+                                                <span class="badge badge-soft-success">{{translate('messages.active')}}</span>
+                                            @else
+                                                <span class="badge badge-soft-secondary">{{translate('messages.inactive')}}</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-sm btn--primary btn-outline-primary" 
+                                                href="{{route('admin.access-control.user-assignment.edit',[$assignment->id])}}" 
+                                                title="{{translate('messages.edit')}}">
+                                                <i class="tio-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <div class="text-center py-4">
+                        <p class="text-muted">{{translate('messages.no_assignments_found')}}</p>
+                        <a href="{{route('admin.access-control.user-assignment.create')}}?user_id={{$employee->id}}" class="btn btn--primary">
+                            <i class="tio-add-circle"></i> {{translate('messages.create_first_assignment')}}
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+        @endif
+        <!-- End Access Control Assignments Section -->
+
         <div class="btn--container justify-content-end mt-4">
+            <a href="{{route('admin.users.employee.list')}}" class="btn btn--reset">{{translate('messages.cancel')}}</a>
             <button type="reset" id="reset_btn" class="btn btn--reset">{{translate('messages.reset')}}</button>
             <button type="submit" class="btn btn--primary">{{translate('messages.update')}}</button>
         </div>

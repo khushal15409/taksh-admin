@@ -130,4 +130,60 @@ class User extends Authenticatable
     {
         return $this->hasOne(SalesmanProfile::class);
     }
+
+    /**
+     * Get the user assignments.
+     */
+    public function assignments()
+    {
+        return $this->hasMany(UserAssignment::class);
+    }
+
+    /**
+     * Get currently effective assignments.
+     */
+    public function activeAssignments()
+    {
+        return $this->assignments()->currentlyEffective();
+    }
+
+    /**
+     * Get primary assignment (most recent active assignment).
+     */
+    public function primaryAssignment()
+    {
+        return $this->hasOne(UserAssignment::class)
+            ->currentlyEffective()
+            ->latestOfMany();
+    }
+
+    /**
+     * Get all departments the user is assigned to.
+     */
+    public function departments()
+    {
+        return $this->hasManyThrough(
+            Department::class,
+            UserAssignment::class,
+            'user_id',
+            'id',
+            'id',
+            'department_id'
+        )->distinct();
+    }
+
+    /**
+     * Get all geographies the user has access to.
+     */
+    public function accessibleGeographies()
+    {
+        return $this->hasManyThrough(
+            Geography::class,
+            UserAssignment::class,
+            'user_id',
+            'id',
+            'id',
+            'geography_id'
+        )->distinct();
+    }
 }

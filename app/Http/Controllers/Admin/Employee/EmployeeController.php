@@ -155,8 +155,13 @@ class EmployeeController extends Controller
             $zones = Zone::active()->get();
         }
 
+        // Load access control assignments for this employee
+        $assignments = $employee->activeAssignments()
+            ->with(['department', 'departmentUnit', 'geography', 'role'])
+            ->get();
+
         if (array_key_exists('flag', $data) && $data['flag'] == 'authorized') {
-            return view(EmployeeViewPath::UPDATE['VIEW'], compact('roles', 'employee', 'zones'));
+            return view(EmployeeViewPath::UPDATE['VIEW'], compact('roles', 'employee', 'zones', 'assignments'));
         }
 
         Toastr::warning(translate('messages.access_denied'));
