@@ -7,6 +7,7 @@ use App\Models\Banner;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\FulfillmentCenter;
+use App\Models\AppDashboardSection;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,15 +23,57 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         // Get nearest fulfillment center if latitude and longitude provided
-        $nearestFulfillmentCenterId = null;
+        $nearestFulfillmentCenter = null;
         if ($request->has('latitude') && $request->has('longitude')) {
-            $nearestFulfillmentCenterId = $this->getNearestFulfillmentCenter(
+            $nearestFulfillmentCenter = $this->getNearestFulfillmentCenter(
                 $request->input('latitude'),
                 $request->input('longitude')
             );
         }
-        // Fetch banners (home_top and home_middle positions)
-        $banners = Banner::where('is_active', true)
+
+        // Get active dashboard sections
+        $activeSections = AppDashboardSection::where('is_active', true)
+            ->orderBy('sort_order')
+            ->pluck('section_key')
+            ->toArray();
+
+        $data = [];
+
+        // Build response conditionally based on active sections
+        if (in_array('banners', $activeSections)) {
+            $data['banners'] = $this->getBanners();
+        }
+
+        if (in_array('trending_products', $activeSections)) {
+            $data['trending_products'] = $this->getTrendingProducts($nearestFulfillmentCenter);
+        }
+
+        if (in_array('latest_products', $activeSections)) {
+            $data['latest_products'] = $this->getLatestProducts($nearestFulfillmentCenter);
+        }
+
+        if (in_array('categories', $activeSections)) {
+            $data['categories'] = $this->getCategories();
+        }
+
+        if (in_array('express_30_products', $activeSections)) {
+            $data['express_30_products'] = $this->getExpress30Products($nearestFulfillmentCenter);
+        }
+
+        // If no fulfillment center found and location was provided, add message
+        if ($request->has('latitude') && $request->has('longitude') && !$nearestFulfillmentCenter) {
+            $data['message'] = 'No fulfillment center found nearby. Showing all available products.';
+        }
+
+        return $this->success($data, 'api.dashboard.loaded');
+    }
+
+    /**
+     * Get banners
+     */
+    private function getBanners()
+    {
+        return Banner::where('is_active', true)
             ->whereIn('position', ['home_top', 'home_middle'])
             ->where(function ($q) {
                 $q->whereNull('start_date')
@@ -42,10 +85,25 @@ class DashboardController extends Controller
             })
             ->orderBy('sort_order', 'asc')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->map(function ($banner) {
+                return [
+                    'id' => $banner->id,
+                    'title' => $banner->title,
+                    'image_url' => $banner->image_url,
+                    'position' => $banner->position,
+                    'redirect_type' => $banner->redirect_type,
+                    'redirect_id' => $banner->redirect_id,
+                ];
+            });
+    }
 
-        // Fetch trending products (limit 10)
-        $trendingProductsQuery = Product::with(['brand', 'category', 'variants' => function ($query) {
+    /**
+     * Get trending products
+     */
+    private function getTrendingProducts($fulfillmentCenter)
+    {
+        $query = Product::with(['brand', 'category', 'variants' => function ($query) {
             $query->where('status', 'active')
                 ->orderBy('sale_price', 'asc')
                 ->limit(1);
@@ -56,16 +114,12 @@ class DashboardController extends Controller
             ->where('status', 'active')
             ->where('is_trending', true);
 
-        // Filter by nearest fulfillment center if provided
-        if ($nearestFulfillmentCenterId) {
-            $trendingProductsQuery->whereHas('variants.warehouseProducts', function ($query) use ($nearestFulfillmentCenterId) {
-                $query->where('warehouse_id', $nearestFulfillmentCenterId)
-                    ->where('stock_qty', '>', 0);
-            });
+        // Filter by fulfillment center if provided
+        if ($fulfillmentCenter) {
+            $query->where('fulfillment_center_id', $fulfillmentCenter->id);
         }
 
-        $trendingProducts = $trendingProductsQuery
-            ->orderBy('created_at', 'desc')
+        return $query->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->map(function ($product) {
@@ -82,9 +136,14 @@ class DashboardController extends Controller
                     'brand' => $product->brand ? $product->brand->name : null,
                 ];
             });
+    }
 
-        // Fetch latest products (limit 10)
-        $latestProductsQuery = Product::with(['brand', 'category', 'variants' => function ($query) {
+    /**
+     * Get latest products
+     */
+    private function getLatestProducts($fulfillmentCenter)
+    {
+        $query = Product::with(['brand', 'category', 'variants' => function ($query) {
             $query->where('status', 'active')
                 ->orderBy('sale_price', 'asc')
                 ->limit(1);
@@ -92,18 +151,15 @@ class DashboardController extends Controller
             $query->where('is_primary', true)
                 ->limit(1);
         }])
-            ->where('status', 'active');
+            ->where('status', 'active')
+            ->where('is_latest', true);
 
-        // Filter by nearest fulfillment center if provided
-        if ($nearestFulfillmentCenterId) {
-            $latestProductsQuery->whereHas('variants.warehouseProducts', function ($query) use ($nearestFulfillmentCenterId) {
-                $query->where('warehouse_id', $nearestFulfillmentCenterId)
-                    ->where('stock_qty', '>', 0);
-            });
+        // Filter by fulfillment center if provided
+        if ($fulfillmentCenter) {
+            $query->where('fulfillment_center_id', $fulfillmentCenter->id);
         }
 
-        $latestProducts = $latestProductsQuery
-            ->orderBy('created_at', 'desc')
+        return $query->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
             ->map(function ($product) {
@@ -120,30 +176,96 @@ class DashboardController extends Controller
                     'brand' => $product->brand ? $product->brand->name : null,
                 ];
             });
+    }
 
-        // Fetch categories with images
-        $categories = Category::where('status', 'active')
+    /**
+     * Get categories with image collage
+     */
+    private function getCategories()
+    {
+        return Category::where('status', 'active')
             ->whereNull('parent_id')
             ->orderBy('name', 'asc')
             ->get()
             ->map(function ($category) {
+                // Get category image or generate collage from product images
+                $imageUrl = $category->image_url;
+                
+                // If no category image, try to get first product image as collage
+                if (!$imageUrl) {
+                    $firstProduct = $category->products()
+                        ->where('status', 'active')
+                        ->with(['images' => function ($query) {
+                            $query->where('is_primary', true)->limit(1);
+                        }])
+                        ->first();
+                    
+                    if ($firstProduct && $firstProduct->images->first()) {
+                        $imageUrl = $firstProduct->images->first()->image_url;
+                    }
+                }
+
                 return [
                     'id' => $category->id,
                     'name' => $category->name,
                     'slug' => $category->slug,
-                    'image_url' => $category->image_url,
+                    'image_url' => $imageUrl,
                     'icon_url' => $category->icon_url,
                 ];
             });
+    }
 
-        $data = [
-            'banners' => $banners,
-            'trending_products' => $trendingProducts,
-            'latest_products' => $latestProducts,
-            'categories' => $categories,
-        ];
+    /**
+     * Get express 30 products
+     */
+    private function getExpress30Products($fulfillmentCenter)
+    {
+        // Express 30 products must come from fulfillment centers that support it
+        $query = Product::with(['brand', 'category', 'variants' => function ($query) {
+            $query->where('status', 'active')
+                ->orderBy('sale_price', 'asc')
+                ->limit(1);
+        }, 'images' => function ($query) {
+            $query->where('is_primary', true)
+                ->limit(1);
+        }])
+            ->where('status', 'active')
+            ->where('is_express_30', true);
 
-        return $this->success($data, 'api.dashboard.loaded');
+        // Filter by fulfillment center if provided
+        if ($fulfillmentCenter) {
+            // Only show express 30 products from centers that support it
+            if ($fulfillmentCenter->supports_express_30) {
+                $query->where('fulfillment_center_id', $fulfillmentCenter->id);
+            } else {
+                // Return empty if nearest center doesn't support express 30
+                return collect([]);
+            }
+        } else {
+            // If no center provided, only show products from centers that support express 30
+            $query->whereHas('fulfillmentCenter', function ($q) {
+                $q->where('supports_express_30', true)
+                    ->where('status', 'active');
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($product) {
+                $variant = $product->variants->first();
+                $image = $product->images->first();
+
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'short_description' => $product->short_description,
+                    'price' => $variant ? (float) ($variant->sale_price ?? $variant->price) : 0,
+                    'image_url' => $image ? $image->image_url : null,
+                    'brand' => $product->brand ? $product->brand->name : null,
+                ];
+            });
     }
 
     /**
@@ -151,7 +273,7 @@ class DashboardController extends Controller
      * 
      * @param float $latitude
      * @param float $longitude
-     * @return int|null
+     * @return FulfillmentCenter|null
      */
     private function getNearestFulfillmentCenter($latitude, $longitude)
     {
@@ -162,22 +284,9 @@ class DashboardController extends Controller
         $latitude = (float) $latitude;
         $longitude = (float) $longitude;
 
-        // Haversine formula to calculate distance (in km)
-        // Radius: 30 km
-        $radius = 30;
+        // Radius: 15 km (configurable)
+        $radius = config('app.fulfillment_center_radius', 15);
 
-        $nearestFulfillmentCenter = FulfillmentCenter::select('fulfillment_centers.*')
-            ->selectRaw(
-                '(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance',
-                [$latitude, $longitude, $latitude]
-            )
-            ->where('status', 'active')
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->havingRaw('distance <= ?', [$radius])
-            ->orderBy('distance', 'asc')
-            ->first();
-
-        return $nearestFulfillmentCenter ? $nearestFulfillmentCenter->id : null;
+        return FulfillmentCenter::nearest($latitude, $longitude, $radius)->first();
     }
 }

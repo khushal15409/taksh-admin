@@ -72,10 +72,10 @@ class AuthController extends Controller
             if ($request->has('category_id') && !empty($request->category_id)) {
                 // If it's already a string with commas, use it as is
                 // If it's a single ID, convert to string
-                $categoryId = is_string($request->category_id) 
-                    ? $request->category_id 
+                $categoryId = is_string($request->category_id)
+                    ? $request->category_id
                     : (string) $request->category_id;
-                
+
                 // Clean up: remove spaces and ensure proper comma separation
                 $categoryId = preg_replace('/\s+/', '', $categoryId); // Remove spaces
                 $categoryId = trim($categoryId, ','); // Remove leading/trailing commas
@@ -109,7 +109,7 @@ class AuthController extends Controller
             $vendorData['state_id'] = $request->state_id ?? null;
             $vendorData['city_id'] = $request->city_id ?? null;
             $vendorData['pincode'] = $request->pincode ?? $request->shop_pincode ?? '';
-            
+
             // Bank details (backward compatibility) - ensure required fields are set
             $vendorData['bank_name'] = $request->bank_name ?? '';
             if ($request->account_number) {
@@ -120,7 +120,7 @@ class AuthController extends Controller
                 $vendorData['account_number'] = '';
             }
             $vendorData['ifsc_code'] = $request->ifsc_code ?? '';
-            
+
             // GST and PAN (backward compatibility)
             if ($request->gst_number) {
                 $vendorData['gst_number'] = $request->gst_number;
@@ -252,7 +252,7 @@ class AuthController extends Controller
             // Auto-assign salesman based on pincode
             $assignmentService = new VendorAssignmentService();
             $assignedSalesman = $assignmentService->autoAssignByPincode($vendor);
-            
+
             $assignmentInfo = null;
             if ($assignedSalesman) {
                 $assignmentInfo = [
@@ -269,8 +269,8 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'documents_uploaded' => count($documents),
                 'assigned_salesman' => $assignmentInfo,
-                'message' => $assignedSalesman 
-                    ? 'Vendor registration successful. Auto-assigned to salesman based on pincode.' 
+                'message' => $assignedSalesman
+                    ? 'Vendor registration successful. Auto-assigned to salesman based on pincode.'
                     : 'Vendor registration successful. Waiting for admin approval.',
             ], 'vendor.register.pending');
         } catch (\Exception $e) {
@@ -318,9 +318,11 @@ class AuthController extends Controller
         }
 
         // Check approval status
-        if ($user->vendor_status !== 'approved' || 
-            $vendor->status !== 'approved' || 
-            !$user->is_active) {
+        if (
+            $user->vendor_status !== 'approved' ||
+            $vendor->status !== 'approved' ||
+            !$user->is_active
+        ) {
             return $this->error('vendor.login.not_approved', 403);
         }
 
@@ -381,9 +383,11 @@ class AuthController extends Controller
         }
 
         // Check approval status
-        if ($user->vendor_status !== 'approved' || 
-            $vendor->status !== 'approved' || 
-            !$user->is_active) {
+        if (
+            $user->vendor_status !== 'approved' ||
+            $vendor->status !== 'approved' ||
+            !$user->is_active
+        ) {
             return $this->error('vendor.login.not_approved', 403);
         }
 
@@ -459,9 +463,11 @@ class AuthController extends Controller
         }
 
         // Check approval status
-        if ($user->vendor_status !== 'approved' || 
-            $vendor->status !== 'approved' || 
-            !$user->is_active) {
+        if (
+            $user->vendor_status !== 'approved' ||
+            $vendor->status !== 'approved' ||
+            !$user->is_active
+        ) {
             return $this->error('vendor.login.not_approved', 403);
         }
 
@@ -489,21 +495,21 @@ class AuthController extends Controller
         // Generate Sanctum token
         $token = $user->createToken('vendor-app')->plainTextToken;
 
-            return $this->success([
-                'user' => [
-                    'id' => $user->id,
-                    'mobile' => $user->mobile,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'user_type' => $user->user_type,
-                ],
-                'vendor' => [
-                    'id' => $vendor->id,
-                    'vendor_name' => $vendor->vendor_name,
-                    'shop_name' => $vendor->shop_name,
-                ],
-                'token' => $token,
-            ], 'vendor.login.success');
+        return $this->success([
+            'user' => [
+                'id' => $user->id,
+                'mobile' => $user->mobile,
+                'name' => $user->name,
+                'email' => $user->email,
+                'user_type' => $user->user_type,
+            ],
+            'vendor' => [
+                'id' => $vendor->id,
+                'vendor_name' => $vendor->vendor_name,
+                'shop_name' => $vendor->shop_name,
+            ],
+            'token' => $token,
+        ], 'vendor.login.success');
     }
 
     /**
@@ -582,6 +588,7 @@ class AuthController extends Controller
             // Get all active categories
             $categories = Category::where('status', 'active')
                 ->orderBy('name', 'asc')
+                ->whereNull('parent_id')
                 ->get()
                 ->map(function ($category) {
                     return [
@@ -649,26 +656,26 @@ class AuthController extends Controller
      * Get categories list for vendor registration
      * GET /api/vendor/categories
      */
-    public function categories()
-    {
-        try {
-            // Get all active categories (parent categories only for vendor selection)
-            $categories = Category::where('status', 'active')
-                ->whereNull('parent_id')
-                ->select('id', 'name', 'slug', 'status')
-                ->orderBy('name', 'asc')
-                ->get();
+    // public function categories()
+    // {
+    //     try {
+    //         // Get all active categories (parent categories only for vendor selection)
+    //         $categories = Category::where('status', 'active')
+    //             ->whereNull('parent_id')
+    //             ->select('id', 'name', 'slug', 'status')
+    //             ->orderBy('name', 'asc')
+    //             ->get();
 
-            return $this->success([
-                'categories' => $categories,
-                'count' => $categories->count(),
-            ], 'vendor.categories_fetched');
-        } catch (\Exception $e) {
-            Log::error('Vendor categories fetch error: ' . $e->getMessage(), [
-                'exception' => $e,
-                'trace' => $e->getTraceAsString()
-            ]);
-            return $this->error('api.server_error', 500);
-        }
-    }
+    //         return $this->success([
+    //             'categories' => $categories,
+    //             'count' => $categories->count(),
+    //         ], 'vendor.categories_fetched');
+    //     } catch (\Exception $e) {
+    //         Log::error('Vendor categories fetch error: ' . $e->getMessage(), [
+    //             'exception' => $e,
+    //             'trace' => $e->getTraceAsString()
+    //         ]);
+    //         return $this->error('api.server_error', 500);
+    //     }
+    // }
 }
