@@ -178,4 +178,40 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
             Route::get('search-pincodes', [App\Http\Controllers\Admin\Employee\EmployeeController::class, 'searchPincodes'])->name('search-pincodes');
         });
     });
+    
+    // Access Control Routes
+    Route::group(['prefix' => 'access-control', 'as' => 'access-control.'], function () {
+        // Department Routes
+        Route::group(['prefix' => 'department', 'as' => 'department.'], function () {
+            Route::get('/', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'index'])->name('index');
+            Route::get('create', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'store'])->name('store');
+            Route::get('{id}/edit', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'edit'])->name('edit');
+            Route::put('{id}', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'update'])->name('update');
+            Route::delete('{id}', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'destroy'])->name('destroy');
+            Route::post('{id}/status', [App\Http\Controllers\Admin\AccessControl\DepartmentController::class, 'status'])->name('status');
+        });
+        
+        // Department Unit Routes
+        Route::group(['prefix' => 'department-unit', 'as' => 'department-unit.'], function () {
+            Route::get('/', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'index'])->name('index');
+            Route::get('create', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'store'])->name('store');
+            Route::get('{id}/edit', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'edit'])->name('edit');
+            Route::put('{id}', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'update'])->name('update');
+            Route::delete('{id}', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'destroy'])->name('destroy');
+            Route::post('{id}/status', [App\Http\Controllers\Admin\AccessControl\DepartmentUnitController::class, 'status'])->name('status');
+        });
+        
+        // User Assignment Routes
+        Route::group(['prefix' => 'user-assignment', 'as' => 'user-assignment.'], function () {
+            Route::get('/', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'index'])->name('index');
+            Route::get('create', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'store'])->name('store');
+            Route::get('get-units-by-department', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'getUnitsByDepartment'])->name('get-units-by-department');
+            Route::get('{id}/edit', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'edit'])->name('edit');
+            Route::put('{id}', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'update'])->name('update');
+            Route::delete('{id}', [App\Http\Controllers\Admin\AccessControl\UserAssignmentController::class, 'destroy'])->name('destroy');
+        });
+    });
 });

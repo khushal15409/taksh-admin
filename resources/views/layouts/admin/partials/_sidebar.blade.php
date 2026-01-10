@@ -1384,6 +1384,52 @@
                     @endif
                     <!-- End Employee -->
 
+                    <!-- Access Control -->
+                    <li class="nav-item non-vendor-menu">
+                        <small class="nav-subtitle" title="Access Control">Access Control</small>
+                        <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                    </li>
+
+                    @if (true)
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/access-control/department*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.access-control.department.index') }}"
+                                title="Department">
+                                <i class="tio-city nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Department</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (true)
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/access-control/department-unit*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.access-control.department-unit.index') }}"
+                                title="Department Unit">
+                                <i class="tio-building nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Department Unit</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (true)
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/access-control/user-assignment*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.access-control.user-assignment.index') }}"
+                                title="User Assignment">
+                                <i class="tio-user-big nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">User Assignment</span>
+                            </a>
+                        </li>
+                    @endif
+                    <!-- End Access Control -->
+
                     <!-- Logistics Management -->
                     <li class="nav-item">
                         <small class="nav-subtitle">Logistics Management</small>
