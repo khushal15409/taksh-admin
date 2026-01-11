@@ -14,6 +14,7 @@ return [
     'logged_out' => 'Logged out successfully',
     'mobile_required' => 'Mobile number is required',
     'otp_required' => 'OTP is required',
+    'otp_rate_limit' => 'Too many OTP requests. Please try again later.',
     
     // Products
     'products_fetched' => 'Products fetched successfully',
@@ -51,7 +52,6 @@ return [
     'warehouse_not_found' => 'Warehouse not found',
     'delivery_type_invalid' => 'Invalid delivery type',
     'payment_method_invalid' => 'Invalid payment method',
-    'otp_rate_limit' => 'Too many OTP requests. Please try again later.',
     
     // Payment
     'payment_initiated' => 'Payment initiated successfully',
@@ -61,104 +61,26 @@ return [
     
     // Return
     'return_requested' => 'Return requested successfully',
-    'return_not_found' => 'Return not found',
-    'return_reason_required' => 'Return reason is required',
+    'return_not_found' => 'Return request not found',
     
-    // Banners
-    'banners' => [
-        'fetched' => 'Banners fetched successfully',
-        'not_found' => 'No banners found',
-    ],
-    
-    // Dashboard
-    'dashboard' => [
-        'loaded' => 'Dashboard data loaded successfully',
-        'failed' => 'Failed to load dashboard data',
-    ],
-    
-    // Express 30 Delivery
-    'express' => [
-        'products_loaded' => '30-minute delivery products fetched',
-        'order_placed' => 'Order placed with 30-minute delivery',
-        'not_available' => '30-minute delivery is not available in your area',
-        'product_not_eligible' => 'Product is not eligible for 30-minute delivery',
-    ],
-    
-    // General
-    'unauthorized' => 'Authentication required. Please provide a valid Bearer token.',
-    'not_found' => 'Resource not found',
-    'server_error' => 'Internal server error',
-    
-    // Vendor
-    'vendor' => [
-        'categories_fetched' => 'Categories fetched successfully for vendor registration',
+    // Delivery Man
+    'delivery' => [
+        'otp' => [
+            'sent' => 'OTP sent successfully',
+            'invalid' => 'Invalid OTP',
+            'verified' => 'OTP verified successfully',
+        ],
         'register' => [
-            'pending' => 'Vendor registration successful. Waiting for admin approval.',
-            'success' => 'Vendor registration completed successfully.',
-            'verification_required' => 'Documents uploaded. Verification required.',
+            'pending' => 'Registration successful. Waiting for admin approval.',
+            'failed' => 'Registration failed. Please try again.',
         ],
-        'document' => [
-            'uploaded' => 'Documents uploaded successfully.',
-        ],
-        'assigned_to_salesman' => 'Salesman assigned successfully.',
-        'verified_by_salesman' => 'Vendor verified by salesman successfully.',
-        'approved' => 'Vendor approved successfully.',
-        'rejected' => 'Vendor rejected successfully.',
         'login' => [
-            'success' => 'Vendor login successful.',
-            'not_approved' => 'Vendor account is not approved yet. Please wait for admin approval.',
-        ],
-        'verification' => [
-            'invalid_status' => 'Vendor is not in assigned status.',
-            'submitted' => 'Vendor verification submitted successfully.',
-        ],
-        'approval' => [
-            'not_verified' => 'Vendor must be verified by salesman before approval.',
-        ],
-        'categories_fetched' => 'Categories fetched successfully.',
-        'auto_assigned' => 'Vendor auto-assigned to salesman successfully.',
-        'already_assigned' => 'Vendor is already assigned to a salesman.',
-        'auto_assign' => [
-            'no_salesman_found' => 'No active salesman found with matching pincode. Please contact admin.',
-        ],
-        'not_found' => 'Vendor not found.',
-    ],
-    
-    // Salesman
-    'salesman' => [
-        'login' => [
-            'success' => 'Salesman login successful.',
+            'success' => 'Login successful',
+            'pending_approval' => 'Your registration is pending approval',
             'inactive' => 'Your account is inactive. Please contact administrator.',
-            'location' => [
-                'updated' => 'Location updated successfully.',
-            ],
+            'not_found' => 'Delivery man not found',
         ],
-        'location' => [
-            'updated' => 'Location updated successfully.',
-            'required' => 'Please update your location to see nearby vendors.',
-        ],
-        'vendors' => [
-            'nearby' => 'Nearby vendors fetched successfully.',
-        ],
-        'verification' => [
-            'submitted' => 'Vendor verification submitted successfully.',
-            'too_far' => 'Vendor is too far away. Maximum distance is 15 KM.',
-        ],
-        'created' => [
-            'success' => 'Salesman created successfully.',
-        ],
-        'updated' => [
-            'success' => 'Salesman updated successfully.',
-        ],
-        'status' => [
-            'updated' => 'Salesman status updated successfully.',
-        ],
-    ],
-    'vendor' => [
-        'verification' => [
-            'too_far' => 'Vendor is too far away. Maximum distance is 15 KM.',
-            'location_missing' => 'Vendor location coordinates are missing.',
-        ],
+        'approved' => 'Delivery man approved successfully',
+        'rejected' => 'Delivery man rejected successfully',
     ],
 ];
-

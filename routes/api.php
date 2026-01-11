@@ -20,6 +20,9 @@ require __DIR__ . '/vendor.php';
 // Salesman routes
 require __DIR__ . '/salesman.php';
 
+// Delivery Man routes
+require __DIR__ . '/delivery-man.php';
+
 // Protected routes (require authentication)
 require __DIR__ . '/address.php';
 require __DIR__ . '/order.php';

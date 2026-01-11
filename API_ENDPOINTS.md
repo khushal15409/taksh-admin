@@ -1617,3 +1617,365 @@ salesman_id: 8 (required, must exist in users table with user_type = salesman)
 -   `vendor` - Can login and access vendor features (after approval)
 
 ---
+
+## 🚴 DELIVERY MAN AUTHENTICATION ENDPOINTS
+
+### 31. Send OTP (Delivery Man)
+
+**POST** `/api/delivery-man/send-otp`  
+**Alias:** `/api/delivery-boy/send-otp` (backward compatibility)
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile_number: 9876543210
+```
+
+**Description:** Sends OTP to mobile number for delivery man authentication. Does NOT auto-register delivery man. Used for both login and registration flow.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "OTP sent successfully",
+    "data": {
+        "message": "OTP sent. Use 1234 for verification (TEST MODE)",
+        "expires_at": "2026-01-11 12:05:00"
+    }
+}
+```
+
+**Test Data:**
+
+-   Mobile: Any 10-digit mobile number
+-   OTP: `1234` (fixed for all requests - TEST MODE)
+
+**Note:** Fixed OTP = 1234 for testing. In production, OTP will be sent via SMS gateway.
+
+---
+
+### 32. Verify OTP (Delivery Man)
+
+**POST** `/api/delivery-man/verify-otp`  
+**Alias:** `/api/delivery-boy/verify-otp` (backward compatibility)
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile_number: 9876543210
+otp: 1234
+```
+
+**Description:** Verifies OTP and checks delivery man status. Returns whether delivery man can register, login, or is pending approval.
+
+**Response (New Delivery Man - Can Register):**
+
+```json
+{
+    "success": true,
+    "message": "OTP verified successfully",
+    "data": {
+        "can_register": true,
+        "can_login": false
+    }
+}
+```
+
+**Response (Existing - Pending Approval):**
+
+```json
+{
+    "success": true,
+    "message": "Registration successful. Waiting for admin approval.",
+    "data": {
+        "can_register": false,
+        "can_login": false,
+        "status": "pending",
+        "message": "Your registration is pending approval"
+    }
+}
+```
+
+**Response (Existing - Approved):**
+
+```json
+{
+    "success": true,
+    "message": "OTP verified successfully",
+    "data": {
+        "can_register": false,
+        "can_login": true,
+        "status": "approved"
+    }
+}
+```
+
+**Test Data:**
+
+-   Mobile: Any 10-digit mobile number
+-   OTP: `1234` (fixed for all)
+
+**Note:** This endpoint only verifies OTP and checks status. Use `/api/delivery-boy/register` for registration or `/api/delivery-boy/login` for login after approval.
+
+---
+
+### 33. Register Delivery Boy
+
+**POST** `/api/delivery-boy/register`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+-   `Content-Type: multipart/form-data` (required for file uploads)
+
+**Body (FormData):**
+
+**👤 Personal Details (Required):**
+
+```
+name: John Doe (required)
+email: john.doe@example.com (optional)
+mobile_number: 9876543210 (required, 10 digits, unique)
+address: 123 Main Street, Area Name (required)
+pincode: 380009 (required, max 10 characters)
+state_id: 1 (required, must exist in states table)
+city_id: 1 (required, must exist in cities table)
+fulfillment_center_id: 1 (required, must exist in fulfillment_centers table)
+```
+
+**🚗 Vehicle Details (Required):**
+
+```
+vehicle_type: bike (required: bike, cycle, scooter)
+vehicle_number: GJ01AB1234 (optional, max 50 characters)
+driving_license_number: DL1234567890 (required, max 50 characters)
+aadhaar_number: 123456789012 (required, 12 digits)
+```
+
+**📄 Documents (Optional but Recommended):**
+
+```
+profile_photo: [file.jpg] (optional, image, max 2MB, jpeg/jpg/png)
+aadhaar_front: [file.jpg] (optional, image, max 2MB, jpeg/jpg/png)
+aadhaar_back: [file.jpg] (optional, image, max 2MB, jpeg/jpg/png)
+driving_license_photo: [file.jpg] (optional, image, max 2MB, jpeg/jpg/png)
+```
+
+**Description:** Registers a new delivery man with personal details, vehicle information, and documents. Creates a user account with `user_type = delivery_man`, `status = pending`, and `is_active = false`. Delivery man must wait for admin approval before login.
+
+**Response:**
+
+```json
+{
+    "success": true,
+    "message": "Registration successful. Waiting for admin approval.",
+    "data": {
+        "delivery_boy": {
+            "id": 1,
+            "name": "John Doe",
+            "mobile_number": "9876543210",
+            "status": "pending"
+        }
+    }
+}
+```
+
+**Test Data:**
+
+-   State IDs: `1` (Gujarat), `2` (Maharashtra), `3` (Delhi)
+-   City IDs: `1` (Ahmedabad), `2` (Surat), `3` (Mumbai), `4` (Pune), `5` (New Delhi)
+-   Fulfillment Center IDs: `1`, `2`, `3` (from fulfillment_centers table)
+-   Vehicle Types: `bike`, `cycle`, `scooter`
+
+**Note:**
+
+-   Delivery boy status will be `pending` after registration
+-   All documents are uploaded and stored securely
+-   Maximum file size: 2MB per file
+-   Files accepted: JPEG, PNG, JPG (images only)
+-   Delivery boy cannot login until admin approves
+
+---
+
+### 34. Login Delivery Boy (After Approval)
+
+**POST** `/api/delivery-boy/login`
+
+**Headers:**
+
+-   `Accept-Language: en` (optional)
+
+**Body (FormData):**
+
+```
+mobile_number: 9876543210 (required, 10 digits)
+otp: 1234 (required, fixed OTP for testing)
+```
+
+**Description:** Allows delivery man to login using mobile number and OTP. Delivery man can only login if:
+
+-   Delivery man exists in `delivery_men` table
+-   `status = approved`
+-   `is_active = true` (user account must be active)
+
+Otherwise returns appropriate error message.
+
+**Response (Success):**
+
+```json
+{
+    "success": true,
+    "message": "Login successful",
+    "data": {
+        "delivery_boy": {
+            "id": 1,
+            "name": "John Doe",
+            "mobile_number": "9876543210",
+            "email": "john.doe@example.com",
+            "status": "approved",
+            "fulfillment_center_id": 1
+        },
+        "token": "1|xxxxxxxxxxxxxxxxxxxx"
+    }
+}
+```
+
+**Response (Pending Approval):**
+
+```json
+{
+    "success": false,
+    "message": "Your registration is pending approval",
+    "data": null
+}
+```
+
+**Response (Inactive):**
+
+```json
+{
+    "success": false,
+    "message": "Your account is inactive. Please contact administrator.",
+    "data": null
+}
+```
+
+**Response (Not Found):**
+
+```json
+{
+    "success": false,
+    "message": "Delivery boy not found",
+    "data": null
+}
+```
+
+**Test Data:**
+
+-   Mobile: Use mobile number of approved delivery boy (from seeder)
+-   OTP: `1234` (fixed for all)
+
+**Note:**
+
+-   Save the `token` for authenticated requests
+-   Use it in `Authorization: Bearer {token}` header for protected routes
+-   Only approved and active delivery boys can login
+-   OTP = 1234 for testing (TEST MODE)
+
+---
+
+## 📋 DELIVERY BOY SYSTEM FLOW
+
+### Complete Delivery Boy Onboarding Flow
+
+1. **Send OTP:** POST `/api/delivery-boy/send-otp`
+
+    - Delivery man enters mobile number
+    - Receives OTP (1234 for testing)
+
+2. **Verify OTP:** POST `/api/delivery-man/verify-otp`
+
+    - Verifies OTP and checks status
+    - Returns whether can register or login
+
+3. **Register Delivery Man:** POST `/api/delivery-man/register`
+
+    - Delivery man submits registration form with details and documents
+    - Status: `pending`, `is_active = false`
+    - Delivery man cannot login yet
+
+4. **Admin Approves:** (Admin Panel - Web Interface)
+
+    - Super admin reviews delivery man details and documents
+    - Approves delivery man
+    - Status: `approved`, `is_active = true`
+    - Delivery man can now login
+
+5. **Delivery Man Login:** POST `/api/delivery-man/login`
+
+    - Delivery man logs in with mobile + OTP
+    - Receives authentication token
+
+### Test Sequence
+
+1. Send OTP → `/api/delivery-man/send-otp` (mobile: 9876543210)
+2. Verify OTP → `/api/delivery-man/verify-otp` (mobile: 9876543210, otp: 1234)
+3. Register → `/api/delivery-man/register` (with all details)
+4. Login as admin → Admin panel (approve delivery man)
+5. Login → `/api/delivery-man/login` (mobile: 9876543210, otp: 1234)
+
+---
+
+## 🔗 DELIVERY MAN SYSTEM QUICK REFERENCE
+
+| Endpoint                        | Method | Auth | FormData | Description                 |
+| ------------------------------- | ------ | ---- | -------- | --------------------------- |
+| `/api/delivery-man/send-otp`    | POST   | ❌   | ✅       | Send OTP to mobile number   |
+| `/api/delivery-man/verify-otp`  | POST   | ❌   | ✅       | Verify OTP and check status |
+| `/api/delivery-man/register`    | POST   | ❌   | ✅       | Register new delivery man   |
+| `/api/delivery-man/login`       | POST   | ❌   | ✅       | Login (after approval)      |
+
+**Note:** Old endpoints `/api/delivery-boy/*` are still available for backward compatibility.
+
+**Legend:**
+
+-   ❌ = Not required
+-   ✅ = Required
+
+---
+
+## 🧪 DELIVERY MAN SYSTEM TEST DATA
+
+### Delivery Man Status Flow
+
+-   `pending` → Delivery man registered, waiting for admin approval
+-   `approved` → Admin approved, delivery man can login
+-   `rejected` → Admin rejected, delivery man cannot login
+
+### Spatie Roles
+
+-   `delivery-man` - Can login and access delivery man features (after approval)
+-   `delivery-boy` - Legacy role (backward compatibility, will be migrated)
+
+### OTP
+
+-   Fixed OTP: `1234` (for all mobile numbers - TEST MODE)
+
+### Important Notes
+
+-   Delivery men can ONLY login via mobile app (not admin panel)
+-   OTP-based authentication only (no password)
+-   Admin approval required before login
+-   Assigned to ONE fulfillment center
+-   Future-ready for order dispatch system
+
+---

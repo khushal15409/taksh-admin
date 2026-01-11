@@ -19,7 +19,7 @@ Route::get('reset-password', [App\Http\Controllers\LoginController::class, 'rese
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], function () {
     Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard'])->name('dashboard');
     Route::get('dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'dashboard'])->name('dashboard');
-    
+
     // Dashboard stats routes
     Route::group(['prefix' => 'dashboard-stats', 'as' => 'dashboard-stats.'], function () {
         Route::post('order', [App\Http\Controllers\Admin\DashboardController::class, 'order'])->name('order');
@@ -27,12 +27,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::post('user-overview', [App\Http\Controllers\Admin\DashboardController::class, 'user_overview'])->name('user-overview');
         Route::post('commission-overview', [App\Http\Controllers\Admin\DashboardController::class, 'commission_overview'])->name('commission-overview');
     });
-    
+
     // Profile routes
     Route::get('profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
     Route::post('profile/update', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::post('profile/update-password', [App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.update-password');
-    
+
     // Logistics Routes
     Route::group(['prefix' => 'logistics', 'as' => 'logistics.'], function () {
         Route::get('warehouse', [App\Http\Controllers\Admin\Logistics\WarehouseController::class, 'index'])->name('warehouse.index');
@@ -42,7 +42,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::put('warehouse/{id}', [App\Http\Controllers\Admin\Logistics\WarehouseController::class, 'update'])->name('warehouse.update');
         Route::delete('warehouse/{id}', [App\Http\Controllers\Admin\Logistics\WarehouseController::class, 'destroy'])->name('warehouse.destroy');
         Route::post('warehouse/status', [App\Http\Controllers\Admin\Logistics\WarehouseController::class, 'status'])->name('warehouse.status');
-        
+
         Route::get('miniwarehouse', [App\Http\Controllers\Admin\Logistics\MiniwarehouseController::class, 'index'])->name('miniwarehouse.index');
         Route::get('miniwarehouse/create', [App\Http\Controllers\Admin\Logistics\MiniwarehouseController::class, 'create'])->name('miniwarehouse.create');
         Route::post('miniwarehouse', [App\Http\Controllers\Admin\Logistics\MiniwarehouseController::class, 'store'])->name('miniwarehouse.store');
@@ -50,7 +50,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::put('miniwarehouse/{id}', [App\Http\Controllers\Admin\Logistics\MiniwarehouseController::class, 'update'])->name('miniwarehouse.update');
         Route::delete('miniwarehouse/{id}', [App\Http\Controllers\Admin\Logistics\MiniwarehouseController::class, 'destroy'])->name('miniwarehouse.destroy');
         Route::post('miniwarehouse/status', [App\Http\Controllers\Admin\Logistics\MiniwarehouseController::class, 'status'])->name('miniwarehouse.status');
-        
+
         Route::get('lm-center', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'index'])->name('lm-center.index');
         Route::get('lm-center/create', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'create'])->name('lm-center.create');
         Route::post('lm-center', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'store'])->name('lm-center.store');
@@ -60,7 +60,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::post('lm-center/status', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'status'])->name('lm-center.status');
         Route::post('lm-center/verify-document', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'verifyDocument'])->name('lm-center.verify-document');
         Route::get('lm-center/search-pincodes', [App\Http\Controllers\Admin\Logistics\LmCenterController::class, 'searchPincodes'])->name('lm-center.search-pincodes');
-        
+
         Route::get('fm-rt-center', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'index'])->name('fm-rt-center.index');
         Route::get('fm-rt-center/create', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'create'])->name('fm-rt-center.create');
         Route::post('fm-rt-center', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'store'])->name('fm-rt-center.store');
@@ -69,7 +69,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::delete('fm-rt-center/{id}', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'destroy'])->name('fm-rt-center.destroy');
         Route::post('fm-rt-center/status', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'status'])->name('fm-rt-center.status');
         Route::get('fm-rt-center/search-pincodes', [App\Http\Controllers\Admin\Logistics\FmRtCenterController::class, 'searchPincodes'])->name('fm-rt-center.search-pincodes');
-        
+
         Route::get('pending-mapping', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'index'])->name('pending-mapping.index');
         Route::get('pending-mapping/pending-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getPendingPincodes'])->name('pending-mapping.pending-pincodes');
         Route::get('pending-mapping/active-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getActivePincodes'])->name('pending-mapping.active-pincodes');
@@ -77,11 +77,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::get('pending-mapping/pending-logistic-pincodes', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'getPendingLogisticPincodes'])->name('pending-mapping.pending-logistic-pincodes');
         Route::post('pending-mapping/pincode-status', [App\Http\Controllers\Admin\Logistics\PendingMappingController::class, 'updatePincodeStatus'])->name('pending-mapping.pincode-status');
     });
-    
+
     // Banner Routes
     Route::resource('banner', App\Http\Controllers\Admin\BannerController::class);
     Route::post('banner/status', [App\Http\Controllers\Admin\BannerController::class, 'statusToggle'])->name('banner.status');
-    
+
     // App Dashboard Sections Routes
     Route::prefix('app-dashboard')->name('app-dashboard.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'index'])->name('index');
@@ -89,11 +89,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::post('update-sort-orders', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'updateSortOrder'])->name('update-sort-orders');
         Route::put('update-sort-order/{id}', [App\Http\Controllers\Admin\AppDashboardSectionController::class, 'updateSingleSortOrder'])->name('update-sort-order');
     });
-    
+
     // Category Routes
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     Route::post('categories/status', [App\Http\Controllers\Admin\CategoryController::class, 'statusToggle'])->name('categories.status');
-    
+
     // Product Routes
     Route::resource('products', App\Http\Controllers\Admin\ProductController::class);
     Route::post('products/status', [App\Http\Controllers\Admin\ProductController::class, 'statusToggle'])->name('products.status');
@@ -101,7 +101,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
     Route::delete('products/image/{id}', [App\Http\Controllers\Admin\ProductController::class, 'deleteImage'])->name('products.delete-image');
     Route::get('get-cities', [App\Http\Controllers\Admin\ProductController::class, 'getCities'])->name('get-cities');
     Route::get('get-fulfillment-centers', [App\Http\Controllers\Admin\ProductController::class, 'getFulfillmentCenters'])->name('get-fulfillment-centers');
-    
+
     // Order Routes
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('index');
@@ -109,23 +109,23 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::get('confirmed', [App\Http\Controllers\Admin\OrderController::class, 'confirmed'])->name('confirmed');
         Route::get('delivered', [App\Http\Controllers\Admin\OrderController::class, 'delivered'])->name('delivered');
         Route::get('cancelled', [App\Http\Controllers\Admin\OrderController::class, 'cancelled'])->name('cancelled');
-        
+
         // Express-30 Orders (must be before {id} route)
         Route::prefix('express-30')->name('express-30.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\ExpressOrderController::class, 'index'])->name('index');
             Route::get('{id}', [App\Http\Controllers\Admin\ExpressOrderController::class, 'show'])->name('show');
         });
-        
+
         // Order detail (must be last to avoid conflicts)
         Route::get('{id}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
     });
-    
+
     // Customer Routes
     Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('list', [App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('list');
         Route::get('view/{id}', [App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('view');
     });
-    
+
     // Vendor Management Routes
     Route::prefix('vendor')->name('vendor.')->group(function () {
         // Vendor Assignment
@@ -135,7 +135,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
             Route::post('{id}/assign', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'assign'])->name('assign');
             Route::post('{id}/auto-assign', [App\Http\Controllers\Admin\VendorAssignmentController::class, 'autoAssignSalesman'])->name('auto-assign');
         });
-        
+
         // Vendor Approval
         Route::prefix('approval')->name('approval.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\VendorApprovalController::class, 'index'])->name('index');
@@ -144,7 +144,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
             Route::post('{id}/reject', [App\Http\Controllers\Admin\VendorApprovalController::class, 'rejectWeb'])->name('reject');
         });
     });
-    
+
     // Salesmen Management Routes
     Route::prefix('salesmen')->name('salesmen.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\SalesmanController::class, 'index'])->name('index');
@@ -153,5 +153,31 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth']], 
         Route::get('{id}/edit', [App\Http\Controllers\Admin\SalesmanController::class, 'edit'])->name('edit');
         Route::put('{id}', [App\Http\Controllers\Admin\SalesmanController::class, 'update'])->name('update');
         Route::post('{id}/toggle-status', [App\Http\Controllers\Admin\SalesmanController::class, 'toggleStatus'])->name('toggle-status');
+    });
+
+    // Delivery Boys Management Routes (for backward compatibility - uses DeliveryManController)
+    Route::prefix('delivery-boys')->name('delivery-boys.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\DeliveryManController::class, 'index'])->name('index');
+        Route::get('pending', [App\Http\Controllers\Admin\DeliveryManController::class, 'pending'])->name('pending');
+        Route::get('approved', [App\Http\Controllers\Admin\DeliveryManController::class, 'approved'])->name('approved');
+        Route::get('rejected', [App\Http\Controllers\Admin\DeliveryManController::class, 'rejected'])->name('rejected');
+        Route::get('{id}', [App\Http\Controllers\Admin\DeliveryManController::class, 'show'])->name('show');
+        Route::post('{id}/approve', [App\Http\Controllers\Admin\DeliveryManController::class, 'approve'])->name('approve');
+        Route::post('{id}/reject', [App\Http\Controllers\Admin\DeliveryManController::class, 'reject'])->name('reject');
+    });
+
+    // Delivery Man Management Routes (Admin Panel)
+    Route::prefix('delivery-men')->name('delivery-men.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\DeliveryManController::class, 'index'])->name('index');
+        Route::get('pending', [App\Http\Controllers\Admin\DeliveryManController::class, 'pending'])->name('pending');
+        Route::get('create', [App\Http\Controllers\Admin\DeliveryManController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\DeliveryManController::class, 'store'])->name('store');
+        Route::get('{id}', [App\Http\Controllers\Admin\DeliveryManController::class, 'show'])->name('show');
+        Route::get('{id}/edit', [App\Http\Controllers\Admin\DeliveryManController::class, 'edit'])->name('edit');
+        Route::put('{id}', [App\Http\Controllers\Admin\DeliveryManController::class, 'update'])->name('update');
+        Route::post('{id}/approve', [App\Http\Controllers\Admin\DeliveryManController::class, 'approve'])->name('approve');
+        Route::post('{id}/reject', [App\Http\Controllers\Admin\DeliveryManController::class, 'reject'])->name('reject');
+        Route::post('{id}/toggle-status', [App\Http\Controllers\Admin\DeliveryManController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('{id}/assign-fc', [App\Http\Controllers\Admin\DeliveryManController::class, 'assignFulfillmentCenter'])->name('assign-fc');
     });
 });

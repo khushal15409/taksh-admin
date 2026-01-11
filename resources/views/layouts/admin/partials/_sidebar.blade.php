@@ -42,7 +42,8 @@
             <div class="navbar-vertical-content bg--005555" id="navbar-vertical-content">
                 <ul class="navbar-nav navbar-nav-lg nav-tabs">
                     <!-- Dashboards -->
-                    <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin') ? 'show active' : '' }}">
+                    <li
+                        class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin') ? 'show active' : '' }}">
                         <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.dashboard') }}"
                             title="{{ translate('messages.dashboard') }}">
                             <i class="tio-home-vs-1-outlined nav-icon"></i>
@@ -61,7 +62,8 @@
                     </li>
                     <!-- Pos -->
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/pos*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/pos*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link "
                                 href="{{ route('admin.dashboard') }}" title="{{ translate('New Sale') }}">
                                 <i class="tio-shopping-basket-outlined nav-icon"></i>
@@ -78,7 +80,8 @@
                     </li>
 
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/zone*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/zone*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.dashboard') }}" title="{{ translate('messages.zone_setup') }}">
                                 <i class="tio-city nav-icon"></i>
@@ -89,7 +92,8 @@
                     @endif
 
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/module') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/module') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.system_module_setup') }}">
                                 <i class="tio-globe nav-icon"></i>
@@ -131,7 +135,8 @@
                     </li>
                     <!-- Campaign -->
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/campaign') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/campaign') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.campaigns') }}">
                                 <i class="tio-layers-outlined nav-icon"></i>
@@ -161,7 +166,8 @@
                     <!-- End Campaign -->
                     <!-- Banner -->
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/banner*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/banner*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.banner.index') }}"
                                 title="{{ translate('messages.banners') }}">
@@ -174,20 +180,21 @@
                     <!-- End Banner -->
                     <!-- App Dashboard Sections -->
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/app-dashboard*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/app-dashboard*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
-                                href="{{ route('admin.app-dashboard.index') }}"
-                                title="App Dashboard Sections">
+                                href="{{ route('admin.app-dashboard.index') }}" title="App Dashboard Sections">
                                 <i class="tio-dashboard nav-icon"></i>
-                                <span
-                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">App Dashboard Sections</span>
+                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">App
+                                    Dashboard Sections</span>
                             </a>
                         </li>
                     @endif
                     <!-- End App Dashboard Sections -->
                     <!-- Coupon -->
                     @if (true)
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/coupon*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/coupon*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.dashboard') }}" title="{{ translate('messages.coupons') }}">
                                 <i class="tio-gift nav-icon"></i>
@@ -232,7 +239,8 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders*') || Request::is('admin/refund*') || Request::is('admin/dispatch*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders*') || Request::is('admin/refund*') || Request::is('admin/dispatch*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.orders') }}">
                                 <i class="tio-shopping-cart nav-icon"></i>
@@ -242,11 +250,13 @@
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub non-vendor-menu"
                                 style="display:{{ Request::is('admin/orders*') || Request::is('admin/refund*') || Request::is('admin/dispatch*') ? 'block' : 'none' }}">
-                                <li class="nav-item {{ Request::is('admin/orders') && !Request::is('admin/orders/*') ? 'active' : '' }}">
+                                <li
+                                    class="nav-item {{ Request::is('admin/orders') && !Request::is('admin/orders/*') ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('admin.orders.index') }}"
                                         title="{{ translate('messages.all_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                             <span>{{ translate('messages.all_orders') }}</span>
                                             <span class="badge badge-soft-dark badge-pill ml-auto">
                                                 {{ isset($orderCounts) ? number_format($orderCounts['all'] ?? 0) : 0 }}
@@ -258,7 +268,8 @@
                                     <a class="nav-link " href="{{ route('admin.orders.pending') }}"
                                         title="{{ translate('messages.pending_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                             <span>{{ translate('messages.pending_orders') }}</span>
                                             <span class="badge badge-soft-warning badge-pill ml-auto">
                                                 {{ isset($orderCounts) ? number_format($orderCounts['pending'] ?? 0) : 0 }}
@@ -270,7 +281,8 @@
                                     <a class="nav-link " href="{{ route('admin.orders.confirmed') }}"
                                         title="{{ translate('messages.confirmed_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                             <span>{{ translate('messages.confirmed_orders') }}</span>
                                             <span class="badge badge-soft-info badge-pill ml-auto">
                                                 {{ isset($orderCounts) ? number_format($orderCounts['confirmed'] ?? 0) : 0 }}
@@ -282,7 +294,8 @@
                                     <a class="nav-link " href="{{ route('admin.orders.delivered') }}"
                                         title="{{ translate('messages.delivered_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                             <span>{{ translate('messages.delivered_orders') }}</span>
                                             <span class="badge badge-soft-success badge-pill ml-auto">
                                                 {{ isset($orderCounts) ? number_format($orderCounts['delivered'] ?? 0) : 0 }}
@@ -294,7 +307,8 @@
                                     <a class="nav-link " href="{{ route('admin.orders.cancelled') }}"
                                         title="{{ translate('messages.cancelled_orders') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                             <span>{{ translate('messages.cancelled_orders') }}</span>
                                             <span class="badge badge-soft-danger badge-pill ml-auto">
                                                 {{ isset($orderCounts) ? number_format($orderCounts['cancelled'] ?? 0) : 0 }}
@@ -307,7 +321,8 @@
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
                                         title="{{ translate('messages.order_refunds') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                        <span
+                                            class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                             <span>{{ translate('messages.order_refunds') }}</span>
                                             <span class="badge badge-soft-secondary badge-pill ml-auto">
                                                 {{ isset($orderCounts) ? number_format($orderCounts['refunds'] ?? 0) : 0 }}
@@ -350,12 +365,14 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders/express-30*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders/express-30*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.orders.express-30.index') }}"
                                 title="{{ translate('messages.express_30_orders') }}">
                                 <i class="tio-time nav-icon"></i>
-                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
                                     <span>{{ translate('messages.express_30_orders') }}</span>
                                     <span class="badge badge-soft-primary badge-pill ml-auto">
                                         {{ isset($orderCounts) ? number_format($orderCounts['express_30'] ?? 0) : 0 }}
@@ -507,7 +524,8 @@
 
                     <!-- Unit -->
                     @if (\App\CentralLogics\Helpers::module_permission_check('unit'))
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/unit*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/unit*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
                                 href="{{ route('admin.dashboard') }}" title="{{ translate('messages.units') }}">
                                 <i class="tio-ruler nav-icon"></i>
@@ -522,7 +540,8 @@
 
                     <!-- AddOn -->
                     @if (\App\CentralLogics\Helpers::module_permission_check('addon'))
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/addon*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/addon*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.addons') }}">
                                 <i class="tio-add-circle-outlined nav-icon"></i>
@@ -561,7 +580,8 @@
                     <!-- End AddOn -->
                     <!-- Food -->
                     @if (\App\CentralLogics\Helpers::module_permission_check('item'))
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/item*') ? 'active' : '' }}">
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/item*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.items') }}">
                                 <i class="tio-premium-outlined nav-icon"></i>
@@ -636,9 +656,10 @@
                     <!-- End Food -->
 
                     <!-- Product Management -->
-                    <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/product*') || Request::is('admin/categories*') ? 'active' : '' }}">
-                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:void(0)"
-                            title="{{ translate('messages.product_management') }}">
+                    <li
+                        class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/product*') || Request::is('admin/categories*') ? 'active' : '' }}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                            href="javascript:void(0)" title="{{ translate('messages.product_management') }}">
                             <i class="tio-shop nav-icon"></i>
                             <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
                                 {{ translate('messages.product_management') }}
@@ -648,14 +669,14 @@
                             style="display:{{ Request::is('admin/product*') || Request::is('admin/categories*') ? 'block' : 'none' }}">
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/categories*') ? 'active' : '' }}"
-                                   href="{{ route('admin.categories.index') }}">
+                                    href="{{ route('admin.categories.index') }}">
                                     <span class="tio-circle nav-indicator-icon"></span>
                                     <span class="text-truncate">{{ translate('messages.categories') }}</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link {{ Request::is('admin/products*') ? 'active' : '' }}"
-                                   href="{{ route('admin.products.index') }}">
+                                    href="{{ route('admin.products.index') }}">
                                     <span class="tio-circle nav-indicator-icon"></span>
                                     <span class="text-truncate">{{ translate('messages.products') }}</span>
                                 </a>
@@ -666,15 +687,16 @@
 
                     <!-- Vendor & Salesman Management Section -->
                     <li class="nav-item vendor-menu">
-                        <small class="nav-subtitle"
-                            title="Vendor & Salesman Management">Vendor & Salesman Management</small>
+                        <small class="nav-subtitle" title="Vendor & Salesman Management">Vendor & Salesman
+                            Management</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>
 
                     <!-- Vendor Management -->
-                    <li class="navbar-vertical-aside-has-menu vendor-menu {{ Request::is('admin/vendor*') ? 'active' : '' }}">
-                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:void(0)"
-                            title="Vendor Management">
+                    <li
+                        class="navbar-vertical-aside-has-menu vendor-menu {{ Request::is('admin/vendor*') ? 'active' : '' }}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle"
+                            href="javascript:void(0)" title="Vendor Management">
                             <i class="tio-user nav-icon"></i>
                             <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
                                 Vendor Management
@@ -684,21 +706,21 @@
                             style="display:{{ Request::is('admin/vendor*') ? 'block' : 'none' }}">
                             <li class="nav-item vendor-menu">
                                 <a class="nav-link {{ Request::is('admin/vendor/assignment*') ? 'active' : '' }}"
-                                   href="{{ route('admin.vendor.assignment.index') }}">
+                                    href="{{ route('admin.vendor.assignment.index') }}">
                                     <span class="tio-circle nav-indicator-icon"></span>
                                     <span class="text-truncate">Vendor Assignment</span>
                                 </a>
                             </li>
                             <li class="nav-item vendor-menu">
                                 <a class="nav-link {{ Request::is('admin/vendor/approval*') ? 'active' : '' }}"
-                                   href="{{ route('admin.vendor.approval.index') }}">
+                                    href="{{ route('admin.vendor.approval.index') }}">
                                     <span class="tio-circle nav-indicator-icon"></span>
                                     <span class="text-truncate">Vendor Approval</span>
                                 </a>
                             </li>
                             <li class="nav-item vendor-menu">
                                 <a class="nav-link {{ Request::is('admin/salesmen*') ? 'active' : '' }}"
-                                   href="{{ route('admin.salesmen.index') }}">
+                                    href="{{ route('admin.salesmen.index') }}">
                                     <span class="tio-circle nav-indicator-icon"></span>
                                     <span class="text-truncate">Salesmen</span>
                                 </a>
@@ -706,6 +728,7 @@
                         </ul>
                     </li>
                     <!-- End Vendor Management -->
+
 
                     <!-- Store Store -->
                     <li class="nav-item non-vendor-menu">
@@ -799,9 +822,9 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
                         <li
-                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/delivery-man/add') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/delivery-men/create') || Request::is('admin/delivery-man/add') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
-                                href="{{ route('admin.dashboard') }}"
+                                href="{{ route('admin.delivery-men.create') }}"
                                 title="{{ translate('messages.add_delivery_man') }}">
                                 <i class="tio-running nav-icon"></i>
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
@@ -811,9 +834,9 @@
                         </li>
 
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/delivery-man/new') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/delivery-men/pending') || Request::is('admin/delivery-man/new') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link text-capitalize"
-                                href="{{ route('admin.dashboard') }}"
+                                href="{{ route('admin.delivery-men.pending') }}"
                                 title="{{ translate('messages.new_joining_requests') }}">
                                 <i class="tio-man nav-icon"></i>
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
@@ -824,9 +847,9 @@
 
 
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/delivery-man/list') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu {{ request()->routeIs('admin.delivery-men.index') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
-                                href="{{ route('admin.dashboard') }}"
+                                href="{{ route('admin.delivery-men.index') }}"
                                 title="{{ translate('messages.deliveryman_list') }}">
                                 <i class="tio-filter-list nav-icon"></i>
                                 <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">

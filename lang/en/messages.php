@@ -169,4 +169,50 @@ return [
     'customers' => 'Customers',
     'customer_details' => 'Customer Details',
     'verification_status' => 'Verification Status',
+
+    // Delivery Man Management
+    'delivery_men' => 'Delivery Men',
+    'delivery_boys' => 'Delivery Men', // Backward compatibility
+    'delivery_men_management' => 'Delivery Men Management',
+    'delivery_boys_management' => 'Delivery Men Management', // Backward compatibility
+    'manage_delivery_men' => 'Manage delivery men and approve registration requests',
+    'manage_delivery_boys' => 'Manage delivery men and approve registration requests', // Backward compatibility
+    'all_delivery_men' => 'All Delivery Men',
+    'all_delivery_boys' => 'All Delivery Men', // Backward compatibility
+    'pending_approval' => 'Pending Approval',
+    'approved_delivery_men' => 'Approved Delivery Men',
+    'approved_delivery_boys' => 'Approved Delivery Men', // Backward compatibility
+    'rejected_delivery_men' => 'Rejected Delivery Men',
+    'rejected_delivery_boys' => 'Rejected Delivery Men', // Backward compatibility
+    'delivery_man_details' => 'Delivery Man Details',
+    'delivery_boy_details' => 'Delivery Man Details', // Backward compatibility
+    'approve' => 'Approve',
+    'reject' => 'Reject',
+    'approved' => 'Approved',
+    'rejected' => 'Rejected',
+    'activate' => 'Activate',
+    'deactivate' => 'Deactivate',
+    'vehicle_type' => 'Vehicle Type',
+    'vehicle_number' => 'Vehicle Number',
+    'driving_license_number' => 'Driving License Number',
+    'aadhaar_number' => 'Aadhaar Number',
+    'profile_photo' => 'Profile Photo',
+    'aadhaar_front' => 'Aadhaar Front',
+    'aadhaar_back' => 'Aadhaar Back',
+    'driving_license_photo' => 'Driving License Photo',
+    'approved_by' => 'Approved By',
+    'approved_at' => 'Approved At',
+    'mobile_number' => 'Mobile Number',
+    'address' => 'Address',
+    'bike' => 'Bike',
+    'cycle' => 'Cycle',
+    'scooter' => 'Scooter',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+
+    // Delivery Boy Approval Messages
+    'delivery_boys1' => [
+        'approved' => 'Delivery boy approved successfully',
+        'rejected' => 'Delivery boy rejected successfully',
+    ],
 ];

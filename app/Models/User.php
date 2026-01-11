@@ -73,4 +73,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(SalesmanProfile::class);
     }
+
+    public function deliveryMan()
+    {
+        return $this->hasOne(DeliveryMan::class);
+    }
 }
