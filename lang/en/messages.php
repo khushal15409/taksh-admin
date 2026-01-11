@@ -14,7 +14,7 @@ return [
     'express_30' => '30 mins Delivery',
     'product_saved' => 'Product saved successfully',
     'category_saved' => 'Category saved successfully',
-    
+
     // Common
     'sl' => 'SL',
     'status' => 'Status',
@@ -24,7 +24,7 @@ return [
     'edit' => 'Edit',
     'delete' => 'Delete',
     'no_data_found' => 'No data found',
-    
+
     // Messages
     'category_added' => 'Category added successfully',
     'category_updated' => 'Category updated successfully',
@@ -37,7 +37,7 @@ return [
     'failed_to_upload_image' => 'Failed to upload image',
     'Cannot delete category with products' => 'Cannot delete category with products',
     'Cannot delete category with subcategories' => 'Cannot delete category with subcategories',
-    
+
     'product_added' => 'Product added successfully',
     'product_updated' => 'Product updated successfully',
     'select_state' => 'Select State',
@@ -85,7 +85,7 @@ return [
     'failed_to_delete_image' => 'Failed to delete image',
     'Invalid flag' => 'Invalid flag',
     'SKU already exists' => 'SKU already exists',
-    
+
     // Orders
     'orders' => 'Orders',
     'order_management' => 'Order Management',
@@ -97,6 +97,7 @@ return [
     'order_details' => 'Order Details',
     'express_30_orders' => '30 mins Delivery Orders',
     'express_30_order_details' => '30 mins Delivery Order Details',
+    'express_30_section' => '30 Mins. Delivery',
     'order_id' => 'Order ID',
     'customer' => 'Customer',
     'total_amount' => 'Total Amount',
@@ -158,15 +159,14 @@ return [
     'payment_failed' => 'Payment Failed',
     'refunded' => 'Refunded',
     'order_refunds' => 'Order Refunds',
-    
+
     // Dashboard
     'total_orders' => 'Total Orders',
     'newly_added' => 'Newly added',
     'total_customers' => 'Total Customers',
-    
+
     // Customer Management
     'customers' => 'Customers',
     'customer_details' => 'Customer Details',
     'verification_status' => 'Verification Status',
 ];
-

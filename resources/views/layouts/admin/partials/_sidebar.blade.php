@@ -232,7 +232,7 @@
                             <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                         </li>
 
-                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders*') ? 'active' : '' }}">
+                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders*') || Request::is('admin/refund*') || Request::is('admin/dispatch*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.orders') }}">
                                 <i class="tio-shopping-cart nav-icon"></i>
@@ -241,7 +241,7 @@
                                 </span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub non-vendor-menu"
-                                style="display:{{ Request::is('admin/orders*') ? 'block' : 'none' }}">
+                                style="display:{{ Request::is('admin/orders*') || Request::is('admin/refund*') || Request::is('admin/dispatch*') ? 'block' : 'none' }}">
                                 <li class="nav-item {{ Request::is('admin/orders') && !Request::is('admin/orders/*') ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('admin.orders.index') }}"
                                         title="{{ translate('messages.all_orders') }}">
@@ -302,34 +302,6 @@
                                         </span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ Request::is('admin/orders/express-30*') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.orders.express-30.index') }}"
-                                        title="{{ translate('messages.express_30_orders') }}">
-                                        <span class="tio-circle nav-indicator-icon"></span>
-                                        <span class="text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
-                                            <span>{{ translate('messages.express_30_orders') }}</span>
-                                            <span class="badge badge-soft-primary badge-pill ml-auto">
-                                                {{ isset($orderCounts) ? number_format($orderCounts['express_30'] ?? 0) : 0 }}
-                                            </span>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <!-- Order refund -->
-                        <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/refund/*') ? 'active' : '' }}">
-                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
-                                title="{{ translate('Order Refunds') }}">
-                                <i class="tio-receipt nav-icon"></i>
-                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                    {{ translate('Order Refunds') }}
-                                </span>
-                            </a>
-                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display: {{ Request::is('admin/refund*') ? 'block' : 'none' }}">
-
                                 <li
                                     class="nav-item {{ Request::is('admin/refund/requested') || Request::is('admin/refund/rejected') || Request::is('admin/refund/refunded') ? 'active' : '' }}">
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
@@ -343,33 +315,6 @@
                                         </span>
                                     </a>
                                 </li>
-
-                                {{-- <li class="nav-item {{ Request::is('admin/refund/settings') ? 'active' : '' }}">
-                            <a class="nav-link " href="{{ route('admin.dashboard') }}"
-                                title="{{ translate('refund_settings') }}">
-                                <span class="tio-circle nav-indicator-icon"></span>
-                                <span class="text-truncate sidebar--badge-container">
-                                    {{ translate('refund_settings') }}
-
-                                </span>
-                            </a>
-                        </li> --}}
-                            </ul>
-                        </li>
-                        <!-- Order refund End-->
-
-                        <!-- Order dispachment -->
-                        <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/dispatch/*') ? 'active' : '' }}">
-                            <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
-                                title="{{ translate('messages.dispatch') }}">
-                                <i class="tio-clock nav-icon"></i>
-                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">
-                                    {{ translate('messages.dispatch') }}
-                                </span>
-                            </a>
-                            <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="{{ Request::is('admin/dispatch*') ? 'display-block' : 'display-none' }}">
                                 <li
                                     class="nav-item {{ Request::is('admin/dispatch/list/searching_for_deliverymen') ? 'active' : '' }}">
                                     <a class="nav-link " href="{{ route('admin.dashboard') }}"
@@ -398,7 +343,27 @@
                                 </li>
                             </ul>
                         </li>
-                        <!-- Order dispachment End-->
+
+                        <!-- 30 Mins. Delivery section -->
+                        <li class="nav-item non-vendor-menu">
+                            <small class="nav-subtitle">{{ translate('messages.express_30_section') }}</small>
+                            <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                        </li>
+
+                        <li class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/orders/express-30*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.orders.express-30.index') }}"
+                                title="{{ translate('messages.express_30_orders') }}">
+                                <i class="tio-time nav-icon"></i>
+                                <span class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate sidebar--badge-container d-flex justify-content-between align-items-center">
+                                    <span>{{ translate('messages.express_30_orders') }}</span>
+                                    <span class="badge badge-soft-primary badge-pill ml-auto">
+                                        {{ isset($orderCounts) ? number_format($orderCounts['express_30'] ?? 0) : 0 }}
+                                    </span>
+                                </span>
+                            </a>
+                        </li>
+                        <!-- End 30 Mins. Delivery section -->
                     @endif
                     <!-- End Orders -->
 

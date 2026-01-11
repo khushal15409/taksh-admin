@@ -16,6 +16,8 @@ services:
       - APP_DEBUG=true
     networks:
       - laravel
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   laravel:

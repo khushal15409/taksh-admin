@@ -1,12 +1,24 @@
 FROM php:8.2-apache
 
-# Install PHP extensions
-RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libjpeg-dev libfreetype6-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Enable Apache mod_rewrite
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libzip-dev \
+    unzip \
+    && docker-php-ext-configure gd \
+        --with-freetype \
+        --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql zip
+
+# Enable Apache rewrite
 RUN a2enmod rewrite
+
+
+RUN docker-php-ext-install pdo pdo_mysql
+
 
 # Set working directory
 WORKDIR /var/www/html
@@ -18,7 +30,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # Install dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install \
+    --no-interaction \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts
+
+
 
 # Set correct permissions
 RUN chown -R www-data:www-data /var/www/html \
