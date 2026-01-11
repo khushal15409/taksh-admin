@@ -29,4 +29,12 @@ class Area extends Model
     {
         return $this->hasMany(Address::class);
     }
+
+    /**
+     * Get geographies for this area.
+     */
+    public function geographies()
+    {
+        return $this->hasMany(Geography::class, 'area_id');
+    }
 }

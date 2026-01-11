@@ -27,4 +27,12 @@ class State extends Model
     {
         return $this->hasMany(Address::class);
     }
+
+    /**
+     * Get geographies for this state.
+     */
+    public function geographies()
+    {
+        return $this->hasMany(Geography::class, 'state_id');
+    }
 }

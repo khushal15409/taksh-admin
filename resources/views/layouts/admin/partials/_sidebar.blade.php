@@ -1330,9 +1330,9 @@
 
                     @if (\App\CentralLogics\Helpers::module_permission_check('custom_role'))
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/custom-role*') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/users/custom-role*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link"
-                                href="{{ route('admin.dashboard') }}"
+                                href="{{ route('admin.users.custom-role.create') }}"
                                 title="{{ translate('messages.employee_Role') }}">
                                 <i class="tio-incognito nav-icon"></i>
                                 <span
@@ -1343,7 +1343,7 @@
 
                     @if (\App\CentralLogics\Helpers::module_permission_check('employee'))
                         <li
-                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/employee*') ? 'active' : '' }}">
+                            class="navbar-vertical-aside-has-menu {{ Request::is('admin/users/employee*') ? 'active' : '' }}">
                             <a class="js-navbar-vertical-aside-menu-link nav-link nav-link-toggle" href="javascript:"
                                 title="{{ translate('messages.Employee') }}">
                                 <i class="tio-user nav-icon"></i>
@@ -1351,16 +1351,16 @@
                                     class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">{{ translate('messages.employees') }}</span>
                             </a>
                             <ul class="js-navbar-vertical-aside-submenu nav nav-sub"
-                                style="display:{{ Request::is('admin/employee*') ? 'block' : 'none' }}">
-                                <li class="nav-item {{ Request::is('admin/employee/add-new') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
+                                style="display:{{ Request::is('admin/users/employee*') ? 'block' : 'none' }}">
+                                <li class="nav-item {{ Request::is('admin/users/employee/add-new') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.users.employee.add-new') }}"
                                         title="{{ translate('messages.add_new_Employee') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">{{ translate('messages.add_new') }}</span>
                                     </a>
                                 </li>
-                                <li class="nav-item {{ Request::is('admin/employee/list') ? 'active' : '' }}">
-                                    <a class="nav-link " href="{{ route('admin.dashboard') }}"
+                                <li class="nav-item {{ Request::is('admin/users/employee/list') ? 'active' : '' }}">
+                                    <a class="nav-link " href="{{ route('admin.users.employee.list') }}"
                                         title="{{ translate('messages.Employee_list') }}">
                                         <span class="tio-circle nav-indicator-icon"></span>
                                         <span class="text-truncate">{{ translate('messages.list') }}</span>
@@ -1371,6 +1371,52 @@
                         </li>
                     @endif
                     <!-- End Employee -->
+
+                    <!-- Access Control -->
+                    <li class="nav-item non-vendor-menu">
+                        <small class="nav-subtitle" title="Access Control">Access Control</small>
+                        <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                    </li>
+
+                    @if (true)
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/access-control/department*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.access-control.department.index') }}"
+                                title="Department">
+                                <i class="tio-city nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Department</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (true)
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/access-control/department-unit*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.access-control.department-unit.index') }}"
+                                title="Department Unit">
+                                <i class="tio-building nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">Department Unit</span>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (true)
+                        <li
+                            class="navbar-vertical-aside-has-menu non-vendor-menu {{ Request::is('admin/access-control/user-assignment*') ? 'active' : '' }}">
+                            <a class="js-navbar-vertical-aside-menu-link nav-link"
+                                href="{{ route('admin.access-control.user-assignment.index') }}"
+                                title="User Assignment">
+                                <i class="tio-user-big nav-icon"></i>
+                                <span
+                                    class="navbar-vertical-aside-mini-mode-hidden-elements text-truncate">User Assignment</span>
+                            </a>
+                        </li>
+                    @endif
+                    <!-- End Access Control -->
 
                     <!-- Logistics Management -->
                     <li class="nav-item">
