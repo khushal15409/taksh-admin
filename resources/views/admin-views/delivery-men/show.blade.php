@@ -47,7 +47,6 @@
 @endpush
 
 @section('content')
-@include('admin-views.partials._loader')
 <div class="content container-fluid">
     <div class="page-header">
         <div class="row align-items-center">
@@ -155,6 +154,18 @@
                         <tr>
                             <th width="30%">Vehicle Type:</th>
                             <td>{{ ucfirst($deliveryMan->vehicle_type ?? 'N/A') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Deliveryman Type:</th>
+                            <td>
+                                @if($deliveryMan->deliveryman_type)
+                                    <span class="badge badge-{{ $deliveryMan->deliveryman_type == 'salary_based' ? 'primary' : 'info' }}">
+                                        {{ ucfirst(str_replace('_', ' ', $deliveryMan->deliveryman_type)) }}
+                                    </span>
+                                @else
+                                    <span class="badge badge-secondary">Freelancer (Default)</span>
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <th>Vehicle Number:</th>
@@ -385,69 +396,157 @@
 
 @push('script_2')
 <script>
+    // Hide loader function - robust implementation
     function hideLoader() {
+        // Use PageLoader API if available
         if (typeof PageLoader !== 'undefined' && PageLoader.hide) {
             PageLoader.hide();
         }
+        
+        // Direct DOM manipulation fallback
         var loader = document.getElementById('page-loader');
         if (loader) {
             loader.classList.add('hide');
             loader.style.display = 'none';
             loader.style.visibility = 'hidden';
             loader.style.opacity = '0';
+            loader.style.pointerEvents = 'none';
         }
-        $('#page-loader').addClass('hide').hide().css({
-            'display': 'none',
-            'visibility': 'hidden',
-            'opacity': '0'
+        
+        // jQuery fallback if available
+        if (typeof $ !== 'undefined') {
+            $('#page-loader').addClass('hide').hide().css({
+                'display': 'none',
+                'visibility': 'hidden',
+                'opacity': '0',
+                'pointer-events': 'none'
+            });
+        }
+    }
+    
+    // Function to wait for all images to load
+    function waitForImages(callback) {
+        var images = document.querySelectorAll('img');
+        var loadedCount = 0;
+        var totalImages = images.length;
+        
+        if (totalImages === 0) {
+            callback();
+            return;
+        }
+        
+        var imageLoadHandler = function() {
+            loadedCount++;
+            if (loadedCount === totalImages) {
+                callback();
+            }
+        };
+        
+        var imageErrorHandler = function() {
+            loadedCount++;
+            if (loadedCount === totalImages) {
+                callback();
+            }
+        };
+        
+        images.forEach(function(img) {
+            if (img.complete) {
+                loadedCount++;
+                if (loadedCount === totalImages) {
+                    callback();
+                }
+            } else {
+                img.addEventListener('load', imageLoadHandler);
+                img.addEventListener('error', imageErrorHandler);
+            }
+        });
+        
+        // Fallback timeout if images take too long
+        setTimeout(function() {
+            callback();
+        }, 2000);
+    }
+    
+    // Hide loader when everything is ready
+    function hideLoaderWhenReady() {
+        waitForImages(function() {
+            hideLoader();
+            // Additional safety check
+            setTimeout(function() {
+                hideLoader();
+            }, 200);
         });
     }
     
-    $(document).ready(function() {
-        hideLoader();
-        setTimeout(function() {
-            hideLoader();
-        }, 100);
-    });
-    
-    $(window).on('load', function() {
-        hideLoader();
-    });
-    
+    // Hide loader immediately if page is already loaded
     if (document.readyState === 'complete') {
+        hideLoaderWhenReady();
+    } else if (document.readyState === 'interactive') {
         hideLoader();
     }
     
+    // Hide loader when DOM is ready
+    if (typeof $ !== 'undefined') {
+        $(document).ready(function() {
+            hideLoaderWhenReady();
+        });
+        
+        // Hide loader when window is fully loaded (including images)
+        $(window).on('load', function() {
+            setTimeout(function() {
+                hideLoaderWhenReady();
+            }, 100);
+        });
+    } else {
+        // Fallback if jQuery is not loaded yet
+        document.addEventListener('DOMContentLoaded', function() {
+            hideLoaderWhenReady();
+        });
+        
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                hideLoaderWhenReady();
+            }, 100);
+        });
+    }
+    
+    // Final fallback timeout - ensure loader is hidden
     setTimeout(function() {
         hideLoader();
-    }, 1000);
+    }, 1500);
     
     // Image modal
     function openImageModal(imageSrc) {
-        $('#modalImage').attr('src', imageSrc);
-        $('#imageModal').modal('show');
+        if (typeof $ !== 'undefined') {
+            $('#modalImage').attr('src', imageSrc);
+            $('#imageModal').modal('show');
+        }
     }
     
     // Handle form submissions
-    $('#approveForm').on('submit', function(e) {
-        var $btn = $('#approveBtn');
-        $btn.prop('disabled', true);
-        $btn.find('.btn-text').addClass('d-none');
-        $btn.find('.btn-loading').removeClass('d-none');
-        if (typeof PageLoader !== 'undefined' && PageLoader.show) {
-            PageLoader.show();
-        }
-    });
-    
-    $('#rejectForm').on('submit', function(e) {
-        var $btn = $('#rejectBtn');
-        $btn.prop('disabled', true);
-        $btn.find('.btn-text').addClass('d-none');
-        $btn.find('.btn-loading').removeClass('d-none');
-        if (typeof PageLoader !== 'undefined' && PageLoader.show) {
-            PageLoader.show();
-        }
-    });
+    if (typeof $ !== 'undefined') {
+        $(document).ready(function() {
+            $('#approveForm').on('submit', function(e) {
+                var $btn = $('#approveBtn');
+                $btn.prop('disabled', true);
+                $btn.find('.btn-text').addClass('d-none');
+                $btn.find('.btn-loading').removeClass('d-none');
+                if (typeof PageLoader !== 'undefined' && PageLoader.show) {
+                    PageLoader.show();
+                }
+            });
+            
+            $('#rejectForm').on('submit', function(e) {
+                var $btn = $('#rejectBtn');
+                $btn.prop('disabled', true);
+                $btn.find('.btn-text').addClass('d-none');
+                $btn.find('.btn-loading').removeClass('d-none');
+                if (typeof PageLoader !== 'undefined' && PageLoader.show) {
+                    PageLoader.show();
+                }
+            });
+        });
+    }
 </script>
 @endpush
 

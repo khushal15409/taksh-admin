@@ -176,6 +176,22 @@
 
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label>Deliveryman Type <span class="text-danger">*</span></label>
+                                    <select name="deliveryman_type" class="form-control" required>
+                                        <option value="">-- Select Type --</option>
+                                        <option value="freelancer" {{ old('deliveryman_type') == 'freelancer' ? 'selected' : '' }}>Freelancer</option>
+                                        <option value="salary_based" {{ old('deliveryman_type') == 'salary_based' ? 'selected' : '' }}>Salary Based</option>
+                                    </select>
+                                    @error('deliveryman_type')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label>Vehicle Number</label>
                                     <input type="text" name="vehicle_number" class="form-control" value="{{ old('vehicle_number') }}">
                                     @error('vehicle_number')
@@ -271,10 +287,14 @@
 
 @push('script_2')
 <script>
+    // Hide loader function - robust implementation
     function hideLoader() {
+        // Use PageLoader API if available
         if (typeof PageLoader !== 'undefined' && PageLoader.hide) {
             PageLoader.hide();
         }
+        
+        // Direct DOM manipulation fallback
         var loader = document.getElementById('page-loader');
         if (loader) {
             loader.classList.add('hide');
@@ -282,44 +302,73 @@
             loader.style.visibility = 'hidden';
             loader.style.opacity = '0';
         }
-        $('#page-loader').addClass('hide').hide().css({
-            'display': 'none',
-            'visibility': 'hidden',
-            'opacity': '0'
-        });
-    }
-    
-    $(document).ready(function() {
-        hideLoader();
         
-        // Filter cities based on state
-        $('#state_id').on('change', function() {
-            var stateId = $(this).val();
-            var citySelect = $('#city_id');
-            
-            citySelect.html('<option value="">-- Select City --</option>');
-            
-            if (stateId) {
-                @foreach($cities as $city)
-                if ({{ $city->state_id }} == stateId) {
-                    citySelect.append('<option value="{{ $city->id }}">{{ $city->name }}</option>');
-                }
-                @endforeach
-            }
-        });
-    });
+        // jQuery fallback if available
+        if (typeof $ !== 'undefined') {
+            $('#page-loader').addClass('hide').hide().css({
+                'display': 'none',
+                'visibility': 'hidden',
+                'opacity': '0'
+            });
+        }
+    }
     
-    $(window).on('load', function() {
-        hideLoader();
-    });
-    
-    if (document.readyState === 'complete') {
+    // Hide loader immediately if page is already loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
         hideLoader();
     }
     
+    // Hide loader when DOM is ready
+    if (typeof $ !== 'undefined') {
+        $(document).ready(function() {
+            hideLoader();
+            setTimeout(function() {
+                hideLoader();
+            }, 100);
+            
+            // Filter cities based on state
+            $('#state_id').on('change', function() {
+                var stateId = $(this).val();
+                var citySelect = $('#city_id');
+                
+                citySelect.html('<option value="">-- Select City --</option>');
+                
+                if (stateId) {
+                    @foreach($cities as $city)
+                    if ({{ $city->state_id }} == stateId) {
+                        citySelect.append('<option value="{{ $city->id }}">{{ $city->name }}</option>');
+                    }
+                    @endforeach
+                }
+            });
+        });
+        
+        // Hide loader when window is fully loaded
+        $(window).on('load', function() {
+            setTimeout(function() {
+                hideLoader();
+            }, 100);
+        });
+    } else {
+        // Fallback if jQuery is not loaded yet
+        document.addEventListener('DOMContentLoaded', function() {
+            hideLoader();
+            setTimeout(function() {
+                hideLoader();
+            }, 100);
+        });
+        
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                hideLoader();
+            }, 100);
+        });
+    }
+    
+    // Final fallback timeout
     setTimeout(function() {
         hideLoader();
-    }, 1000);
+    }, 500);
 </script>
 @endpush
 

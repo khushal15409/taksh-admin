@@ -23,6 +23,7 @@ class DeliveryMan extends Model
         'state_id',
         'city_id',
         'vehicle_type',
+        'deliveryman_type',
         'vehicle_number',
         'driving_license_number',
         'aadhaar_number',

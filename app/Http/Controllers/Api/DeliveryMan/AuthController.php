@@ -144,6 +144,7 @@ class AuthController extends Controller
             'city_id' => 'required|exists:cities,id',
             'fulfillment_center_id' => 'required|exists:fulfillment_centers,id',
             'vehicle_type' => 'required|in:bike,cycle,scooter',
+            'deliveryman_type' => 'required|in:freelancer,salary_based',
             'vehicle_number' => 'nullable|string|max:50',
             'driving_license_number' => 'required|string|max:50',
             'aadhaar_number' => 'required|string|regex:/^[0-9]{12}$/',
@@ -204,6 +205,7 @@ class AuthController extends Controller
                 'state_id' => $request->state_id,
                 'city_id' => $request->city_id,
                 'vehicle_type' => $request->vehicle_type,
+                'deliveryman_type' => $request->deliveryman_type,
                 'vehicle_number' => $request->vehicle_number,
                 'driving_license_number' => $request->driving_license_number,
                 'aadhaar_number' => $request->aadhaar_number,
@@ -231,6 +233,7 @@ class AuthController extends Controller
                     'name' => $deliveryMan->name,
                     'mobile_number' => $deliveryMan->mobile_number,
                     'status' => $deliveryMan->status,
+                    'deliveryman_type' => $deliveryMan->deliveryman_type,
                 ],
             ], 'delivery.register.pending');
 
@@ -307,6 +310,7 @@ class AuthController extends Controller
                 'email' => $deliveryMan->email,
                 'status' => $deliveryMan->status,
                 'fulfillment_center_id' => $deliveryMan->fulfillment_center_id,
+                'deliveryman_type' => $deliveryMan->deliveryman_type ?? 'freelancer',
             ],
             'token' => $token,
         ], 'api.delivery.login.success');

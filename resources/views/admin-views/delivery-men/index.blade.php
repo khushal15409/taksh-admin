@@ -86,8 +86,15 @@
                                 $searchValue = request('search');
                                 $searchValue = is_array($searchValue) ? '' : (string) ($searchValue ?? '');
                             @endphp
-                            <input type="text" name="search" class="form-control"
-                                placeholder="Search by name, mobile, email" value="{{ $searchValue }}">
+                            <div class="input-group input--group">
+                                <input id="datatableSearch" name="search" type="search" class="form-control" 
+                                    placeholder="Ex : search delivery man email or phone" 
+                                    value="{{ $searchValue }}" 
+                                    aria-label="Search here">
+                                <button type="submit" class="btn btn--secondary">
+                                    <i class="tio-search"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="col-md-2">
                             <select name="fulfillment_center_id" class="form-control">
@@ -146,6 +153,7 @@
                                 <th>Email</th>
                                 <th>Fulfillment Center</th>
                                 <th>Vehicle Type</th>
+                                <th>Type</th>
                                 <th>Status</th>
                                 <th>Active</th>
                                 <th>Registered</th>
@@ -184,6 +192,15 @@
                                         @endif
                                     </td>
                                     <td>
+                                        @if($deliveryMan->deliveryman_type)
+                                            <span class="badge badge-{{ $deliveryMan->deliveryman_type == 'salary_based' ? 'primary' : 'info' }}">
+                                                {{ ucfirst(str_replace('_', ' ', $deliveryMan->deliveryman_type)) }}
+                                            </span>
+                                        @else
+                                            <span class="badge badge-secondary">Freelancer</span>
+                                        @endif
+                                    </td>
+                                    <td>
                                         @if ($deliveryMan->status === 'approved')
                                             <span class="status-badge status-approved">Approved</span>
                                         @elseif($deliveryMan->status === 'rejected')
@@ -219,7 +236,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="10" class="text-center py-4">
+                                    <td colspan="11" class="text-center py-4">
                                         <p class="text-muted">No delivery men found</p>
                                     </td>
                                 </tr>
@@ -238,10 +255,14 @@
 
 @push('script_2')
     <script>
+        // Hide loader function - robust implementation
         function hideLoader() {
+            // Use PageLoader API if available
             if (typeof PageLoader !== 'undefined' && PageLoader.hide) {
                 PageLoader.hide();
             }
+            
+            // Direct DOM manipulation fallback
             var loader = document.getElementById('page-loader');
             if (loader) {
                 loader.classList.add('hide');
@@ -249,30 +270,56 @@
                 loader.style.visibility = 'hidden';
                 loader.style.opacity = '0';
             }
-            $('#page-loader').addClass('hide').hide().css({
-                'display': 'none',
-                'visibility': 'hidden',
-                'opacity': '0'
+            
+            // jQuery fallback if available
+            if (typeof $ !== 'undefined') {
+                $('#page-loader').addClass('hide').hide().css({
+                    'display': 'none',
+                    'visibility': 'hidden',
+                    'opacity': '0'
+                });
+            }
+        }
+        
+        // Hide loader immediately if page is already loaded
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            hideLoader();
+        }
+        
+        // Hide loader when DOM is ready
+        if (typeof $ !== 'undefined') {
+            $(document).ready(function() {
+                hideLoader();
+                setTimeout(function() {
+                    hideLoader();
+                }, 100);
+            });
+            
+            // Hide loader when window is fully loaded
+            $(window).on('load', function() {
+                setTimeout(function() {
+                    hideLoader();
+                }, 100);
+            });
+        } else {
+            // Fallback if jQuery is not loaded yet
+            document.addEventListener('DOMContentLoaded', function() {
+                hideLoader();
+                setTimeout(function() {
+                    hideLoader();
+                }, 100);
+            });
+            
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    hideLoader();
+                }, 100);
             });
         }
-
-        $(document).ready(function() {
-            hideLoader();
-            setTimeout(function() {
-                hideLoader();
-            }, 100);
-        });
-
-        $(window).on('load', function() {
-            hideLoader();
-        });
-
-        if (document.readyState === 'complete') {
-            hideLoader();
-        }
-
+        
+        // Final fallback timeout
         setTimeout(function() {
             hideLoader();
-        }, 1000);
+        }, 500);
     </script>
 @endpush
